@@ -12,13 +12,6 @@ namespace Melodorium
 		public FormOpenData()
 		{
 			InitializeComponent();
-			Init();
-		}
-
-		private void Init()
-		{
-			LblFolder.Text = Program.Settings.RootFolder == "" ? "Select root folder" : Program.Settings.RootFolder;
-			InpIgnore.Text = string.Join("\r\n", Program.MusicData.Ignore);
 		}
 
 		private void FormOpenData_Shown(object sender, EventArgs e)
@@ -41,25 +34,11 @@ namespace Melodorium
 			Program.Settings.RootFolder = RootFolderDialog.SelectedPath;
 			Program.Settings.Save();
 			MusicData.Load();
-			Init();
-			ScanFolder();
-			return true;
-		}
-
-		private void ScanFolder()
-		{
-			if (Program.Settings.RootFolder == "") return;
-			_files = [];
-
-			foreach (var path in Directory.EnumerateFiles(Program.Settings.RootFolder, "*",
-				new EnumerationOptions { RecurseSubdirectories = true }))
-			{
-				if (path == Program.Settings.DataFilePath) continue;
-				var rpath = Path.GetRelativePath(Program.Settings.RootFolder, path);
-				_files.Add(rpath);
-			}
-			_files.Sort();
+			LblFolder.Text = Program.Settings.RootFolder;
+			InpIgnore.Text = string.Join("\r\n", Program.MusicData.Ignore);
+			_files = Program.MusicData.GetFileNames(fullpath: false, includeIgnore: true);
 			UpdateList();
+			return true;
 		}
 
 		private void BtnSave_Click(object sender, EventArgs e)
@@ -94,15 +73,7 @@ namespace Melodorium
 				var rootFilesIgnore = new List<string>();
 				foreach (var file in _files)
 				{
-					var ignore = false;
-					foreach (var pattern in Program.MusicData.Ignore)
-					{
-						if (Regex.Match(file, pattern).Success)
-						{
-							ignore = true;
-							break;
-						}
-					}
+					var ignore = Program.MusicData.IsFileInIgnore(file);
 					var path = file.Split(Path.DirectorySeparatorChar);
 					if (path.Length == 1)
 					{

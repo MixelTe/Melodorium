@@ -15,7 +15,7 @@ namespace Melodorium
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
 			Settings.Load();
-			MusicData.Load();
+			MusicData.LoadFull();
 			Application.Run(new FormMain());
 		}
 	}

@@ -30,6 +30,8 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			BtnChangeFolder = new Button();
+			BtnExport = new Button();
+			BtnManage = new Button();
 			SuspendLayout();
 			// 
 			// BtnChangeFolder
@@ -42,11 +44,33 @@
 			BtnChangeFolder.UseVisualStyleBackColor = true;
 			BtnChangeFolder.Click += BtnChangeFolder_Click;
 			// 
+			// BtnExport
+			// 
+			BtnExport.Location = new Point(98, 12);
+			BtnExport.Name = "BtnExport";
+			BtnExport.Size = new Size(75, 23);
+			BtnExport.TabIndex = 1;
+			BtnExport.Text = "Export data";
+			BtnExport.UseVisualStyleBackColor = true;
+			BtnExport.Click += BtnExport_Click;
+			// 
+			// BtnManage
+			// 
+			BtnManage.Location = new Point(179, 12);
+			BtnManage.Name = "BtnManage";
+			BtnManage.Size = new Size(84, 23);
+			BtnManage.TabIndex = 2;
+			BtnManage.Text = "Manage files";
+			BtnManage.UseVisualStyleBackColor = true;
+			BtnManage.Click += BtnManage_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
+			Controls.Add(BtnManage);
+			Controls.Add(BtnExport);
 			Controls.Add(BtnChangeFolder);
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			Name = "FormMain";
@@ -59,5 +83,7 @@
 		#endregion
 
 		private Button BtnChangeFolder;
+		private Button BtnExport;
+		private Button BtnManage;
 	}
 }

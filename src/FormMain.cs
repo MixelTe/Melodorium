@@ -32,7 +32,17 @@ namespace Melodorium
 		{
 			using var dialog = new FormOpenData();
 			dialog.ShowDialog(this);
-			MusicData.Load();
+			MusicData.LoadFull();
+		}
+
+		private void BtnExport_Click(object sender, EventArgs e)
+		{
+			Program.MusicData.ExportData();
+		}
+
+		private void BtnManage_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
