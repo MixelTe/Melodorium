@@ -36,9 +36,9 @@
 			// 
 			BtnChangeFolder.Location = new Point(12, 12);
 			BtnChangeFolder.Name = "BtnChangeFolder";
-			BtnChangeFolder.Size = new Size(140, 23);
+			BtnChangeFolder.Size = new Size(80, 23);
 			BtnChangeFolder.TabIndex = 0;
-			BtnChangeFolder.Text = "Change/Update folder";
+			BtnChangeFolder.Text = "Open folder";
 			BtnChangeFolder.UseVisualStyleBackColor = true;
 			BtnChangeFolder.Click += BtnChangeFolder_Click;
 			// 

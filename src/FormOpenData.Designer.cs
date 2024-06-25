@@ -34,14 +34,13 @@
 			InpIgnore = new TextBox();
 			label1 = new Label();
 			splitContainer1 = new SplitContainer();
-			ListMusic = new ListView();
-			columnHeader1 = new ColumnHeader();
+			TreeMusic = new TreeView();
+			TreeMusicIgnore = new TreeView();
 			BtnFilter = new Button();
-			ListMusicIgnore = new ListView();
-			columnHeader2 = new ColumnHeader();
-			BtnSave = new Button();
+			BtnSelect = new Button();
 			InpExts = new TextBox();
 			label2 = new Label();
+			BtnSave = new Button();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -84,35 +83,35 @@
 			// 
 			// splitContainer1.Panel1
 			// 
-			splitContainer1.Panel1.Controls.Add(ListMusic);
+			splitContainer1.Panel1.Controls.Add(TreeMusic);
 			splitContainer1.Panel1.Padding = new Padding(0, 0, 3, 0);
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(TreeMusicIgnore);
 			splitContainer1.Panel2.Controls.Add(BtnFilter);
-			splitContainer1.Panel2.Controls.Add(ListMusicIgnore);
 			splitContainer1.Panel2.Controls.Add(label1);
 			splitContainer1.Panel2.Controls.Add(InpIgnore);
 			splitContainer1.Size = new Size(776, 380);
 			splitContainer1.SplitterDistance = 493;
 			splitContainer1.TabIndex = 7;
 			// 
-			// ListMusic
+			// TreeMusic
 			// 
-			ListMusic.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
-			ListMusic.Dock = DockStyle.Fill;
-			ListMusic.Location = new Point(0, 0);
-			ListMusic.Name = "ListMusic";
-			ListMusic.Size = new Size(490, 380);
-			ListMusic.TabIndex = 0;
-			ListMusic.UseCompatibleStateImageBehavior = false;
-			ListMusic.View = View.Details;
-			ListMusic.MouseDoubleClick += ListMusic_MouseDoubleClick;
+			TreeMusic.Dock = DockStyle.Fill;
+			TreeMusic.Location = new Point(0, 0);
+			TreeMusic.Name = "TreeMusic";
+			TreeMusic.Size = new Size(490, 380);
+			TreeMusic.TabIndex = 1;
+			TreeMusic.NodeMouseDoubleClick += TreeMusic_NodeMouseDoubleClick;
 			// 
-			// columnHeader1
+			// TreeMusicIgnore
 			// 
-			columnHeader1.Text = "Path";
-			columnHeader1.Width = 450;
+			TreeMusicIgnore.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			TreeMusicIgnore.Location = new Point(3, 158);
+			TreeMusicIgnore.Name = "TreeMusicIgnore";
+			TreeMusicIgnore.Size = new Size(273, 222);
+			TreeMusicIgnore.TabIndex = 8;
 			// 
 			// BtnFilter
 			// 
@@ -125,32 +124,16 @@
 			BtnFilter.UseVisualStyleBackColor = true;
 			BtnFilter.Click += BtnFilter_Click;
 			// 
-			// ListMusicIgnore
+			// BtnSelect
 			// 
-			ListMusicIgnore.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			ListMusicIgnore.Columns.AddRange(new ColumnHeader[] { columnHeader2 });
-			ListMusicIgnore.Location = new Point(3, 158);
-			ListMusicIgnore.Name = "ListMusicIgnore";
-			ListMusicIgnore.Size = new Size(273, 219);
-			ListMusicIgnore.TabIndex = 6;
-			ListMusicIgnore.UseCompatibleStateImageBehavior = false;
-			ListMusicIgnore.View = View.Details;
-			// 
-			// columnHeader2
-			// 
-			columnHeader2.Text = "Path";
-			columnHeader2.Width = 250;
-			// 
-			// BtnSave
-			// 
-			BtnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnSave.Location = new Point(683, 9);
-			BtnSave.Name = "BtnSave";
-			BtnSave.Size = new Size(102, 41);
-			BtnSave.TabIndex = 8;
-			BtnSave.Text = "Save changes";
-			BtnSave.UseVisualStyleBackColor = true;
-			BtnSave.Click += BtnSave_Click;
+			BtnSelect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnSelect.Location = new Point(731, 9);
+			BtnSelect.Name = "BtnSelect";
+			BtnSelect.Size = new Size(54, 41);
+			BtnSelect.TabIndex = 8;
+			BtnSelect.Text = "Select";
+			BtnSelect.UseVisualStyleBackColor = true;
+			BtnSelect.Click += BtnSelect_Click;
 			// 
 			// InpExts
 			// 
@@ -169,14 +152,26 @@
 			label2.TabIndex = 10;
 			label2.Text = "Dbl click to ignore  v";
 			// 
+			// BtnSave
+			// 
+			BtnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnSave.Location = new Point(623, 9);
+			BtnSave.Name = "BtnSave";
+			BtnSave.Size = new Size(102, 41);
+			BtnSave.TabIndex = 11;
+			BtnSave.Text = "Save changes";
+			BtnSave.UseVisualStyleBackColor = true;
+			BtnSave.Click += BtnSave_Click;
+			// 
 			// FormOpenData
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 452);
+			Controls.Add(BtnSave);
 			Controls.Add(label2);
 			Controls.Add(InpExts);
-			Controls.Add(BtnSave);
+			Controls.Add(BtnSelect);
 			Controls.Add(splitContainer1);
 			Controls.Add(LblFolder);
 			Icon = (Icon)resources.GetObject("$this.Icon");
@@ -201,13 +196,12 @@
 		private TextBox InpIgnore;
 		private Label label1;
 		private SplitContainer splitContainer1;
-		private ListView ListMusic;
-		private ColumnHeader columnHeader1;
-		private ListView ListMusicIgnore;
-		private ColumnHeader columnHeader2;
-		private Button BtnSave;
+		private Button BtnSelect;
 		private Button BtnFilter;
 		private TextBox InpExts;
 		private Label label2;
+		private TreeView TreeMusic;
+		private TreeView TreeMusicIgnore;
+		private Button BtnSave;
 	}
 }

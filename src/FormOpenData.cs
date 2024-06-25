@@ -1,11 +1,13 @@
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Melodorium
 {
 	public partial class FormOpenData : Form
 	{
 		private List<string> _files = [];
-		private FormLoading _formLoading = new();
+		private readonly FormLoading _formLoading = new();
 
 		public FormOpenData()
 		{
@@ -56,12 +58,19 @@ namespace Melodorium
 				var rpath = Path.GetRelativePath(Program.Settings.RootFolder, path);
 				_files.Add(rpath);
 			}
+			_files.Sort();
 			UpdateList();
 		}
 
 		private void BtnSave_Click(object sender, EventArgs e)
 		{
-			UpdateList(saveData: true);
+			UpdateIgnore();
+			Program.MusicData.Save();
+			Close();
+		}
+
+		private void BtnSelect_Click(object sender, EventArgs e)
+		{
 			Close();
 		}
 
@@ -70,38 +79,23 @@ namespace Melodorium
 			UpdateList();
 		}
 
-		private void UpdateList(bool saveData = false)
+		private void UpdateList()
 		{
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
-				var ignores = InpIgnore.Text.Split("\n")
-					.Select(v => v.Trim())
-					.Where(v =>
-					{
-						if (v == "") return false;
-						try { Regex.Match("", v); return true; }
-						catch { return false; }
-					})
-					.ToArray();
-				ListMusic.Items.Clear();
-				ListMusicIgnore.Items.Clear();
+				UpdateIgnore();
+				TreeMusic.Nodes.Clear();
+				TreeMusicIgnore.Nodes.Clear();
 				var exts = new HashSet<string>();
-				if (saveData)
-				{
-					Program.MusicData.Ignore = ignores;
-					Program.MusicData.FilesIgnored = [];
-				}
-				List<string> files = [];
-				List<string> filesNew = [];
-				List<string> filesDel = [];
-				List<string> filesIgnore = [];
-				List<string> filesIgnoreNew = [];
-				List<string> filesIgnoreDel = [];
+				var folders = new List<Tuple<string, TreeNodeCollection>>();
+				var foldersIgnore = new List<Tuple<string, TreeNodeCollection>>();
+				var rootFiles = new List<string>();
+				var rootFilesIgnore = new List<string>();
 				foreach (var file in _files)
 				{
 					var ignore = false;
-					foreach (var pattern in ignores)
+					foreach (var pattern in Program.MusicData.Ignore)
 					{
 						if (Regex.Match(file, pattern).Success)
 						{
@@ -109,84 +103,93 @@ namespace Melodorium
 							break;
 						}
 					}
-					if (ignore)
+					var path = file.Split(Path.DirectorySeparatorChar);
+					if (path.Length == 1)
 					{
-						if (saveData)
-							Program.MusicData.FilesIgnored.Add(file);
+						if (ignore)
+						{
+							rootFilesIgnore.Add(file);
+						}
 						else
 						{
-							if (Program.MusicData.FilesIgnored.Contains(file))
-								filesIgnore.Add(file);
-							else
-								filesIgnoreNew.Add(file);
+							rootFiles.Add(file);
+							exts.Add(Path.GetExtension(file));
 						}
 					}
 					else
 					{
-						exts.Add(Path.GetExtension(file));
-						if (Program.MusicData.Files.Find(v => v.Path == file) == null)
-							filesNew.Add(file);
-						else
-							files.Add(file);
+						if (!ignore)
+							exts.Add(Path.GetExtension(file));
+
+						var curFolder = ignore ? foldersIgnore : folders;
+						while (curFolder.Count > path.Length - 1)
+							curFolder.RemoveAt(curFolder.Count - 1);
+						for (var i = 0; i < path.Length - 1; i++)
+						{
+							if (i < curFolder.Count && path[i] != curFolder[i].Item1)
+								curFolder.RemoveRange(i, curFolder.Count - i);
+							if (i >= curFolder.Count)
+							{
+								var node = new TreeNode(path[i]);
+								if (i == 0)
+									(ignore ? TreeMusicIgnore : TreeMusic).Nodes.Add(node);
+								else
+									curFolder[i - 1].Item2.Add(node);
+								curFolder.Add(Tuple.Create(path[i], node.Nodes));
+							}
+						}
+						curFolder.Last().Item2.Add(new TreeNode(path.Last()) { Tag = file });
 					}
 				}
+				foreach (var file in rootFiles)
+					TreeMusic.Nodes.Add(new TreeNode(file) { Tag = file });
+				foreach (var file in rootFilesIgnore)
+					TreeMusicIgnore.Nodes.Add(new TreeNode(file) { Tag = file });
+				for (var i = 0; i < TreeMusicIgnore.Nodes.Count; i++)
+				{
+					var node = TreeMusicIgnore.Nodes[i];
+					if (node.Nodes.Count == 1 && node.Nodes[0].Nodes.Count != 0)
+					{
+						var innerNode = node.Nodes[0];
+						node.Text += "/" + innerNode.Text;
+						node.Nodes.Clear();
+						for (var j = 0; j < innerNode.Nodes.Count; j++)
+							node.Nodes.Add(innerNode.Nodes[j]);
+					}
+				}
+
 				InpExts.Text = string.Join("; ", exts);
-				if (saveData)
-				{
-					Program.MusicData.Files = Program.MusicData.Files
-												.Where(v => files.Contains(v.Path))
-												.ToList();
-					foreach (var file in filesNew)
-						Program.MusicData.AddNewFile(file);
-					Program.MusicData.Save();
-				}
-				else
-				{
-					foreach (var file in Program.MusicData.Files)
-						if (!files.Contains(file.Path))
-							filesDel.Add(file.Path);
-					foreach (var file in Program.MusicData.FilesIgnored)
-						if (!filesIgnore.Contains(file))
-							filesIgnoreDel.Add(file);
-					files.Sort();
-					filesNew.Sort();
-					filesDel.Sort();
-					filesIgnore.Sort();
-					filesIgnoreNew.Sort();
-					filesIgnoreDel.Sort();
-					foreach (var file in filesDel)
-						ListMusic.Items.Add(new ListViewItem(file) { ForeColor = Color.Tomato });
-					foreach (var file in filesNew)
-						ListMusic.Items.Add(new ListViewItem(file) { ForeColor = Color.Green });
-					foreach (var file in files)
-						ListMusic.Items.Add(file);
-					foreach (var file in filesIgnoreDel)
-						ListMusicIgnore.Items.Add(new ListViewItem(file) { ForeColor = Color.Tomato });
-					foreach (var file in filesIgnoreNew)
-						ListMusicIgnore.Items.Add(new ListViewItem(file) { ForeColor = Color.Green });
-					foreach (var file in filesIgnore)
-						ListMusicIgnore.Items.Add(file);
-				}
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
 		}
 
-		private void ListMusic_MouseDoubleClick(object sender, MouseEventArgs e)
+		private void UpdateIgnore()
 		{
-			var info = ListMusic.HitTest(e.X, e.Y);
-			var item = info.Item;
+			Program.MusicData.Ignore = InpIgnore.Text.Split("\n")
+				.Select(v => v.Trim())
+				.Where(v =>
+				{
+					if (v == "") return false;
+					try { Regex.Match("", v); return true; }
+					catch { return false; }
+				})
+				.ToArray();
+		}
 
-			if (item == null) return;
-
-			if (InpIgnore.Text != "")
-				InpIgnore.Text += "\r\n";
-			InpIgnore.Text += Regex.Escape(item.Text);
-			ListMusic.Items.Remove(item);
-			item.Selected = false;
-			item.ForeColor = Color.Green;
-			ListMusicIgnore.Items.Insert(0, item);
-			ListMusic.Items.Insert(0, new ListViewItem(item.Text) { ForeColor = Color.Tomato });
+		private void TreeMusic_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			var node = e.Node;
+			if (node.Tag is string file)
+			{
+				if (InpIgnore.Text != "")
+					InpIgnore.Text += "\r\n";
+				InpIgnore.Text += $"^{Regex.Escape(file)}$";
+				TreeMusic.Nodes.Remove(node);
+				node.ForeColor = Color.Green;
+				node.Text = file;
+				TreeMusicIgnore.Nodes.Insert(0, node);
+			}
 		}
 	}
 }

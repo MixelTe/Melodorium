@@ -15,16 +15,16 @@ namespace Melodorium
 	{
 		public static int DataVersion = 1;
 		public int Version { get; set; } = DataVersion;
-		public List<MusicFileData> Files { get; set; } = [];
-		public List<string> FilesIgnored { get; set; } = [];
 		public string[] Ignore { get; set; } = [];
+
+		public List<MusicFileData> Files = [];
 
 		public void Save()
 		{
 			var filename = Program.Settings.DataFilePath;
 			if (filename == "") return;
 			//var json = JsonSerializer.Serialize(this);
-			var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true});
+			var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
 			File.WriteAllText(filename, json);
 		}
 		public static void Load()
@@ -37,11 +37,6 @@ namespace Melodorium
 			if (version != DataVersion)
 				throw new Exception($"Unsuported version of data file: {version}");
 			Program.MusicData = JsonSerializer.Deserialize<MusicData>(json)!;
-		}
-
-		public void AddNewFile(string path)
-		{
-			Files.Add(new MusicFileData(path));
 		}
 	}
 
