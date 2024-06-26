@@ -3,7 +3,7 @@
 	internal class Settings
 	{
 		private static readonly string _dataFileName = "melodorium.json";
-		public static readonly string AlternativeDataStreamName = "melodorium";
+		public static string AlternativeDataStreamName { get => "melodorium"; }
 
 		public string RootFolder = "";
 		public string DataFilePath { 

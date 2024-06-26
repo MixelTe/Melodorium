@@ -90,12 +90,16 @@ namespace Melodorium
 
     internal class MusicFile(string path)
 	{
-		public string Path { get; set; } = path;
+		public string FPath { get; set; } = path;
+		public string RPath { get => Path.GetRelativePath(Program.Settings.RootFolder, FPath); }
+		public string Folder { get => Path.GetDirectoryName(FPath) ?? ""; }
+		public string Name { get => Path.GetFileNameWithoutExtension(FPath); }
+		public string Ext { get => Path.GetExtension(FPath); }
 		public MusicFileData Data { get; set; } = new();
 
 		public void Load()
 		{
-			var json = AlternativeDataStream.ReadString(Path, Settings.AlternativeDataStreamName);
+			var json = AlternativeDataStream.ReadString(FPath, Settings.AlternativeDataStreamName);
 			if (json == null) return;
 			Data = JsonSerializer.Deserialize<MusicFileData>(json)!;
 		}
@@ -103,7 +107,7 @@ namespace Melodorium
 		public void Save()
 		{
 			var json = JsonSerializer.Serialize(Data);
-			AlternativeDataStream.WriteString(Path, Settings.AlternativeDataStreamName, json);
+			AlternativeDataStream.WriteString(FPath, Settings.AlternativeDataStreamName, json);
 		}
 	}
 

@@ -31,7 +31,9 @@ namespace Melodorium
 		private void OpenFolder()
 		{
 			using var dialog = new FormOpenData();
+			Hide();
 			dialog.ShowDialog(this);
+			Show();
 			MusicData.LoadFull();
 		}
 
@@ -42,7 +44,11 @@ namespace Melodorium
 
 		private void BtnManage_Click(object sender, EventArgs e)
 		{
-
+			using var dialog = new FormManageFiles();
+			Hide();
+			dialog.ShowDialog(this);
+			Show();
+			MusicData.LoadFull();
 		}
 	}
 }
