@@ -17,6 +17,7 @@ namespace Melodorium
 		public static int DataVersion = 1;
 		public int Version { get; set; } = DataVersion;
 		public string[] Ignore { get; set; } = [];
+		public Dictionary<string, string> FolderAuthor { get; set; } = [];
 
 		public List<MusicFile> Files = [];
 
@@ -93,6 +94,7 @@ namespace Melodorium
 		public string FPath { get; set; } = path;
 		public string RPath { get => Path.GetRelativePath(Program.Settings.RootFolder, FPath); }
 		public string Folder { get => Path.GetDirectoryName(FPath) ?? ""; }
+		public string RFolder { get => Path.GetDirectoryName(RPath) ?? ""; }
 		public string Name { get => Path.GetFileNameWithoutExtension(FPath); }
 		public string Ext { get => Path.GetExtension(FPath); }
 		public MusicFileData Data { get; set; } = new();

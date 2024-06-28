@@ -7,10 +7,10 @@
 
 		public string RootFolder = "";
 		public string DataFilePath { 
-			get => RootFolder == "" ? "" : Path.Combine(RootFolder, _dataFileName); 
+			get => RootFolder == "" ? "" : GetFullPath(_dataFileName); 
 		}
 		public string ExportFilePath { 
-			get => RootFolder == "" ? "" : Path.Combine(RootFolder, $"melodorium_{DateTime.Now:yyyy_MM_dd}.json"); 
+			get => RootFolder == "" ? "" : GetFullPath($"melodorium_{DateTime.Now:yyyy_MM_dd}.json"); 
 		}
 
 		public void Save()
@@ -20,6 +20,11 @@
 		public void Load()
 		{
 			RegSerializer.Load(Program.KeyName, this);
+		}
+
+		public string GetFullPath(string path)
+		{
+			return Path.Combine(RootFolder, path);
 		}
 	}
 }

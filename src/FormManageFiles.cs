@@ -17,6 +17,9 @@ namespace Melodorium
 	{
 		private MusicFile? _selectedRenameFile;
 		private ListViewItem? _selectedRenameFileItem;
+		private List<string> _folders = [];
+		private string? _selectedFolder;
+		private ListViewItem? _selectedFolderItem;
 
 		public FormManageFiles()
 		{
@@ -26,6 +29,7 @@ namespace Melodorium
 		private void FormManageFiles_Shown(object sender, EventArgs e)
 		{
 			FindProblems();
+			LoadFolders();
 		}
 
 		private void FindProblems()
@@ -88,7 +92,7 @@ namespace Melodorium
 			var path = Path.Combine(_selectedRenameFile.Folder, name + _selectedRenameFile.Ext);
 			var exist = Path.Exists(path);
 			PBAlreadyExist.Image = exist ? Properties.Resources.mark_red : Properties.Resources.cross_green;
-			BtnRename.Enabled = !exist;
+			BtnRename.Enabled = !exist && name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
 		}
 
 		private void BtnRename_Click(object sender, EventArgs e)
@@ -127,6 +131,124 @@ namespace Melodorium
 				FileName = "explorer",
 				Arguments = $"/e, /select, \"{_selectedRenameFile.FPath}\"",
 			});
+		}
+
+		private void LoadFolders()
+		{
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				_folders = Program.MusicData.Files.Select(v => v.RFolder).Distinct().ToList();
+				ListFolders.Items.Clear();
+				for (var i = 0; i < _folders.Count; i++)
+				{
+					var folder = _folders[i];
+					if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
+						if (author == "")
+							folder += " [<any>]";
+						else
+							folder += $" [{author}]";
+
+					ListFolders.Items.Add(new ListViewItem(folder) { Tag = i });
+				}
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
+
+		private void BtnOpenInExplorerFolder_Click(object sender, EventArgs e)
+		{
+			if (_selectedFolder == null) return;
+			Process.Start(new ProcessStartInfo()
+			{
+				FileName = "explorer",
+				Arguments = $"/e, \"{Program.Settings.GetFullPath(_selectedFolder)}\"",
+			});
+		}
+
+		private void ListFolders_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (ListFolders.SelectedItems.Count == 0) return;
+			var item = ListFolders.SelectedItems[0];
+			if (item.Tag is not int folderI)
+				return;
+			_selectedFolderItem = item;
+			_selectedFolder = null;
+			var selectedFolder = _folders[folderI];
+			InpFolder.Text = selectedFolder;
+			if (Program.MusicData.FolderAuthor.TryGetValue(selectedFolder, out var author))
+			{
+				InpAuthor.Text = author;
+				if (author == "")
+				{
+					InpAuthorMode_Any.Checked = true;
+					InpAuthor.ReadOnly = true;
+				}
+				else
+				{
+					InpAuthorMode_Manual.Checked = true;
+					InpAuthor.ReadOnly = false;
+				}
+			}
+			else
+			{
+				InpAuthor.Text = selectedFolder;
+				InpAuthorMode_Auto.Checked = true;
+				InpAuthor.ReadOnly = true;
+			}
+			_selectedFolder = selectedFolder;
+			BtnOpenInExplorerFolder.Enabled = true;
+		}
+
+		private void InpAuthorMode_Auto_CheckedChanged(object sender, EventArgs e)
+		{
+			if (!InpAuthorMode_Auto.Checked) return;
+			if (_selectedFolderItem == null) return;
+			if (_selectedFolder == null) return;
+			Program.MusicData.FolderAuthor.Remove(_selectedFolder);
+			InpAuthor.Text = _selectedFolder;
+			InpAuthor.ReadOnly = true;
+			BtnSave.Enabled = true;
+			_selectedFolderItem.Text = _selectedFolder;
+		}
+
+		private void InpAuthorMode_Manual_CheckedChanged(object sender, EventArgs e)
+		{
+			if (!InpAuthorMode_Manual.Checked) return;
+			if (_selectedFolderItem == null) return;
+			if (_selectedFolder == null) return;
+			Program.MusicData.FolderAuthor[_selectedFolder] = _selectedFolder;
+			InpAuthor.Text = _selectedFolder;
+			InpAuthor.ReadOnly = false;
+			BtnSave.Enabled = true;
+			_selectedFolderItem.Text = _selectedFolder + $" [{_selectedFolder}]";
+		}
+
+		private void InpAuthorMode_Any_CheckedChanged(object sender, EventArgs e)
+		{
+			if (!InpAuthorMode_Any.Checked) return;
+			if (_selectedFolderItem == null) return;
+			if (_selectedFolder == null) return;
+			Program.MusicData.FolderAuthor[_selectedFolder] = "";
+			InpAuthor.Text = "";
+			InpAuthor.ReadOnly = true;
+			BtnSave.Enabled = true;
+			_selectedFolderItem.Text = _selectedFolder + " [<any>]";
+		}
+
+		private void InpAuthor_TextChanged(object sender, EventArgs e)
+		{
+			if (!InpAuthorMode_Manual.Checked) return;
+			if (_selectedFolderItem == null) return;
+			if (_selectedFolder == null) return;
+			Program.MusicData.FolderAuthor[_selectedFolder] = InpAuthor.Text;
+			BtnSave.Enabled = true;
+			_selectedFolderItem.Text = _selectedFolder + $" [{InpAuthor.Text}]";
+		}
+
+		private void BtnSave_Click(object sender, EventArgs e)
+		{
+			Program.MusicData.Save();
 		}
 	}
 }
