@@ -79,6 +79,16 @@
 			splitContainer5 = new SplitContainer();
 			ListSimilar = new ListView();
 			columnHeader4 = new ColumnHeader();
+			BtnApplySimilarity = new Button();
+			LblSimiarityLevel = new Label();
+			label17 = new Label();
+			InpSimiarityLevel = new TrackBar();
+			CbxStrictComparison = new CheckBox();
+			CbxIgnoreAuthor = new CheckBox();
+			label16 = new Label();
+			ListSimilarFiles = new ListView();
+			columnHeader5 = new ColumnHeader();
+			label15 = new Label();
 			label14 = new Label();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -106,7 +116,9 @@
 			tabPage4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
 			splitContainer5.Panel1.SuspendLayout();
+			splitContainer5.Panel2.SuspendLayout();
 			splitContainer5.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)InpSimiarityLevel).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
@@ -539,7 +551,7 @@
 			InpMismatchFolderExpected.Location = new Point(63, 0);
 			InpMismatchFolderExpected.Name = "InpMismatchFolderExpected";
 			InpMismatchFolderExpected.ReadOnly = true;
-			InpMismatchFolderExpected.Size = new Size(158, 23);
+			InpMismatchFolderExpected.Size = new Size(206, 23);
 			InpMismatchFolderExpected.TabIndex = 16;
 			// 
 			// InpMismatchName
@@ -642,6 +654,18 @@
 			// splitContainer5.Panel1
 			// 
 			splitContainer5.Panel1.Controls.Add(ListSimilar);
+			// 
+			// splitContainer5.Panel2
+			// 
+			splitContainer5.Panel2.Controls.Add(BtnApplySimilarity);
+			splitContainer5.Panel2.Controls.Add(LblSimiarityLevel);
+			splitContainer5.Panel2.Controls.Add(label17);
+			splitContainer5.Panel2.Controls.Add(InpSimiarityLevel);
+			splitContainer5.Panel2.Controls.Add(CbxStrictComparison);
+			splitContainer5.Panel2.Controls.Add(CbxIgnoreAuthor);
+			splitContainer5.Panel2.Controls.Add(label16);
+			splitContainer5.Panel2.Controls.Add(ListSimilarFiles);
+			splitContainer5.Panel2.Controls.Add(label15);
 			splitContainer5.Size = new Size(774, 382);
 			splitContainer5.SplitterDistance = 372;
 			splitContainer5.TabIndex = 6;
@@ -657,11 +681,116 @@
 			ListSimilar.TabIndex = 1;
 			ListSimilar.UseCompatibleStateImageBehavior = false;
 			ListSimilar.View = View.Details;
+			ListSimilar.SelectedIndexChanged += ListSimilar_SelectedIndexChanged;
 			// 
 			// columnHeader4
 			// 
-			columnHeader4.Text = "File";
+			columnHeader4.Text = "Name";
 			columnHeader4.Width = 340;
+			// 
+			// BtnApplySimilarity
+			// 
+			BtnApplySimilarity.Enabled = false;
+			BtnApplySimilarity.Location = new Point(320, 284);
+			BtnApplySimilarity.Name = "BtnApplySimilarity";
+			BtnApplySimilarity.Size = new Size(75, 23);
+			BtnApplySimilarity.TabIndex = 9;
+			BtnApplySimilarity.Text = "Apply";
+			BtnApplySimilarity.UseVisualStyleBackColor = true;
+			BtnApplySimilarity.Click += BtnApplySimilarity_Click;
+			// 
+			// LblSimiarityLevel
+			// 
+			LblSimiarityLevel.AutoSize = true;
+			LblSimiarityLevel.Location = new Point(224, 288);
+			LblSimiarityLevel.Name = "LblSimiarityLevel";
+			LblSimiarityLevel.Size = new Size(29, 15);
+			LblSimiarityLevel.TabIndex = 8;
+			LblSimiarityLevel.Text = "00%";
+			// 
+			// label17
+			// 
+			label17.AutoSize = true;
+			label17.Location = new Point(132, 288);
+			label17.Name = "label17";
+			label17.Size = new Size(86, 15);
+			label17.TabIndex = 7;
+			label17.Text = "Similarity level:";
+			// 
+			// InpSimiarityLevel
+			// 
+			InpSimiarityLevel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			InpSimiarityLevel.Enabled = false;
+			InpSimiarityLevel.LargeChange = 8;
+			InpSimiarityLevel.Location = new Point(132, 258);
+			InpSimiarityLevel.Maximum = 100;
+			InpSimiarityLevel.Minimum = 50;
+			InpSimiarityLevel.Name = "InpSimiarityLevel";
+			InpSimiarityLevel.Size = new Size(263, 45);
+			InpSimiarityLevel.SmallChange = 2;
+			InpSimiarityLevel.TabIndex = 6;
+			InpSimiarityLevel.Value = 85;
+			InpSimiarityLevel.Scroll += InpSimiarityLevel_Scroll;
+			// 
+			// CbxStrictComparison
+			// 
+			CbxStrictComparison.AutoSize = true;
+			CbxStrictComparison.Checked = true;
+			CbxStrictComparison.CheckState = CheckState.Checked;
+			CbxStrictComparison.Location = new Point(2, 258);
+			CbxStrictComparison.Name = "CbxStrictComparison";
+			CbxStrictComparison.Size = new Size(119, 19);
+			CbxStrictComparison.TabIndex = 5;
+			CbxStrictComparison.Text = "Strict comparison";
+			CbxStrictComparison.UseVisualStyleBackColor = true;
+			CbxStrictComparison.CheckedChanged += CbxStrictComparison_CheckedChanged;
+			// 
+			// CbxIgnoreAuthor
+			// 
+			CbxIgnoreAuthor.AutoSize = true;
+			CbxIgnoreAuthor.Location = new Point(2, 283);
+			CbxIgnoreAuthor.Name = "CbxIgnoreAuthor";
+			CbxIgnoreAuthor.Size = new Size(103, 19);
+			CbxIgnoreAuthor.TabIndex = 4;
+			CbxIgnoreAuthor.Text = "Ignore authors";
+			CbxIgnoreAuthor.UseVisualStyleBackColor = true;
+			CbxIgnoreAuthor.CheckedChanged += CbxIgnoreAuthor_CheckedChanged;
+			// 
+			// label16
+			// 
+			label16.AutoSize = true;
+			label16.Location = new Point(3, 214);
+			label16.Name = "label16";
+			label16.Size = new Size(133, 15);
+			label16.TabIndex = 3;
+			label16.Text = "Cick to open in explorer";
+			// 
+			// ListSimilarFiles
+			// 
+			ListSimilarFiles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			ListSimilarFiles.Columns.AddRange(new ColumnHeader[] { columnHeader5 });
+			ListSimilarFiles.Location = new Point(3, 18);
+			ListSimilarFiles.MultiSelect = false;
+			ListSimilarFiles.Name = "ListSimilarFiles";
+			ListSimilarFiles.Size = new Size(392, 193);
+			ListSimilarFiles.TabIndex = 2;
+			ListSimilarFiles.UseCompatibleStateImageBehavior = false;
+			ListSimilarFiles.View = View.Details;
+			ListSimilarFiles.SelectedIndexChanged += ListSimilarFiles_SelectedIndexChanged;
+			// 
+			// columnHeader5
+			// 
+			columnHeader5.Text = "File";
+			columnHeader5.Width = 365;
+			// 
+			// label15
+			// 
+			label15.AutoSize = true;
+			label15.Location = new Point(3, 0);
+			label15.Name = "label15";
+			label15.Size = new Size(46, 15);
+			label15.TabIndex = 0;
+			label15.Text = "Similar:";
 			// 
 			// label14
 			// 
@@ -718,8 +847,11 @@
 			tabPage4.ResumeLayout(false);
 			tabPage4.PerformLayout();
 			splitContainer5.Panel1.ResumeLayout(false);
+			splitContainer5.Panel2.ResumeLayout(false);
+			splitContainer5.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
 			splitContainer5.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)InpSimiarityLevel).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -776,5 +908,15 @@
 		private ListView ListSimilar;
 		private ColumnHeader columnHeader4;
 		private Label label14;
+		private ListView ListSimilarFiles;
+		private ColumnHeader columnHeader5;
+		private Label label15;
+		private CheckBox CbxIgnoreAuthor;
+		private Label label16;
+		private CheckBox CbxStrictComparison;
+		private Label label17;
+		private TrackBar InpSimiarityLevel;
+		private Label LblSimiarityLevel;
+		private Button BtnApplySimilarity;
 	}
 }

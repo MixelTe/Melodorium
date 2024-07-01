@@ -99,6 +99,7 @@ namespace Melodorium
 		public string FName { get => Path.GetFileName(FPath); }
 		public string Ext { get => Path.GetExtension(FPath); }
 		public string Author { get => Name.Contains("_-_") ? Name.Split("_-_")[0] : ""; }
+		public string SName { get => Name.Contains("_-_") ? Name.Split("_-_")[1] : ""; }
 		public MusicFileData Data { get; set; } = new();
 
 		public void Load()

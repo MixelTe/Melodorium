@@ -24,6 +24,9 @@ namespace Melodorium
 		private List<MismatchFile> _mismatch = [];
 		private MismatchFile? _selectedMismatch;
 		private ListViewItem? _selectedMismatchItem;
+		private List<List<MusicFile>> _similar = [];
+		private List<MusicFile>? _selectedSimilar;
+		private ListViewItem? _selectedSimilarItem;
 
 		public FormManageFiles()
 		{
@@ -33,6 +36,7 @@ namespace Melodorium
 		private void FormManageFiles_Shown(object sender, EventArgs e)
 		{
 			FindProblems();
+			LblSimiarityLevel.Text = InpSimiarityLevel.Value + "%";
 		}
 
 		private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
@@ -43,6 +47,7 @@ namespace Melodorium
 				case 0: FindProblems(); break;
 				case 1: LoadFolders(); break;
 				case 2: FindMismatch(); break;
+				case 3: FindSimilar(); break;
 				default: break;
 			}
 		}
@@ -362,6 +367,122 @@ namespace Melodorium
 				_selectedMismatch.Value.MusicFile.FName
 			);
 		}
+
+		private void FindSimilar()
+		{
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				_similar = [];
+				var watch = Stopwatch.StartNew();
+				for (var i = 0; i < Program.MusicData.Files.Count; i++)
+				{
+					if (i % 100 == 0)
+						Debug.WriteLine(i * 100f / Program.MusicData.Files.Count, "%");
+					var file1 = Program.MusicData.Files[i];
+					if (_similar.Where(v => v.Contains(file1)).Any())
+						continue;
+
+					List<MusicFile> similarGroup = [file1];
+					for (var j = i + 1; j < Program.MusicData.Files.Count; j++)
+					{
+						var file2 = Program.MusicData.Files[j];
+						if (IsFilesSimilar(file1, file2))
+							similarGroup.Add(file2);
+					}
+					if (similarGroup.Count > 1)
+						_similar.Add(similarGroup);
+				}
+				watch.Stop();
+				Debug.WriteLine(watch.ElapsedMilliseconds, "ElapsedMilliseconds");
+				ListSimilar.Items.Clear();
+				var ignoreAuthor = CbxIgnoreAuthor.Checked;
+				for (var i = 0; i < _similar.Count; i++)
+				{
+					var item = _similar[i][0];
+					var title = ignoreAuthor ? item.SName : item.Name;
+					ListSimilar.Items.Add(new ListViewItem(title) { Tag = i });
+				}
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
+
+		private bool IsFilesSimilar(MusicFile file1, MusicFile file2)
+		{
+			var ignoreAuthor = CbxIgnoreAuthor.Checked;
+			var name1 = ignoreAuthor ? file1.SName : file1.Name;
+			var name2 = ignoreAuthor ? file2.SName : file2.Name;
+
+			if (name1 == "") name1 = file1.Name;
+			if (name2 == "") name2 = file2.Name;
+
+			var strictComparison = CbxStrictComparison.Checked;
+			if (strictComparison)
+				return name1 == name2;
+
+			var similarity = Utils.StringSimilarityBySmithWatermanAlgorithm(name1, name2);
+
+			return similarity * 100 >= InpSimiarityLevel.Value;
+		}
+
+		private void ListSimilar_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (ListSimilar.SelectedItems.Count == 0) return;
+			var item = ListSimilar.SelectedItems[0];
+			if (item.Tag is not int similarI)
+				return;
+			_selectedSimilar = _similar[similarI];
+			_selectedSimilarItem = item;
+
+
+			ListSimilarFiles.Items.Clear();
+			for (var i = 0; i < _selectedSimilar.Count; i++)
+			{
+				var similar = _selectedSimilar[i];
+				ListSimilarFiles.Items.Add(new ListViewItem(similar.RPath) { Tag = i });
+			}
+		}
+
+		private void ListSimilarFiles_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (ListSimilarFiles.SelectedItems.Count == 0) return;
+			if (_selectedSimilar == null) return;
+			var item = ListSimilarFiles.SelectedItems[0];
+			if (item.Tag is not int similarI)
+				return;
+			if (_selectedSimilar.Count <= similarI) return;
+			var file = _selectedSimilar[similarI];
+
+			Process.Start(new ProcessStartInfo()
+			{
+				FileName = "explorer",
+				Arguments = $"/e, /select, \"{file.FPath}\"",
+			});
+		}
+
+		private void CbxIgnoreAuthor_CheckedChanged(object sender, EventArgs e)
+		{
+			FindSimilar();
+		}
+
+		private void CbxStrictComparison_CheckedChanged(object sender, EventArgs e)
+		{
+			InpSimiarityLevel.Enabled = !CbxStrictComparison.Checked;
+			BtnApplySimilarity.Enabled = !CbxStrictComparison.Checked;
+			FindSimilar();
+		}
+
+		private void InpSimiarityLevel_Scroll(object sender, EventArgs e)
+		{
+			LblSimiarityLevel.Text = InpSimiarityLevel.Value + "%";
+		}
+
+		private void BtnApplySimilarity_Click(object sender, EventArgs e)
+		{
+			FindSimilar();
+		}
+
 		private struct MismatchFile(MusicFile musicFile, string correctFolder)
 		{
 			public MusicFile MusicFile = musicFile;
