@@ -96,7 +96,9 @@ namespace Melodorium
 		public string Folder { get => Path.GetDirectoryName(FPath) ?? ""; }
 		public string RFolder { get => Path.GetDirectoryName(RPath) ?? ""; }
 		public string Name { get => Path.GetFileNameWithoutExtension(FPath); }
+		public string FName { get => Path.GetFileName(FPath); }
 		public string Ext { get => Path.GetExtension(FPath); }
+		public string Author { get => Name.Contains("_-_") ? Name.Split("_-_")[0] : ""; }
 		public MusicFileData Data { get; set; } = new();
 
 		public void Load()

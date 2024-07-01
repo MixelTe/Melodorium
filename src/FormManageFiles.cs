@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,6 +21,9 @@ namespace Melodorium
 		private List<string> _folders = [];
 		private string? _selectedFolder;
 		private ListViewItem? _selectedFolderItem;
+		private List<MismatchFile> _mismatch = [];
+		private MismatchFile? _selectedMismatch;
+		private ListViewItem? _selectedMismatchItem;
 
 		public FormManageFiles()
 		{
@@ -30,6 +34,7 @@ namespace Melodorium
 		{
 			FindProblems();
 			LoadFolders();
+			FindMismatch();
 		}
 
 		private void FindProblems()
@@ -249,6 +254,113 @@ namespace Melodorium
 		private void BtnSave_Click(object sender, EventArgs e)
 		{
 			Program.MusicData.Save();
+			FindMismatch();
+		}
+
+		private void FindMismatch()
+		{
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				var authorToFolder = new Dictionary<string, string>();
+				var anyFolder = "";
+				foreach (var folder in _folders)
+				{
+					if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
+						if (author != "")
+							authorToFolder[author] = folder;
+						else
+							anyFolder = folder;
+					else
+						authorToFolder[folder] = folder;
+				}
+				_mismatch = Program.MusicData.Files
+					.Where(f =>
+					{
+						if (authorToFolder.TryGetValue(f.Author, out var folder))
+							return folder != f.RFolder;
+						if (Program.MusicData.FolderAuthor.TryGetValue(f.RFolder, out var author))
+							return author != "";
+						return true;
+					})
+					.Select(f => new MismatchFile(f, authorToFolder.GetValueOrDefault(f.Author, anyFolder)))
+					.ToList();
+				ListMismatch.Items.Clear();
+				for (var i = 0; i < _mismatch.Count; i++)
+				{
+					var mismatch = _mismatch[i];
+					ListMismatch.Items.Add(new ListViewItem(mismatch.MusicFile.RPath) { Tag = i });
+				}
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
+
+		private void ListMismatch_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (ListMismatch.SelectedItems.Count == 0) return;
+			var item = ListMismatch.SelectedItems[0];
+			if (item.Tag is not int mismatchI)
+				return;
+			_selectedMismatch = _mismatch[mismatchI];
+			_selectedMismatchItem = item;
+
+			InpMismatchName.Text = _selectedMismatch.Value.MusicFile.Name;
+			InpMismatchFolder.Text = _selectedMismatch.Value.MusicFile.RFolder;
+			InpMismatchFolderExpected.Text = _selectedMismatch.Value.CorrectFolder;
+
+			BtnOpenInExplorerMismatch.Enabled = true;
+			var exist = File.Exists(GetMismatchCorrectPath());
+			PBAlreadyExistMismatch.Image = exist ? Properties.Resources.mark_red : Properties.Resources.cross_green;
+			BtnMoveMismatch.Enabled = !exist;
+		}
+
+		private void BtnOpenInExplorerMismatch_Click(object sender, EventArgs e)
+		{
+			if (_selectedMismatch == null) return;
+			Process.Start(new ProcessStartInfo()
+			{
+				FileName = "explorer",
+				Arguments = $"/e, /select, \"{_selectedMismatch.Value.MusicFile.FPath}\"",
+			});
+		}
+
+		private void BtnMoveMismatch_Click(object sender, EventArgs e)
+		{
+			if (_selectedMismatch == null) return;
+			if (_selectedMismatchItem == null) return;
+			File.Move(_selectedMismatch.Value.MusicFile.FPath, GetMismatchCorrectPath());
+			ListMismatch.Items.Remove(_selectedMismatchItem);
+			_selectedMismatchItem = null;
+			_selectedMismatch = null;
+
+			InpMismatchName.Text = "";
+			InpMismatchFolder.Text = "";
+			InpMismatchFolderExpected.Text = "";
+
+			BtnOpenInExplorerMismatch.Enabled = false;
+			BtnMoveMismatch.Enabled = false;
+			PBAlreadyExistMismatch.Image = null;
+		}
+
+		private string GetMismatchCorrectPath()
+		{
+			if (_selectedMismatch == null) return "";
+			return Path.Combine(
+				Program.Settings.GetFullPath(_selectedMismatch.Value.CorrectFolder),
+				_selectedMismatch.Value.MusicFile.FName
+			);
+		}
+
+		private void splitContainer3_Panel2_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private struct MismatchFile(MusicFile musicFile, string correctFolder)
+		{
+			public MusicFile MusicFile = musicFile;
+			public string CorrectFolder = correctFolder;
 		}
 	}
 }
