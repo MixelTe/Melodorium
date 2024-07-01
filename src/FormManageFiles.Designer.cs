@@ -71,10 +71,15 @@
 			InpMismatchName = new TextBox();
 			label10 = new Label();
 			BtnOpenInExplorerMismatch = new Button();
-			tabControl1 = new TabControl();
+			Tabs = new TabControl();
 			tabPage1 = new TabPage();
 			tabPage2 = new TabPage();
 			tabPage3 = new TabPage();
+			tabPage4 = new TabPage();
+			splitContainer5 = new SplitContainer();
+			ListSimilar = new ListView();
+			columnHeader4 = new ColumnHeader();
+			label14 = new Label();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -94,10 +99,14 @@
 			splitContainer4.Panel1.SuspendLayout();
 			splitContainer4.Panel2.SuspendLayout();
 			splitContainer4.SuspendLayout();
-			tabControl1.SuspendLayout();
+			Tabs.SuspendLayout();
 			tabPage1.SuspendLayout();
 			tabPage2.SuspendLayout();
 			tabPage3.SuspendLayout();
+			tabPage4.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
+			splitContainer5.Panel1.SuspendLayout();
+			splitContainer5.SuspendLayout();
 			SuspendLayout();
 			// 
 			// label1
@@ -423,7 +432,6 @@
 			splitContainer3.Panel2.Controls.Add(InpMismatchName);
 			splitContainer3.Panel2.Controls.Add(label10);
 			splitContainer3.Panel2.Controls.Add(BtnOpenInExplorerMismatch);
-			splitContainer3.Panel2.Paint += splitContainer3_Panel2_Paint;
 			splitContainer3.Size = new Size(774, 382);
 			splitContainer3.SplitterDistance = 372;
 			splitContainer3.TabIndex = 5;
@@ -531,7 +539,7 @@
 			InpMismatchFolderExpected.Location = new Point(63, 0);
 			InpMismatchFolderExpected.Name = "InpMismatchFolderExpected";
 			InpMismatchFolderExpected.ReadOnly = true;
-			InpMismatchFolderExpected.Size = new Size(143, 23);
+			InpMismatchFolderExpected.Size = new Size(158, 23);
 			InpMismatchFolderExpected.TabIndex = 16;
 			// 
 			// InpMismatchName
@@ -564,17 +572,19 @@
 			BtnOpenInExplorerMismatch.UseVisualStyleBackColor = true;
 			BtnOpenInExplorerMismatch.Click += BtnOpenInExplorerMismatch_Click;
 			// 
-			// tabControl1
+			// Tabs
 			// 
-			tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			tabControl1.Controls.Add(tabPage1);
-			tabControl1.Controls.Add(tabPage2);
-			tabControl1.Controls.Add(tabPage3);
-			tabControl1.Location = new Point(9, 12);
-			tabControl1.Name = "tabControl1";
-			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(785, 431);
-			tabControl1.TabIndex = 6;
+			Tabs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			Tabs.Controls.Add(tabPage1);
+			Tabs.Controls.Add(tabPage2);
+			Tabs.Controls.Add(tabPage3);
+			Tabs.Controls.Add(tabPage4);
+			Tabs.Location = new Point(9, 12);
+			Tabs.Name = "Tabs";
+			Tabs.SelectedIndex = 0;
+			Tabs.Size = new Size(785, 431);
+			Tabs.TabIndex = 6;
+			Tabs.SelectedIndexChanged += Tabs_SelectedIndexChanged;
 			// 
 			// tabPage1
 			// 
@@ -611,13 +621,65 @@
 			tabPage3.Text = "Mismatch";
 			tabPage3.UseVisualStyleBackColor = true;
 			// 
+			// tabPage4
+			// 
+			tabPage4.Controls.Add(splitContainer5);
+			tabPage4.Controls.Add(label14);
+			tabPage4.Location = new Point(4, 24);
+			tabPage4.Name = "tabPage4";
+			tabPage4.Padding = new Padding(3);
+			tabPage4.Size = new Size(777, 403);
+			tabPage4.TabIndex = 3;
+			tabPage4.Text = "Doubles";
+			tabPage4.UseVisualStyleBackColor = true;
+			// 
+			// splitContainer5
+			// 
+			splitContainer5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			splitContainer5.Location = new Point(0, 21);
+			splitContainer5.Name = "splitContainer5";
+			// 
+			// splitContainer5.Panel1
+			// 
+			splitContainer5.Panel1.Controls.Add(ListSimilar);
+			splitContainer5.Size = new Size(774, 382);
+			splitContainer5.SplitterDistance = 372;
+			splitContainer5.TabIndex = 6;
+			// 
+			// ListSimilar
+			// 
+			ListSimilar.Columns.AddRange(new ColumnHeader[] { columnHeader4 });
+			ListSimilar.Dock = DockStyle.Fill;
+			ListSimilar.Location = new Point(0, 0);
+			ListSimilar.MultiSelect = false;
+			ListSimilar.Name = "ListSimilar";
+			ListSimilar.Size = new Size(372, 382);
+			ListSimilar.TabIndex = 1;
+			ListSimilar.UseCompatibleStateImageBehavior = false;
+			ListSimilar.View = View.Details;
+			// 
+			// columnHeader4
+			// 
+			columnHeader4.Text = "File";
+			columnHeader4.Width = 340;
+			// 
+			// label14
+			// 
+			label14.AutoSize = true;
+			label14.Location = new Point(3, 3);
+			label14.Name = "label14";
+			label14.Size = new Size(97, 15);
+			label14.TabIndex = 5;
+			label14.Text = "Similar filenames";
+			// 
 			// FormManageFiles
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
-			Controls.Add(tabControl1);
+			Controls.Add(Tabs);
 			Icon = (Icon)resources.GetObject("$this.Icon");
+			MinimumSize = new Size(720, 320);
 			Name = "FormManageFiles";
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Melodorium | Manage files";
@@ -646,13 +708,18 @@
 			splitContainer4.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
 			splitContainer4.ResumeLayout(false);
-			tabControl1.ResumeLayout(false);
+			Tabs.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
 			tabPage1.PerformLayout();
 			tabPage2.ResumeLayout(false);
 			tabPage2.PerformLayout();
 			tabPage3.ResumeLayout(false);
 			tabPage3.PerformLayout();
+			tabPage4.ResumeLayout(false);
+			tabPage4.PerformLayout();
+			splitContainer5.Panel1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
+			splitContainer5.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -700,9 +767,14 @@
 		private Button BtnMoveMismatch;
 		private PictureBox PBAlreadyExistMismatch;
 		private Label label13;
-		private TabControl tabControl1;
+		private TabControl Tabs;
 		private TabPage tabPage1;
 		private TabPage tabPage2;
 		private TabPage tabPage3;
+		private TabPage tabPage4;
+		private SplitContainer splitContainer5;
+		private ListView ListSimilar;
+		private ColumnHeader columnHeader4;
+		private Label label14;
 	}
 }

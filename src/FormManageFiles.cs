@@ -33,9 +33,20 @@ namespace Melodorium
 		private void FormManageFiles_Shown(object sender, EventArgs e)
 		{
 			FindProblems();
-			LoadFolders();
-			FindMismatch();
 		}
+
+		private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			MusicData.LoadFull();
+			switch (Tabs.SelectedIndex)
+			{
+				case 0: FindProblems(); break;
+				case 1: LoadFolders(); break;
+				case 2: FindMismatch(); break;
+				default: break;
+			}
+		}
+
 
 		private void FindProblems()
 		{
@@ -351,12 +362,6 @@ namespace Melodorium
 				_selectedMismatch.Value.MusicFile.FName
 			);
 		}
-
-		private void splitContainer3_Panel2_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
 		private struct MismatchFile(MusicFile musicFile, string correctFolder)
 		{
 			public MusicFile MusicFile = musicFile;
