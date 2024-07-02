@@ -373,29 +373,43 @@ namespace Melodorium
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
-				_similar = [];
-				var watch = Stopwatch.StartNew();
+				//var watch = Stopwatch.StartNew();
+				List<Tuple<float, List<MusicFile>>> r = [];
+				var C = (Program.MusicData.Files.Count - 1) * Program.MusicData.Files.Count / 2;
+				var similarityBound = InpSimiarityLevel.Value / 100f;
+				var c = 0;
 				for (var i = 0; i < Program.MusicData.Files.Count; i++)
 				{
-					if (i % 100 == 0)
-						Debug.WriteLine(i * 100f / Program.MusicData.Files.Count, "%");
+					if (i % 10 == 0) Application.DoEvents();
+					loadingDialog.SetProgress((float)c / C);
 					var file1 = Program.MusicData.Files[i];
-					if (_similar.Where(v => v.Contains(file1)).Any())
+					if (r.Where(v => v.Item2.Contains(file1)).Any())
+					{
+						c += Program.MusicData.Files.Count - i - 1;
 						continue;
+					}
 
 					List<MusicFile> similarGroup = [file1];
+					var maxSimilarity = 0f;
 					for (var j = i + 1; j < Program.MusicData.Files.Count; j++)
 					{
+						c++;
 						var file2 = Program.MusicData.Files[j];
-						if (IsFilesSimilar(file1, file2))
+						var similarity = FilesSimilarity(file1, file2);
+						maxSimilarity = Math.Max(maxSimilarity, similarity);
+						if (similarity >= similarityBound)
 							similarGroup.Add(file2);
 					}
 					if (similarGroup.Count > 1)
-						_similar.Add(similarGroup);
+						r.Add(Tuple.Create(maxSimilarity, similarGroup));
 				}
-				watch.Stop();
-				Debug.WriteLine(watch.ElapsedMilliseconds, "ElapsedMilliseconds");
+				//watch.Stop();
+				//Debug.WriteLine(watch.ElapsedMilliseconds, "FindSimilar_ElapsedMilliseconds");
 				ListSimilar.Items.Clear();
+				_similar = r.OrderByDescending(v => v.Item1)
+							.ThenBy(v => v.Item2[0].Name)
+							.Select(v => v.Item2)
+							.ToList();
 				var ignoreAuthor = CbxIgnoreAuthor.Checked;
 				for (var i = 0; i < _similar.Count; i++)
 				{
@@ -408,22 +422,17 @@ namespace Melodorium
 			loadingDialog.ShowDialog(this);
 		}
 
-		private bool IsFilesSimilar(MusicFile file1, MusicFile file2)
+		private float FilesSimilarity(MusicFile file1, MusicFile file2)
 		{
-			var ignoreAuthor = CbxIgnoreAuthor.Checked;
-			var name1 = ignoreAuthor ? file1.SName : file1.Name;
-			var name2 = ignoreAuthor ? file2.SName : file2.Name;
-
-			if (name1 == "") name1 = file1.Name;
-			if (name2 == "") name2 = file2.Name;
+			var ignoreAuthor = CbxIgnoreAuthor.Checked || file1.Author == file2.Author;
+			var name1 = ignoreAuthor ? file1.NormilizedName : file1.NormilizedFullName;
+			var name2 = ignoreAuthor ? file2.NormilizedName : file2.NormilizedFullName;
 
 			var strictComparison = CbxStrictComparison.Checked;
 			if (strictComparison)
-				return name1 == name2;
+				return name1 == name2 ? 1 : 0;
 
-			var similarity = Utils.StringSimilarityBySmithWatermanAlgorithm(name1, name2);
-
-			return similarity * 100 >= InpSimiarityLevel.Value;
+			return Utils.StringSimilarityBySmithWatermanAlgorithm(name1, name2);
 		}
 
 		private void ListSimilar_SelectedIndexChanged(object sender, EventArgs e)

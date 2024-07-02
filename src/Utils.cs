@@ -89,12 +89,29 @@ namespace Melodorium
 			{'Ю', "Yu"},
 			{'Я', "Ya"}
 		};
+		private static readonly string _normilizedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
 		public static string CleanName(string source)
 		{
 			var result = new StringBuilder();
 			foreach (var letter in source)
 				result.Append(_nameReplacement.GetValueOrDefault(letter, letter.ToString()));
+			return result.ToString();
+		}
+
+		public static string NormalizeName(string source)
+		{
+			source = source.ToLower();
+			var result = new StringBuilder();
+			foreach (var letter in source)
+			{
+				var ch = _nameReplacement.GetValueOrDefault(letter, "");
+				if (ch == "_") continue;
+				if (ch != "") 
+					result.Append(ch);
+				else if (_normilizedChars.Contains(letter))
+					result.Append(letter);
+			}
 			return result.ToString();
 		}
 
@@ -151,6 +168,8 @@ namespace Melodorium
 
 		public static float StringSimilarityBySmithWatermanAlgorithm(string A, string B, int Match = 3, int Dismatch = 3, int Gap = 1)
 		{
+			if (A == "" || B == "")
+				return A == B ? 1 : 0;
 			var p = SmithWatermanAlgorithm(A, B, Match, Dismatch, Gap);
 
 			var li = -1;

@@ -30,6 +30,7 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLoading));
 			label1 = new Label();
+			ProgBar = new ProgressBar();
 			SuspendLayout();
 			// 
 			// label1
@@ -44,12 +45,21 @@
 			label1.Text = "Loading...";
 			label1.TextAlign = ContentAlignment.MiddleCenter;
 			// 
+			// ProgBar
+			// 
+			ProgBar.Location = new Point(12, 115);
+			ProgBar.Name = "ProgBar";
+			ProgBar.Size = new Size(276, 23);
+			ProgBar.TabIndex = 1;
+			ProgBar.Value = 41;
+			// 
 			// FormLoading
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Black;
 			ClientSize = new Size(300, 150);
+			Controls.Add(ProgBar);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.None;
 			Icon = (Icon)resources.GetObject("$this.Icon");
@@ -65,5 +75,6 @@
 		#endregion
 
 		private Label label1;
+		private ProgressBar ProgBar;
 	}
 }

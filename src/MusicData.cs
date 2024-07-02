@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Melodorium
 {
@@ -89,18 +90,48 @@ namespace Melodorium
 		}
 	}
 
-    internal class MusicFile(string path)
+    internal class MusicFile
 	{
-		public string FPath { get; set; } = path;
-		public string RPath { get => Path.GetRelativePath(Program.Settings.RootFolder, FPath); }
-		public string Folder { get => Path.GetDirectoryName(FPath) ?? ""; }
-		public string RFolder { get => Path.GetDirectoryName(RPath) ?? ""; }
-		public string Name { get => Path.GetFileNameWithoutExtension(FPath); }
-		public string FName { get => Path.GetFileName(FPath); }
-		public string Ext { get => Path.GetExtension(FPath); }
-		public string Author { get => Name.Contains("_-_") ? Name.Split("_-_")[0] : ""; }
-		public string SName { get => Name.Contains("_-_") ? Name.Split("_-_")[1] : ""; }
+		private string _fPath = "";
+		public string FPath
+		{
+			get => _fPath; set
+			{
+				_fPath = value;
+				RPath = Path.GetRelativePath(Program.Settings.RootFolder, _fPath);
+				Folder = Path.GetDirectoryName(_fPath) ?? "";
+				RFolder = Path.GetDirectoryName(RPath) ?? "";
+				Name = Path.GetFileNameWithoutExtension(_fPath);
+				FName = Path.GetFileName(_fPath);
+				Ext = Path.GetExtension(_fPath);
+				Author = "";
+				SName = "";
+				if (Name.Contains("_-_"))
+				{
+					var parts = Name.Split("_-_");
+					Author = parts[0];
+					SName = parts[1];
+				}
+				NormilizedFullName = Utils.NormalizeName(Name);
+				NormilizedName = SName != "" ? Utils.NormalizeName(SName) : NormilizedFullName;
+			}
+		}
+		public string RPath { get; private set; } = "";
+		public string Folder { get; private set; } = "";
+		public string RFolder { get; private set; } = "";
+		public string Name { get; private set; } = "";
+		public string FName { get; private set; } = "";
+		public string Ext { get; private set; } = "";
+		public string Author { get; private set; } = "";
+		public string SName { get; private set; } = "";
+		public string NormilizedName { get; private set; } = "";
+		public string NormilizedFullName { get; private set; } = "";
 		public MusicFileData Data { get; set; } = new();
+
+		public MusicFile(string path)
+		{
+			FPath = path;
+		}
 
 		public void Load()
 		{
