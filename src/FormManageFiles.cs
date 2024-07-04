@@ -373,16 +373,12 @@ namespace Melodorium
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
-				Utils.t1 = 0;
-				Utils.t2 = 0;
-				Utils.t3 = 0;
-				Utils.C = 0;
 				var watch = Stopwatch.StartNew();
 				List<Tuple<float, List<MusicFile>>> r = [];
 				var C = (Program.MusicData.Files.Count - 1) * Program.MusicData.Files.Count / 2;
 				var similarityBound = InpSimiarityLevel.Value / 100f;
 				var c = 0;
-				for (var i = 0; i < Program.MusicData.Files.Count / 25; i++)
+				for (var i = 0; i < Program.MusicData.Files.Count; i++)
 				{
 					if (i % 10 == 0) Application.DoEvents();
 					loadingDialog.SetProgress((float)c / C);
@@ -409,15 +405,6 @@ namespace Melodorium
 				}
 				watch.Stop();
 				Debug.WriteLine(watch.ElapsedMilliseconds, "FindSimilar_ElapsedMilliseconds");
-				Debug.WriteLine(watch.ElapsedTicks, "FindSimilar_ElapsedTicks");
-				if (Utils.C > 0)
-				{
-					Debug.WriteLine(Utils.t1 / Utils.C, "t1");
-					Debug.WriteLine(Utils.t2 / Utils.C, "t2");
-					Debug.WriteLine(Utils.t3 / Utils.C, "t3");
-					Debug.WriteLine(Utils.C, "C");
-					Debug.WriteLine(Utils.t3 + Utils.t2 + Utils.t1, "t3 + t2 + t1");
-				}
 				ListSimilar.Items.Clear();
 				_similar = r.OrderByDescending(v => v.Item1)
 							.ThenBy(v => v.Item2[0].Name)
