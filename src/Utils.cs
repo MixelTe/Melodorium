@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Melodorium
 {
@@ -124,45 +125,90 @@ namespace Melodorium
 				_ => string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1))
 			};
 		}
+		public static long t1 = 0;
+		public static long t2 = 0;
+		public static long t3 = 0;
+		public static long C = 0;
 
 		private static List<Tuple<int, int>> SmithWatermanAlgorithm(string A, string B, int Match = 3, int Dismatch = 3, int Gap = 1)
 		{
-			var n = A.Length;
-			var m = B.Length;
+			var N = A.Length + 1;
+			var M = B.Length + 1;
 
-			var H = new int[n + 1, m + 1];
+			C += 1;
+			var watch = Stopwatch.StartNew();
+			var H1 = ArrayPool<int>.Shared.Rent(N * M);
+			//var H1 = GC.AllocateUninitializedArray<int>(N * M);
+			for (int i = 0; i < N; i++)
+				H1[i * M] = 0;
+			for (int j = 0; j < M; j++)
+				H1[j] = 0;
+			//var H1 = new int[N * M];
+			//var H = new int[N, M];
 			var Mv = -1;
 			var Mi = -1;
 			var Mj = -1;
-			for (int i = 1; i < n + 1; i++)
-				for (int j = 1; j < m + 1; j++)
+			unsafe
+			{
+				fixed (char* ptrA = A)
+				fixed (char* ptrB = B)
+				fixed (int* ptrH = H1)
+				for (int i = 1; i < N; i++)
 				{
-					var v = H[i, j] = Max(
-						H[i - 1, j - 1] + (A[i - 1] == B[j - 1] ? Match : -Dismatch),
-						H[i - 1, j] - Gap,
-						H[i, j - 1] - Gap,
-						0
-					);
-					if (v > Mv)
+					var Ai1 = ptrA[i - 1];
+					var iM = i * M;
+					var i1M = iM - M;
+					var pv = 0;
+					for (int j = 1; j < M; j++)
 					{
-						Mv = v;
-						Mi = i;
-						Mj = j;
+						//var v = H[i, j] = Max(
+						//	H[i - 1, j - 1] + (A[i - 1] == B[j - 1] ? Match : -Dismatch),
+						//	H[i - 1, j] - Gap,
+						//	H[i, j - 1] - Gap,
+						//	0
+						//);
+
+						var v1 = ptrH[j - 1 + i1M] + (Ai1 == ptrB[j - 1] ? Match : -Dismatch);
+						var v2 = ptrH[j + i1M] - Gap;
+						var v = pv - Gap;
+						if (0 > v) v = 0;
+						if (v1 > v) v = v1;
+						if (v2 > v) v = v2;
+						pv = ptrH[j + iM] = v;
+
+						if (v > Mv)
+						{
+							Mv = v;
+							Mi = i;
+							Mj = j;
+						}
 					}
 				}
+			}
+
+			watch.Stop();
+			t1 += watch.ElapsedTicks;
+			watch = Stopwatch.StartNew();
 			List<Tuple<int, int>> p = [];
-			while (H[Mi, Mj] > 0)
+			while (H1[Mj + Mi * M] > 0)
+			//while (H[Mi, Mj] > 0)
 			{
 				p.Add(Tuple.Create(Mi, Mj));
-				var v1 = H[Mi - 1, Mj - 1];
-				var v2 = H[Mi - 1, Mj];
-				var v3 = H[Mi, Mj - 1];
+				var v1 = H1[(Mj - 1) + (Mi - 1) * M];
+				var v2 = H1[Mj + (Mi - 1) * M];
+				var v3 = H1[(Mj - 1) + Mi * M];
+				//var v1 = H[Mi - 1, Mj - 1];
+				//var v2 = H[Mi - 1, Mj];
+				//var v3 = H[Mi, Mj - 1];
 				var max = Max(v1, v2, v3);
 				if (v1 == max) { Mi--; Mj--; }
 				else if (v2 == max) Mi--;
 				else Mj--;
 				Mv = max;
 			}
+			ArrayPool<int>.Shared.Return(H1);
+			watch.Stop();
+			t2 += watch.ElapsedTicks;
 			return p;
 		}
 
@@ -172,6 +218,7 @@ namespace Melodorium
 				return A == B ? 1 : 0;
 			var p = SmithWatermanAlgorithm(A, B, Match, Dismatch, Gap);
 
+			var watch = Stopwatch.StartNew();
 			var li = -1;
 			var lj = -1;
 			var m = 0;
@@ -190,6 +237,8 @@ namespace Melodorium
 				li = i;
 				lj = j;
 			}
+			watch.Stop();
+			t3 += watch.ElapsedTicks;
 
 			return (m + n / 2) / Math.Max(A.Length, B.Length);
 		}
