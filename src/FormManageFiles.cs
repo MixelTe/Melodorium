@@ -154,11 +154,7 @@ namespace Melodorium
 		private void BtnOpenInExplorer_Click(object sender, EventArgs e)
 		{
 			if (_selectedRenameFile == null) return;
-			Process.Start(new ProcessStartInfo()
-			{
-				FileName = "explorer",
-				Arguments = $"/e, /select, \"{_selectedRenameFile.FPath}\"",
-			});
+			Utils.OpenExplorer(_selectedRenameFile.FPath);
 		}
 
 		private void LoadFolders()
@@ -192,11 +188,7 @@ namespace Melodorium
 		private void BtnOpenInExplorerFolder_Click(object sender, EventArgs e)
 		{
 			if (_selectedFolder == null) return;
-			Process.Start(new ProcessStartInfo()
-			{
-				FileName = "explorer",
-				Arguments = $"/e, \"{Program.Settings.GetFullPath(_selectedFolder)}\"",
-			});
+			Utils.OpenExplorer(Program.Settings.GetFullPath(_selectedFolder), true);
 		}
 
 		private void ListFolders_SelectedIndexChanged(object sender, EventArgs e)
@@ -347,11 +339,7 @@ namespace Melodorium
 		private void BtnOpenInExplorerMismatch_Click(object sender, EventArgs e)
 		{
 			if (_selectedMismatch == null) return;
-			Process.Start(new ProcessStartInfo()
-			{
-				FileName = "explorer",
-				Arguments = $"/e, /select, \"{_selectedMismatch.Value.MusicFile.FPath}\"",
-			});
+			Utils.OpenExplorer(_selectedMismatch.Value.MusicFile.FPath);
 		}
 
 		private void BtnMoveMismatch_Click(object sender, EventArgs e)
@@ -476,11 +464,7 @@ namespace Melodorium
 			if (_selectedSimilar.Count <= similarI) return;
 			var file = _selectedSimilar[similarI];
 
-			Process.Start(new ProcessStartInfo()
-			{
-				FileName = "explorer",
-				Arguments = $"/e, /select, \"{file.FPath}\"",
-			});
+			Utils.OpenExplorer(file.FPath);
 		}
 
 		private void CbxIgnoreAuthor_CheckedChanged(object sender, EventArgs e)
@@ -566,13 +550,7 @@ namespace Melodorium
 		{
 			var node = e.Node;
 			if (node.Tag is MusicFile file)
-			{
-				Process.Start(new ProcessStartInfo()
-				{
-					FileName = "explorer",
-					Arguments = $"/e, /select, \"{file.FPath}\"",
-				});
-			}
+				Utils.OpenExplorer(file.FPath);
 		}
 
 		private void BtnMoveGroup_Click(object sender, EventArgs e)

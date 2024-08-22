@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Melodorium
 {
@@ -82,16 +83,25 @@ namespace Melodorium
 				Files.Add(data);
 			}
         }
-		public void ExportData()
+		public string ExportData()
 		{
 			var filename = Program.Settings.ExportFilePath;
-			if (filename == "") return;
-			var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { IncludeFields = true });
+			if (filename == "") return "";
+			var json = JsonSerializer.Serialize(new MusicDataExport(this), new JsonSerializerOptions { IncludeFields = true });
 			File.WriteAllText(filename, json);
+			return filename;
 		}
 	}
 
-    internal class MusicFile
+	internal class MusicDataExport(MusicData data)
+	{
+		public int Version = data.Version;
+		public string[] Ignore = data.Ignore;
+		public Dictionary<string, string> FolderAuthor = data.FolderAuthor;
+		public List<MusicFileData> Files = data.Files.Select(v => v.Data).ToList();
+	}
+
+	internal class MusicFile
 	{
 		private string _fPath = "";
 		public string FPath
@@ -100,6 +110,7 @@ namespace Melodorium
 			{
 				_fPath = value;
 				RPath = Path.GetRelativePath(Program.Settings.RootFolder, _fPath);
+				Data.RPath = RPath;
 				Folder = Path.GetDirectoryName(_fPath) ?? "";
 				RFolder = Path.GetDirectoryName(RPath) ?? "";
 				Name = Path.GetFileNameWithoutExtension(_fPath);
@@ -139,10 +150,13 @@ namespace Melodorium
 			var json = AlternativeDataStream.ReadString(FPath, Settings.AlternativeDataStreamName);
 			if (json == null) return;
 			Data = JsonSerializer.Deserialize<MusicFileData>(json)!;
+			Data.RPath = RPath;
+			Data.IsLoaded = true;
 		}
 
 		public void Save()
 		{
+			Data.IsLoaded = true;
 			var json = JsonSerializer.Serialize(Data);
 			AlternativeDataStream.WriteString(FPath, Settings.AlternativeDataStreamName, json);
 		}
@@ -156,6 +170,34 @@ namespace Melodorium
 
 	internal class MusicFileData()
 	{
-		public string Mood { get; set; } = "";
+		public string RPath = "";
+		public bool IsLoaded = false;
+		public MusicMood Mood { get; set; } = MusicMood.Energistic;
+		public MusicLike Like { get; set; } = MusicLike.Good;
+		public MusicLang Lang { get; set; } = MusicLang.An;
+		public bool Hidden { get; set; } = false;
 	}
+
+	internal enum MusicMood
+	{
+		Rock = 0,
+		Energistic = 1,
+		Calm = 2,
+		Sleep = 3,
+	}
+    internal enum MusicLike
+    {
+        Best = 0,
+        Like = 1,
+        Good = 2,
+    }
+    internal enum MusicLang
+    {
+		No = 0,
+		Ru = 1,
+		An = 2,
+		En = 3,
+		Fr = 4,
+		It = 5,
+    }
 }

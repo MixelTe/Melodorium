@@ -232,5 +232,15 @@ namespace Melodorium
 		{
 			return Math.Max(w, Math.Max(x, Math.Max(y, z)));
 		}
+
+		public static void OpenExplorer(string path, bool folder = false)
+		{
+			var select = folder ? "" : "/select, ";
+			Process.Start(new ProcessStartInfo()
+			{
+				FileName = "explorer",
+				Arguments = $"/e, {select}\"{path}\"",
+			});
+		}
 	}
 }
