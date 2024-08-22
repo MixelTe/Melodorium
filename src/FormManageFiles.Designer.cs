@@ -90,6 +90,17 @@
 			columnHeader5 = new ColumnHeader();
 			label15 = new Label();
 			label14 = new Label();
+			tabPage5 = new TabPage();
+			label21 = new Label();
+			splitContainer6 = new SplitContainer();
+			TreeGroup = new TreeView();
+			LblGroupFolderExist = new Label();
+			BtnMoveGroup = new Button();
+			label20 = new Label();
+			InpGroupName = new TextBox();
+			InpItemsInGroup = new NumericUpDown();
+			label19 = new Label();
+			label18 = new Label();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -119,6 +130,12 @@
 			splitContainer5.Panel2.SuspendLayout();
 			splitContainer5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)InpSimiarityLevel).BeginInit();
+			tabPage5.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)splitContainer6).BeginInit();
+			splitContainer6.Panel1.SuspendLayout();
+			splitContainer6.Panel2.SuspendLayout();
+			splitContainer6.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)InpItemsInGroup).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
@@ -551,7 +568,7 @@
 			InpMismatchFolderExpected.Location = new Point(63, 0);
 			InpMismatchFolderExpected.Name = "InpMismatchFolderExpected";
 			InpMismatchFolderExpected.ReadOnly = true;
-			InpMismatchFolderExpected.Size = new Size(206, 23);
+			InpMismatchFolderExpected.Size = new Size(236, 23);
 			InpMismatchFolderExpected.TabIndex = 16;
 			// 
 			// InpMismatchName
@@ -591,6 +608,7 @@
 			Tabs.Controls.Add(tabPage2);
 			Tabs.Controls.Add(tabPage3);
 			Tabs.Controls.Add(tabPage4);
+			Tabs.Controls.Add(tabPage5);
 			Tabs.Location = new Point(9, 12);
 			Tabs.Name = "Tabs";
 			Tabs.SelectedIndex = 0;
@@ -801,6 +819,126 @@
 			label14.TabIndex = 5;
 			label14.Text = "Similar filenames";
 			// 
+			// tabPage5
+			// 
+			tabPage5.Controls.Add(label21);
+			tabPage5.Controls.Add(splitContainer6);
+			tabPage5.Controls.Add(label18);
+			tabPage5.Location = new Point(4, 24);
+			tabPage5.Name = "tabPage5";
+			tabPage5.Padding = new Padding(3);
+			tabPage5.Size = new Size(777, 403);
+			tabPage5.TabIndex = 4;
+			tabPage5.Text = "Group";
+			tabPage5.UseVisualStyleBackColor = true;
+			// 
+			// label21
+			// 
+			label21.AutoSize = true;
+			label21.Location = new Point(199, 3);
+			label21.Name = "label21";
+			label21.Size = new Size(173, 15);
+			label21.TabIndex = 8;
+			label21.Text = "dbl click to open file in explorer";
+			// 
+			// splitContainer6
+			// 
+			splitContainer6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			splitContainer6.Location = new Point(0, 21);
+			splitContainer6.Name = "splitContainer6";
+			// 
+			// splitContainer6.Panel1
+			// 
+			splitContainer6.Panel1.Controls.Add(TreeGroup);
+			// 
+			// splitContainer6.Panel2
+			// 
+			splitContainer6.Panel2.Controls.Add(LblGroupFolderExist);
+			splitContainer6.Panel2.Controls.Add(BtnMoveGroup);
+			splitContainer6.Panel2.Controls.Add(label20);
+			splitContainer6.Panel2.Controls.Add(InpGroupName);
+			splitContainer6.Panel2.Controls.Add(InpItemsInGroup);
+			splitContainer6.Panel2.Controls.Add(label19);
+			splitContainer6.Size = new Size(775, 382);
+			splitContainer6.SplitterDistance = 372;
+			splitContainer6.TabIndex = 7;
+			// 
+			// TreeGroup
+			// 
+			TreeGroup.Dock = DockStyle.Fill;
+			TreeGroup.Location = new Point(0, 0);
+			TreeGroup.Name = "TreeGroup";
+			TreeGroup.Size = new Size(372, 382);
+			TreeGroup.TabIndex = 0;
+			TreeGroup.NodeMouseClick += TreeGroup_NodeMouseClick;
+			TreeGroup.NodeMouseDoubleClick += TreeGroup_NodeMouseDoubleClick;
+			// 
+			// LblGroupFolderExist
+			// 
+			LblGroupFolderExist.AutoSize = true;
+			LblGroupFolderExist.Location = new Point(208, 69);
+			LblGroupFolderExist.Name = "LblGroupFolderExist";
+			LblGroupFolderExist.Size = new Size(106, 15);
+			LblGroupFolderExist.TabIndex = 5;
+			LblGroupFolderExist.Text = "folder already exist";
+			LblGroupFolderExist.Visible = false;
+			// 
+			// BtnMoveGroup
+			// 
+			BtnMoveGroup.Enabled = false;
+			BtnMoveGroup.Location = new Point(202, 43);
+			BtnMoveGroup.Name = "BtnMoveGroup";
+			BtnMoveGroup.Size = new Size(118, 23);
+			BtnMoveGroup.TabIndex = 4;
+			BtnMoveGroup.Text = "Move to new folder";
+			BtnMoveGroup.UseVisualStyleBackColor = true;
+			BtnMoveGroup.Click += BtnMoveGroup_Click;
+			// 
+			// label20
+			// 
+			label20.AutoSize = true;
+			label20.Location = new Point(3, 46);
+			label20.Name = "label20";
+			label20.Size = new Size(40, 15);
+			label20.TabIndex = 3;
+			label20.Text = "Group";
+			// 
+			// InpGroupName
+			// 
+			InpGroupName.Location = new Point(49, 43);
+			InpGroupName.Name = "InpGroupName";
+			InpGroupName.ReadOnly = true;
+			InpGroupName.Size = new Size(147, 23);
+			InpGroupName.TabIndex = 2;
+			// 
+			// InpItemsInGroup
+			// 
+			InpItemsInGroup.Location = new Point(151, 5);
+			InpItemsInGroup.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			InpItemsInGroup.Name = "InpItemsInGroup";
+			InpItemsInGroup.Size = new Size(45, 23);
+			InpItemsInGroup.TabIndex = 1;
+			InpItemsInGroup.Value = new decimal(new int[] { 5, 0, 0, 0 });
+			InpItemsInGroup.ValueChanged += InpItemsInGroup_ValueChanged;
+			// 
+			// label19
+			// 
+			label19.AutoSize = true;
+			label19.Location = new Point(3, 7);
+			label19.Name = "label19";
+			label19.Size = new Size(142, 15);
+			label19.TabIndex = 0;
+			label19.Text = "Min items count in group";
+			// 
+			// label18
+			// 
+			label18.AutoSize = true;
+			label18.Location = new Point(3, 3);
+			label18.Name = "label18";
+			label18.Size = new Size(133, 15);
+			label18.TabIndex = 6;
+			label18.Text = "Authors in any to group";
+			// 
 			// FormManageFiles
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -852,6 +990,14 @@
 			((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
 			splitContainer5.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)InpSimiarityLevel).EndInit();
+			tabPage5.ResumeLayout(false);
+			tabPage5.PerformLayout();
+			splitContainer6.Panel1.ResumeLayout(false);
+			splitContainer6.Panel2.ResumeLayout(false);
+			splitContainer6.Panel2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)splitContainer6).EndInit();
+			splitContainer6.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)InpItemsInGroup).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -918,5 +1064,16 @@
 		private TrackBar InpSimiarityLevel;
 		private Label LblSimiarityLevel;
 		private Button BtnApplySimilarity;
+		private TabPage tabPage5;
+		private Label label18;
+		private SplitContainer splitContainer6;
+		private TreeView TreeGroup;
+		private Label label19;
+		private NumericUpDown InpItemsInGroup;
+		private Label LblGroupFolderExist;
+		private Button BtnMoveGroup;
+		private Label label20;
+		private TextBox InpGroupName;
+		private Label label21;
 	}
 }

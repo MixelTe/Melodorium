@@ -27,6 +27,14 @@ namespace Melodorium
 		private List<List<MusicFile>> _similar = [];
 		private List<MusicFile>? _selectedSimilar;
 		private ListViewItem? _selectedSimilarItem;
+		private Dictionary<string, List<MusicFile>> _groups = [];
+		private string? _selectedGroup;
+
+		private struct MismatchFile(MusicFile musicFile, string correctFolder)
+		{
+			public MusicFile MusicFile = musicFile;
+			public string CorrectFolder = correctFolder;
+		}
 
 		public FormManageFiles()
 		{
@@ -48,10 +56,10 @@ namespace Melodorium
 				case 1: LoadFolders(); break;
 				case 2: FindMismatch(); break;
 				case 3: FindSimilar(); break;
+				case 4: FindGroup(); break;
 				default: break;
 			}
 		}
-
 
 		private void FindProblems()
 		{
@@ -122,8 +130,7 @@ namespace Melodorium
 
 			var name = InpRenameNew.Text;
 			var path = Path.Combine(_selectedRenameFile.Folder, name + _selectedRenameFile.Ext);
-			File.Move(_selectedRenameFile.FPath, path);
-			_selectedRenameFile.FPath = path;
+			_selectedRenameFile.Move(path);
 
 			if (_selectedRenameFileItem != null)
 				if (IsGoodName(name))
@@ -498,10 +505,97 @@ namespace Melodorium
 			FindSimilar();
 		}
 
-		private struct MismatchFile(MusicFile musicFile, string correctFolder)
+		private void FindGroup()
 		{
-			public MusicFile MusicFile = musicFile;
-			public string CorrectFolder = correctFolder;
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				var files = Program.MusicData.Files
+					.Where(v => Program.MusicData.FolderAuthor.TryGetValue(v.RFolder, out var author) && author == "")
+					.OrderBy(v => v.Author)
+					.ToList();
+				_groups = [];
+				for (var i = 0; i < files.Count; i++)
+				{
+					var file = files[i];
+					var key = file.RFolder + Path.DirectorySeparatorChar + file.Author;
+					if (_groups.TryGetValue(key, out var g))
+						g.Add(file);
+					else
+						_groups[key] = [file];
+				}
+				TreeGroup.Nodes.Clear();
+				foreach (var (author, group) in _groups)
+				{
+					if (group.Count < InpItemsInGroup.Value) continue;
+					var node = new TreeNode(author + $" [{group.Count}]") { Tag = author };
+					TreeGroup.Nodes.Add(node);
+					foreach (var file in group)
+						node.Nodes.Add(new TreeNode(file.SName) { Tag = file });
+				}
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
+
+		private void InpItemsInGroup_ValueChanged(object sender, EventArgs e)
+		{
+			FindGroup();
+		}
+
+		private void TreeGroup_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			var node = e.Node;
+			if (node.Tag is string group)
+				_selectedGroup = group;
+			else if (node.Tag is MusicFile file)
+				_selectedGroup = file.RFolder + Path.DirectorySeparatorChar + file.Author;
+
+			if (_selectedGroup == null) return;
+
+			var author = _selectedGroup.Split(Path.DirectorySeparatorChar)[1];
+			InpGroupName.Text = author;
+
+			var fpath = Program.Settings.GetFullPath(author);
+			var exist = Path.Exists(fpath);
+			BtnMoveGroup.Enabled = !exist;
+			LblGroupFolderExist.Visible = exist;
+		}
+
+		private void TreeGroup_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			var node = e.Node;
+			if (node.Tag is MusicFile file)
+			{
+				Process.Start(new ProcessStartInfo()
+				{
+					FileName = "explorer",
+					Arguments = $"/e, /select, \"{file.FPath}\"",
+				});
+			}
+		}
+
+		private void BtnMoveGroup_Click(object sender, EventArgs e)
+		{
+			if (_selectedGroup == null) return;
+			var author = _selectedGroup.Split(Path.DirectorySeparatorChar)[1];
+
+			var fpath = Program.Settings.GetFullPath(author);
+			var exist = Path.Exists(fpath);
+			BtnMoveGroup.Enabled = !exist;
+			LblGroupFolderExist.Visible = exist;
+			if (exist) return;
+
+			Directory.CreateDirectory(fpath);
+			var group = _groups[_selectedGroup];
+			foreach (var file in group)
+				file.Move(Path.Combine(fpath, file.FName));
+
+			InpGroupName.Text = "";
+			_selectedGroup = null;
+			BtnMoveGroup.Enabled = false;
+			LblGroupFolderExist.Visible = false;
+			FindGroup();
 		}
 	}
 }

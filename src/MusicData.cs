@@ -1,5 +1,6 @@
 ﻿	using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -144,6 +145,12 @@ namespace Melodorium
 		{
 			var json = JsonSerializer.Serialize(Data);
 			AlternativeDataStream.WriteString(FPath, Settings.AlternativeDataStreamName, json);
+		}
+
+		public void Move(string fullDestFileName)
+		{
+			File.Move(FPath, fullDestFileName);
+			FPath = fullDestFileName;
 		}
 	}
 
