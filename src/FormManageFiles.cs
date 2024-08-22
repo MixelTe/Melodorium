@@ -159,7 +159,7 @@ namespace Melodorium
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
-				_folders = Program.MusicData.Files.Select(v => v.RFolder).Distinct().ToList();
+				_folders = GetFolders();
 				ListFolders.Items.Clear();
 				for (var i = 0; i < _folders.Count; i++)
 				{
@@ -175,6 +175,11 @@ namespace Melodorium
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
+		}
+
+		private static List<string> GetFolders()
+		{
+			return Program.MusicData.Files.Select(v => v.RFolder).Distinct().ToList();
 		}
 
 		private void BtnOpenInExplorerFolder_Click(object sender, EventArgs e)
@@ -280,6 +285,7 @@ namespace Melodorium
 			{
 				var authorToFolder = new Dictionary<string, string>();
 				var anyFolder = "";
+				_folders = GetFolders();
 				foreach (var folder in _folders)
 				{
 					if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
@@ -373,7 +379,7 @@ namespace Melodorium
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
-				var watch = Stopwatch.StartNew();
+				//var watch = Stopwatch.StartNew();
 				List<Tuple<float, List<MusicFile>>> r = [];
 				var C = (Program.MusicData.Files.Count - 1) * Program.MusicData.Files.Count / 2;
 				var similarityBound = InpSimiarityLevel.Value / 100f;
@@ -403,8 +409,8 @@ namespace Melodorium
 					if (similarGroup.Count > 1)
 						r.Add(Tuple.Create(maxSimilarity, similarGroup));
 				}
-				watch.Stop();
-				Debug.WriteLine(watch.ElapsedMilliseconds, "FindSimilar_ElapsedMilliseconds");
+				//watch.Stop();
+				//Debug.WriteLine(watch.ElapsedMilliseconds, "FindSimilar_ElapsedMilliseconds");
 				ListSimilar.Items.Clear();
 				_similar = r.OrderByDescending(v => v.Item1)
 							.ThenBy(v => v.Item2[0].Name)
