@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			BtnChangeFolder = new Button();
 			BtnExport = new Button();
@@ -44,6 +45,11 @@
 			splitContainer1 = new SplitContainer();
 			ListFiles = new ListView();
 			columnHeader1 = new ColumnHeader();
+			InpAutoplay = new CheckBox();
+			BtnStop = new Button();
+			BtnPlay = new Button();
+			InpVolume = new NAudio.Gui.Pot();
+			InpMusicTime = new TrackBar();
 			InpHidden = new CheckBox();
 			BtnSaveMusic = new Button();
 			InpLike = new ComboBox();
@@ -52,11 +58,13 @@
 			LblMusicAuthor = new Label();
 			LblMusicName = new Label();
 			BtnExportPlaylist = new Button();
+			MusicTimer = new System.Windows.Forms.Timer(components);
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
 			splitContainer1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			SuspendLayout();
 			// 
 			// BtnChangeFolder
@@ -189,6 +197,11 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(InpAutoplay);
+			splitContainer1.Panel2.Controls.Add(BtnStop);
+			splitContainer1.Panel2.Controls.Add(BtnPlay);
+			splitContainer1.Panel2.Controls.Add(InpVolume);
+			splitContainer1.Panel2.Controls.Add(InpMusicTime);
 			splitContainer1.Panel2.Controls.Add(InpHidden);
 			splitContainer1.Panel2.Controls.Add(BtnSaveMusic);
 			splitContainer1.Panel2.Controls.Add(InpLike);
@@ -217,6 +230,59 @@
 			// 
 			columnHeader1.Text = "Music";
 			columnHeader1.Width = 350;
+			// 
+			// InpAutoplay
+			// 
+			InpAutoplay.AutoSize = true;
+			InpAutoplay.Location = new Point(268, 133);
+			InpAutoplay.Name = "InpAutoplay";
+			InpAutoplay.Size = new Size(74, 19);
+			InpAutoplay.TabIndex = 12;
+			InpAutoplay.Text = "Autoplay";
+			InpAutoplay.UseVisualStyleBackColor = true;
+			// 
+			// BtnStop
+			// 
+			BtnStop.Location = new Point(65, 129);
+			BtnStop.Name = "BtnStop";
+			BtnStop.Size = new Size(56, 23);
+			BtnStop.TabIndex = 8;
+			BtnStop.Text = "Stop";
+			BtnStop.UseVisualStyleBackColor = true;
+			BtnStop.Click += BtnStop_Click;
+			// 
+			// BtnPlay
+			// 
+			BtnPlay.Location = new Point(3, 129);
+			BtnPlay.Name = "BtnPlay";
+			BtnPlay.Size = new Size(56, 23);
+			BtnPlay.TabIndex = 7;
+			BtnPlay.Text = "Play";
+			BtnPlay.UseVisualStyleBackColor = true;
+			BtnPlay.Click += BtnPlay_Click;
+			// 
+			// InpVolume
+			// 
+			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			InpVolume.Location = new Point(353, 129);
+			InpVolume.Margin = new Padding(4, 3, 4, 3);
+			InpVolume.Maximum = 1D;
+			InpVolume.Minimum = 0D;
+			InpVolume.Name = "InpVolume";
+			InpVolume.Size = new Size(37, 37);
+			InpVolume.TabIndex = 10;
+			InpVolume.Value = 0.5D;
+			InpVolume.ValueChanged += InpVolume_VolumeChanged;
+			// 
+			// InpMusicTime
+			// 
+			InpMusicTime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			InpMusicTime.Location = new Point(3, 100);
+			InpMusicTime.Maximum = 100;
+			InpMusicTime.Name = "InpMusicTime";
+			InpMusicTime.Size = new Size(388, 45);
+			InpMusicTime.TabIndex = 11;
+			InpMusicTime.ValueChanged += InpMusicTime_ValueChanged;
 			// 
 			// InpHidden
 			// 
@@ -295,6 +361,12 @@
 			BtnExportPlaylist.Text = "Export playlist";
 			BtnExportPlaylist.UseVisualStyleBackColor = true;
 			// 
+			// MusicTimer
+			// 
+			MusicTimer.Enabled = true;
+			MusicTimer.Interval = 1000;
+			MusicTimer.Tick += MusicTimer_Tick;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -310,6 +382,7 @@
 			Name = "FormMain";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Melodorium";
+			FormClosing += FormMain_FormClosing;
 			Shown += FormMain_Shown;
 			groupBox1.ResumeLayout(false);
 			groupBox1.PerformLayout();
@@ -318,6 +391,7 @@
 			splitContainer1.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
 			splitContainer1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)InpMusicTime).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -346,5 +420,11 @@
 		private ComboBox InpMood;
 		private Button BtnSaveMusic;
 		private CheckBox InpHidden;
+		private Button BtnPlay;
+		private Button BtnStop;
+		private NAudio.Gui.Pot InpVolume;
+		private TrackBar InpMusicTime;
+		private System.Windows.Forms.Timer MusicTimer;
+		private CheckBox InpAutoplay;
 	}
 }

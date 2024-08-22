@@ -2,21 +2,56 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Melodorium
 {
 	public partial class FormMain : Form
 	{
+		private readonly WaveOutEvent _outputDevice = new();
+		private AudioFileReader? _audioFile;
+		private string _audioFileCur = "";
 		private MusicFile? _selectedFile;
+		private int _selectedFileI = 0;
+		private bool _closing = false;
+		private bool _updatingTime = false;
+		private bool _autoplaying = false;
 
 		public FormMain()
 		{
 			InitializeComponent();
+			_outputDevice.PlaybackStopped += (object? sender, StoppedEventArgs args) =>
+			{
+				if (_closing)
+				{
+					_outputDevice.Dispose();
+					_audioFile?.Dispose();
+				}
+				else
+				{
+					if (_selectedFile == null) return;
+					if (!InpAutoplay.Checked) return;
+					if (_autoplaying) return;
+					ListFiles.Invoke(() =>
+					{
+						var toSelectI = (_selectedFileI + 1) % ListFiles.Items.Count;
+						_autoplaying = true;
+						ListFiles.Items[toSelectI].Selected = true;
+						_autoplaying = false;
+					});
+				}
+			};
+			_outputDevice.Volume = Program.Settings.Volume;
+			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
 			FilterMood.Items.Add("Rock", true);
 			FilterMood.Items.Add("Energistic", true);
@@ -50,6 +85,12 @@ namespace Melodorium
 			InpLang.Items.Add("English");
 			InpLang.Items.Add("French");
 			InpLang.Items.Add("Italian");
+		}
+
+		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			_closing = true;
+			_outputDevice.Stop();
 		}
 
 		private void FormMain_Shown(object sender, EventArgs e)
@@ -139,6 +180,7 @@ namespace Melodorium
 			if (item.Tag is not MusicFile file)
 				return;
 			_selectedFile = file;
+			_selectedFileI = ListFiles.SelectedIndices[0];
 
 			LblMusicAuthor.Text = file.Author.Replace("_", " ");
 			LblMusicName.Text = file.SName == "" ? file.Name : file.SName.Replace("_", " ");
@@ -146,6 +188,9 @@ namespace Melodorium
 			InpLike.SelectedIndex = (int)file.Data.Like;
 			InpLang.SelectedIndex = (int)file.Data.Lang;
 			InpHidden.Checked = file.Data.Hidden;
+
+			if (InpAutoplay.Checked)
+				PlayMusic();
 		}
 
 		private void BtnSaveMusic_Click(object sender, EventArgs e)
@@ -158,6 +203,53 @@ namespace Melodorium
 			_selectedFile.Data.Hidden = InpHidden.Checked;
 
 			_selectedFile.Save();
+		}
+
+		private void BtnPlay_Click(object sender, EventArgs e)
+		{
+			PlayMusic();
+		}
+
+		private void PlayMusic()
+		{
+			if (_selectedFile == null) return;
+
+			_outputDevice.Stop();
+			if (_audioFile == null || _audioFileCur != _selectedFile.FPath)
+			{
+				_audioFile?.Dispose();
+				_audioFile = new AudioFileReader(_selectedFile.FPath);
+				_audioFileCur = _selectedFile.FPath;
+				_outputDevice.Init(_audioFile);
+			}
+			_outputDevice.Play();
+		}
+
+		private void BtnStop_Click(object sender, EventArgs e)
+		{
+			_outputDevice?.Pause();
+		}
+
+		private void InpVolume_VolumeChanged(object sender, EventArgs e)
+		{
+			Program.Settings.Volume = (float)InpVolume.Value;
+			Program.Settings.Save();
+			_outputDevice.Volume = Program.Settings.Volume;
+		}
+
+		private void InpMusicTime_ValueChanged(object sender, EventArgs e)
+		{
+			if (_updatingTime) return;
+			if (_audioFile == null) return;
+			_audioFile.CurrentTime = _audioFile.TotalTime * InpMusicTime.Value / 100;
+		}
+
+		private void MusicTimer_Tick(object sender, EventArgs e)
+		{
+			if (_audioFile == null) return;
+			_updatingTime = true;
+			InpMusicTime.Value = (int)(_audioFile.CurrentTime / _audioFile.TotalTime * 100);
+			_updatingTime = false;
 		}
 	}
 }

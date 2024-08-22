@@ -12,6 +12,7 @@
 		public string ExportFilePath { 
 			get => RootFolder == "" ? "" : GetFullPath($"melodorium_{DateTime.Now:yyyy_MM_dd}.json"); 
 		}
+		public float Volume = 0.5f;
 
 		public void Save()
 		{
