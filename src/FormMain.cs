@@ -67,7 +67,9 @@ namespace Melodorium
 			FilterLang.Items.Add("Another", true);
 			FilterLang.Items.Add("English", true);
 			FilterLang.Items.Add("French", true);
+			FilterLang.Items.Add("German", true);
 			FilterLang.Items.Add("Italian", true);
+			FilterLang.Items.Add("Japanese", true);
 			FilterHidden.SelectedIndex = 0;
 			InpMood.Items.Clear();
 			InpMood.Items.Add("Rock");
@@ -84,7 +86,9 @@ namespace Melodorium
 			InpLang.Items.Add("Another");
 			InpLang.Items.Add("English");
 			InpLang.Items.Add("French");
+			InpLang.Items.Add("German");
 			InpLang.Items.Add("Italian");
+			InpLang.Items.Add("Japanese");
 		}
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -137,6 +141,20 @@ namespace Melodorium
 			ShowMusicList();
 		}
 
+		private void BtnResetFilter_Click(object sender, EventArgs e)
+		{
+			FilterUncategorized.Checked = false;
+			FilterAuthor.Text = "";
+			FilterName.Text = "";
+			FilterHidden.SelectedIndex = 0;
+			for (int i = 0; i < FilterMood.Items.Count; i++)
+				FilterMood.SetItemChecked(i, true);
+			for (int i = 0; i < FilterLike.Items.Count; i++)
+				FilterLike.SetItemChecked(i, true);
+			for (int i = 0; i < FilterLang.Items.Count; i++)
+				FilterLang.SetItemChecked(i, true);
+		}
+
 		private void ShowMusicList()
 		{
 			using var loadingDialog = new FormLoading();
@@ -154,17 +172,29 @@ namespace Melodorium
 					if (FilterAuthor.Text != "")
 						if (!file.Author.Contains(FilterAuthor.Text, StringComparison.CurrentCultureIgnoreCase))
 							continue;
+					if (FilterName.Text != "")
+						if (!(file.Name != "" ? file.Name : file.FName)
+								.Contains(FilterName.Text, StringComparison.CurrentCultureIgnoreCase))
+							continue;
 					if (FilterHidden.SelectedIndex == 0)
 						if (file.Data.Hidden) continue;
 					if (FilterHidden.SelectedIndex == 2)
 						if (!file.Data.Hidden) continue;
-					if (!FilterMood.CheckedIndices.Contains((int)file.Data.Mood))
-						continue;
-					if (!FilterLike.CheckedIndices.Contains((int)file.Data.Like))
-						continue;
-					if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
-						continue;
-					ListFiles.Items.Add(new ListViewItem(file.RPath) { Tag = file });
+					//if (!FilterMood.CheckedIndices.Contains((int)file.Data.Mood))
+					//	continue;
+					//if (!FilterLike.CheckedIndices.Contains((int)file.Data.Like))
+					//	continue;
+					//if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
+					//	continue;
+					var tags = "";
+					if (file.Data.IsLoaded)
+					{
+						tags += " [";
+						tags += file.Data.Mood.ToString()[..2] + ";";
+						tags += file.Data.Like.ToString()[..2] + ";";
+						tags += file.Data.Lang.ToString()[..2] + "]";
+					}
+					ListFiles.Items.Add(new ListViewItem(file.RPath + tags) { Tag = file });
 					c++;
 				}
 				ListFiles.Columns[0].Text = $"Music [{c}]";
@@ -184,10 +214,11 @@ namespace Melodorium
 
 			LblMusicAuthor.Text = file.Author.Replace("_", " ");
 			LblMusicName.Text = file.SName == "" ? file.Name : file.SName.Replace("_", " ");
-			InpMood.SelectedIndex = (int)file.Data.Mood;
-			InpLike.SelectedIndex = (int)file.Data.Like;
-			InpLang.SelectedIndex = (int)file.Data.Lang;
+			InpMood.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Mood : -1;
+			InpLike.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Like : -1;
+			InpLang.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Lang : -1;
 			InpHidden.Checked = file.Data.Hidden;
+			LblState.Text = "";
 
 			if (InpAutoplay.Checked)
 				PlayMusic();
@@ -197,12 +228,32 @@ namespace Melodorium
 		{
 			if (_selectedFile == null) return;
 
+			var err = "";
+			if (InpMood.SelectedIndex < 0)
+				err = "Mood";
+			else if (InpLike.SelectedIndex < 0)
+				err = "Like";
+			else if (InpLang.SelectedIndex < 0)
+				err = "Lang";
+			if (err != "")
+			{
+				MessageBox.Show($"{err} not selected");
+				return;
+			}
+
 			_selectedFile.Data.Mood = (MusicMood)InpMood.SelectedIndex;
 			_selectedFile.Data.Like = (MusicLike)InpLike.SelectedIndex;
 			_selectedFile.Data.Lang = (MusicLang)InpLang.SelectedIndex;
 			_selectedFile.Data.Hidden = InpHidden.Checked;
 
 			_selectedFile.Save();
+			LblState.Text = "Saved";
+
+			var tags = " [";
+			tags += _selectedFile.Data.Mood.ToString()[..2] + ";";
+			tags += _selectedFile.Data.Like.ToString()[..2] + ";";
+			tags += _selectedFile.Data.Lang.ToString()[..2] + "]";
+			ListFiles.Items[_selectedFileI].Text = _selectedFile.RPath + tags;
 		}
 
 		private void BtnPlay_Click(object sender, EventArgs e)
@@ -250,6 +301,26 @@ namespace Melodorium
 			_updatingTime = true;
 			InpMusicTime.Value = (int)(_audioFile.CurrentTime / _audioFile.TotalTime * 100);
 			_updatingTime = false;
+		}
+
+		private void InpMood_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			LblState.Text = "Unsaved";
+		}
+
+		private void InpLike_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			LblState.Text = "Unsaved";
+		}
+
+		private void InpLang_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			LblState.Text = "Unsaved";
+		}
+
+		private void InpHidden_CheckedChanged(object sender, EventArgs e)
+		{
+			LblState.Text = "Unsaved";
 		}
 	}
 }

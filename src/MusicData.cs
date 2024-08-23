@@ -198,6 +198,8 @@ namespace Melodorium
 		An = 2,
 		En = 3,
 		Fr = 4,
-		It = 5,
+		Ge = 5,
+		It = 6,
+		Ja = 7,
     }
 }

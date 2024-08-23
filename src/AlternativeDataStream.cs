@@ -10,7 +10,7 @@ namespace Melodorium
 			var fullStreamName = fileName + ":" + streamName;
 
 			var access = FileAccess.Write;
-			using var h = WinApi.CreateFile(fullStreamName, (int)access, FileShare.ReadWrite, nint.Zero, FileMode.OpenOrCreate, 0, nint.Zero);
+			using var h = WinApi.CreateFile(fullStreamName, (int)access, FileShare.ReadWrite, nint.Zero, FileMode.Create, 0, nint.Zero);
 			using var f = new FileStream(h, access);
 			using var sw = new StreamWriter(f);
 			sw.Write(data);
