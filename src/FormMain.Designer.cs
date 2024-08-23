@@ -48,11 +48,21 @@
 			splitContainer1 = new SplitContainer();
 			ListFiles = new ListView();
 			columnHeader1 = new ColumnHeader();
+			InpVolume = new NAudio.Gui.Pot();
+			groupBox2 = new GroupBox();
+			PBMusicImage = new PictureBox();
+			BtnDeleteImage = new Button();
+			InpAlbum = new TextBox();
+			label5 = new Label();
+			InpArtists = new TextBox();
+			label3 = new Label();
+			InpTitle = new TextBox();
+			label4 = new Label();
+			LblTime = new Label();
 			LblState = new Label();
 			InpAutoplay = new CheckBox();
 			BtnStop = new Button();
 			BtnPlay = new Button();
-			InpVolume = new NAudio.Gui.Pot();
 			InpMusicTime = new TrackBar();
 			InpHidden = new CheckBox();
 			BtnSaveMusic = new Button();
@@ -68,6 +78,8 @@
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
 			splitContainer1.SuspendLayout();
+			groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)PBMusicImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			SuspendLayout();
 			// 
@@ -236,11 +248,13 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(InpVolume);
+			splitContainer1.Panel2.Controls.Add(groupBox2);
+			splitContainer1.Panel2.Controls.Add(LblTime);
 			splitContainer1.Panel2.Controls.Add(LblState);
 			splitContainer1.Panel2.Controls.Add(InpAutoplay);
 			splitContainer1.Panel2.Controls.Add(BtnStop);
 			splitContainer1.Panel2.Controls.Add(BtnPlay);
-			splitContainer1.Panel2.Controls.Add(InpVolume);
 			splitContainer1.Panel2.Controls.Add(InpMusicTime);
 			splitContainer1.Panel2.Controls.Add(InpHidden);
 			splitContainer1.Panel2.Controls.Add(BtnSaveMusic);
@@ -249,7 +263,7 @@
 			splitContainer1.Panel2.Controls.Add(InpMood);
 			splitContainer1.Panel2.Controls.Add(LblMusicAuthor);
 			splitContainer1.Panel2.Controls.Add(LblMusicName);
-			splitContainer1.Size = new Size(776, 213);
+			splitContainer1.Size = new Size(776, 296);
 			splitContainer1.SplitterDistance = 378;
 			splitContainer1.TabIndex = 5;
 			// 
@@ -260,7 +274,7 @@
 			ListFiles.Location = new Point(0, 0);
 			ListFiles.MultiSelect = false;
 			ListFiles.Name = "ListFiles";
-			ListFiles.Size = new Size(378, 213);
+			ListFiles.Size = new Size(378, 296);
 			ListFiles.TabIndex = 0;
 			ListFiles.UseCompatibleStateImageBehavior = false;
 			ListFiles.View = View.Details;
@@ -271,12 +285,124 @@
 			columnHeader1.Text = "Music";
 			columnHeader1.Width = 350;
 			// 
+			// InpVolume
+			// 
+			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			InpVolume.Location = new Point(353, 129);
+			InpVolume.Margin = new Padding(4, 3, 4, 3);
+			InpVolume.Maximum = 1D;
+			InpVolume.Minimum = 0D;
+			InpVolume.Name = "InpVolume";
+			InpVolume.Size = new Size(37, 37);
+			InpVolume.TabIndex = 10;
+			InpVolume.Value = 0.5D;
+			InpVolume.ValueChanged += InpVolume_VolumeChanged;
+			// 
+			// groupBox2
+			// 
+			groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			groupBox2.Controls.Add(PBMusicImage);
+			groupBox2.Controls.Add(BtnDeleteImage);
+			groupBox2.Controls.Add(InpAlbum);
+			groupBox2.Controls.Add(label5);
+			groupBox2.Controls.Add(InpArtists);
+			groupBox2.Controls.Add(label3);
+			groupBox2.Controls.Add(InpTitle);
+			groupBox2.Controls.Add(label4);
+			groupBox2.Location = new Point(3, 158);
+			groupBox2.Name = "groupBox2";
+			groupBox2.Size = new Size(387, 109);
+			groupBox2.TabIndex = 18;
+			groupBox2.TabStop = false;
+			groupBox2.Text = "Metadata tags";
+			// 
+			// PBMusicImage
+			// 
+			PBMusicImage.Cursor = Cursors.Hand;
+			PBMusicImage.Location = new Point(329, 22);
+			PBMusicImage.Name = "PBMusicImage";
+			PBMusicImage.Size = new Size(52, 52);
+			PBMusicImage.SizeMode = PictureBoxSizeMode.Zoom;
+			PBMusicImage.TabIndex = 23;
+			PBMusicImage.TabStop = false;
+			PBMusicImage.Click += PBMusicImage_Click;
+			// 
+			// BtnDeleteImage
+			// 
+			BtnDeleteImage.Location = new Point(329, 80);
+			BtnDeleteImage.Name = "BtnDeleteImage";
+			BtnDeleteImage.Size = new Size(52, 23);
+			BtnDeleteImage.TabIndex = 22;
+			BtnDeleteImage.Text = "Delete";
+			BtnDeleteImage.UseVisualStyleBackColor = true;
+			BtnDeleteImage.Click += BtnDeleteImage_Click;
+			// 
+			// InpAlbum
+			// 
+			InpAlbum.Location = new Point(55, 80);
+			InpAlbum.Name = "InpAlbum";
+			InpAlbum.Size = new Size(268, 23);
+			InpAlbum.TabIndex = 21;
+			InpAlbum.TextChanged += InpAlbum_TextChanged;
+			// 
+			// label5
+			// 
+			label5.AutoSize = true;
+			label5.Location = new Point(6, 83);
+			label5.Name = "label5";
+			label5.Size = new Size(43, 15);
+			label5.TabIndex = 20;
+			label5.Text = "Album";
+			// 
+			// InpArtists
+			// 
+			InpArtists.Location = new Point(55, 51);
+			InpArtists.Name = "InpArtists";
+			InpArtists.Size = new Size(268, 23);
+			InpArtists.TabIndex = 19;
+			InpArtists.TextChanged += InpArtists_TextChanged;
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(6, 54);
+			label3.Name = "label3";
+			label3.Size = new Size(40, 15);
+			label3.TabIndex = 18;
+			label3.Text = "Artists";
+			// 
+			// InpTitle
+			// 
+			InpTitle.Location = new Point(55, 22);
+			InpTitle.Name = "InpTitle";
+			InpTitle.Size = new Size(268, 23);
+			InpTitle.TabIndex = 17;
+			InpTitle.TextChanged += InpTitle_TextChanged;
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Location = new Point(6, 25);
+			label4.Name = "label4";
+			label4.Size = new Size(29, 15);
+			label4.TabIndex = 16;
+			label4.Text = "Title";
+			// 
+			// LblTime
+			// 
+			LblTime.AutoSize = true;
+			LblTime.Location = new Point(127, 133);
+			LblTime.Name = "LblTime";
+			LblTime.Size = new Size(66, 15);
+			LblTime.TabIndex = 14;
+			LblTime.Text = "00:00/00:00";
+			// 
 			// LblState
 			// 
 			LblState.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			LblState.Location = new Point(3, 187);
+			LblState.Location = new Point(217, 270);
 			LblState.Name = "LblState";
-			LblState.Size = new Size(307, 23);
+			LblState.Size = new Size(93, 23);
 			LblState.TabIndex = 13;
 			LblState.TextAlign = ContentAlignment.MiddleRight;
 			// 
@@ -310,19 +436,6 @@
 			BtnPlay.UseVisualStyleBackColor = true;
 			BtnPlay.Click += BtnPlay_Click;
 			// 
-			// InpVolume
-			// 
-			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			InpVolume.Location = new Point(353, 129);
-			InpVolume.Margin = new Padding(4, 3, 4, 3);
-			InpVolume.Maximum = 1D;
-			InpVolume.Minimum = 0D;
-			InpVolume.Name = "InpVolume";
-			InpVolume.Size = new Size(37, 37);
-			InpVolume.TabIndex = 10;
-			InpVolume.Value = 0.5D;
-			InpVolume.ValueChanged += InpVolume_VolumeChanged;
-			// 
 			// InpMusicTime
 			// 
 			InpMusicTime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -347,7 +460,7 @@
 			// BtnSaveMusic
 			// 
 			BtnSaveMusic.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			BtnSaveMusic.Location = new Point(316, 187);
+			BtnSaveMusic.Location = new Point(316, 270);
 			BtnSaveMusic.Name = "BtnSaveMusic";
 			BtnSaveMusic.Size = new Size(75, 23);
 			BtnSaveMusic.TabIndex = 5;
@@ -424,7 +537,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800, 450);
+			ClientSize = new Size(800, 533);
 			Controls.Add(BtnExportPlaylist);
 			Controls.Add(splitContainer1);
 			Controls.Add(groupBox1);
@@ -444,6 +557,9 @@
 			splitContainer1.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
 			splitContainer1.ResumeLayout(false);
+			groupBox2.ResumeLayout(false);
+			groupBox2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)PBMusicImage).EndInit();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).EndInit();
 			ResumeLayout(false);
 		}
@@ -483,5 +599,15 @@
 		private TextBox FilterName;
 		private Button BtnResetFilter;
 		private Label LblState;
+		private Label LblTime;
+		private GroupBox groupBox2;
+		private TextBox InpTitle;
+		private Label label4;
+		private TextBox InpAlbum;
+		private Label label5;
+		private TextBox InpArtists;
+		private Label label3;
+		private PictureBox PBMusicImage;
+		private Button BtnDeleteImage;
 	}
 }

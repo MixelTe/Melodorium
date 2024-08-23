@@ -1,5 +1,6 @@
 ﻿	using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,11 +12,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Melodorium
 {
-	internal class MusicDataVersion
+	public class MusicDataVersion
 	{
 		public int Version { get; set; } = -1;
 	}
-	internal class MusicData
+	public class MusicData
 	{
 		public static int DataVersion = 1;
 		public int Version { get; set; } = DataVersion;
@@ -93,7 +94,7 @@ namespace Melodorium
 		}
 	}
 
-	internal class MusicDataExport(MusicData data)
+	public class MusicDataExport(MusicData data)
 	{
 		public int Version = data.Version;
 		public string[] Ignore = data.Ignore;
@@ -101,7 +102,7 @@ namespace Melodorium
 		public List<MusicFileData> Files = data.Files.Select(v => v.Data).ToList();
 	}
 
-	internal class MusicFile
+	public class MusicFile
 	{
 		private string _fPath = "";
 		public string FPath
@@ -139,6 +140,12 @@ namespace Melodorium
 		public string NormilizedName { get; private set; } = "";
 		public string NormilizedFullName { get; private set; } = "";
 		public MusicFileData Data { get; set; } = new();
+		private bool _metaLoaded = false;
+		public string Title = "";
+		public string Album = "";
+		public string[] Artists = [];
+		public TagLib.IPicture? Picture;
+		public TimeSpan Duration;
 
 		public MusicFile(string path)
 		{
@@ -161,6 +168,33 @@ namespace Melodorium
 			AlternativeDataStream.WriteString(FPath, Settings.AlternativeDataStreamName, json);
 		}
 
+		public void LoadMeta()
+		{
+			if (_metaLoaded) return;
+			_metaLoaded = true;
+
+			using var tfile = TagLib.File.Create(FPath);
+			Title = tfile.Tag.Title;
+			Album = tfile.Tag.Album;
+			Artists = tfile.Tag.Performers;
+			if (tfile.Tag.Pictures.Length > 0)
+				Picture = tfile.Tag.Pictures[0];
+			Duration = tfile.Properties.Duration;
+		}
+
+		public void SaveMeta()
+		{
+			if (!_metaLoaded) return;
+			using var tfile = TagLib.File.Create(FPath);
+
+			tfile.Tag.Title = Title;
+			tfile.Tag.Album = Album;
+			tfile.Tag.Performers = Artists;
+			tfile.Tag.Pictures = Picture == null ? [] : [Picture];
+
+			tfile.Save();
+		}
+
 		public void Move(string fullDestFileName)
 		{
 			File.Move(FPath, fullDestFileName);
@@ -168,7 +202,7 @@ namespace Melodorium
 		}
 	}
 
-	internal class MusicFileData()
+	public class MusicFileData()
 	{
 		public string RPath = "";
 		public bool IsLoaded = false;
@@ -178,20 +212,20 @@ namespace Melodorium
 		public bool Hidden { get; set; } = false;
 	}
 
-	internal enum MusicMood
+	public enum MusicMood
 	{
 		Rock = 0,
 		Energistic = 1,
 		Calm = 2,
 		Sleep = 3,
 	}
-    internal enum MusicLike
+    public enum MusicLike
     {
         Best = 0,
         Like = 1,
         Good = 2,
     }
-    internal enum MusicLang
+    public enum MusicLang
     {
 		No = 0,
 		Ru = 1,
