@@ -24,6 +24,7 @@ namespace Melodorium
 		public Dictionary<string, string> FolderAuthor { get; set; } = [];
 
 		public List<MusicFile> Files = [];
+		public List<string> Tags = [];
 
 		public void Save()
 		{
@@ -77,13 +78,27 @@ namespace Melodorium
 
 		public void LoadFiles()
 		{
+			var tags = new HashSet<string>();
             foreach (var path in GetFileNames(fullpath: true))
 			{
 				var data = new MusicFile(path);
 				data.Load();
+				if (data.Data.Tag != "")
+					tags.Add(data.Data.Tag);
 				Files.Add(data);
 			}
-        }
+			Tags = tags.Order().ToList();
+		}
+
+		public void UpdateTagsList()
+		{
+			var tags = new HashSet<string>();
+			foreach (var file in Files)
+				if (file.Data.Tag != "")
+					tags.Add(file.Data.Tag);
+			Tags = tags.Order().ToList();
+		}
+
 		public string ExportData()
 		{
 			var filename = Program.Settings.ExportFilePath;
@@ -210,6 +225,7 @@ namespace Melodorium
 		public MusicLike Like { get; set; } = MusicLike.Good;
 		public MusicLang Lang { get; set; } = MusicLang.An;
 		public bool Hidden { get; set; } = false;
+		public string Tag { get; set; } = "";
 	}
 
 	public enum MusicMood

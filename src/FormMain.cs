@@ -106,6 +106,7 @@ namespace Melodorium
 		{
 			if (Program.Settings.RootFolder == "")
 				OpenFolder();
+			UpdateTags();
 			ShowMusicList();
 		}
 
@@ -121,6 +122,7 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			Show();
 			MusicData.LoadFull();
+			UpdateTags();
 			ShowMusicList();
 		}
 
@@ -138,6 +140,7 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			Show();
 			MusicData.LoadFull();
+			UpdateTags();
 			ShowMusicList();
 		}
 
@@ -152,6 +155,7 @@ namespace Melodorium
 			FilterAuthor.Text = "";
 			FilterName.Text = "";
 			FilterHidden.SelectedIndex = 0;
+			FilterTags.SelectedIndex = 0;
 			for (int i = 0; i < FilterMood.Items.Count; i++)
 				FilterMood.SetItemChecked(i, true);
 			for (int i = 0; i < FilterLike.Items.Count; i++)
@@ -166,6 +170,9 @@ namespace Melodorium
 			loadingDialog.Job = () =>
 			{
 				FilterAuthor.Text = FilterAuthor.Text.Trim();
+				FilterName.Text = FilterName.Text.Trim();
+				var author = FilterAuthor.Text.Replace(" ", "_");
+				var name = FilterName.Text.Replace(" ", "_");
 				ListFiles.Items.Clear();
 				var c = 0;
 				foreach (var file in Program.MusicData.Files)
@@ -174,12 +181,12 @@ namespace Melodorium
 						continue;
 					if (!FilterUncategorized.Checked && !file.Data.IsLoaded)
 						continue;
-					if (FilterAuthor.Text != "")
-						if (!file.Author.Contains(FilterAuthor.Text, StringComparison.CurrentCultureIgnoreCase))
+					if (author != "")
+						if (!file.Author.Contains(author, StringComparison.CurrentCultureIgnoreCase))
 							continue;
-					if (FilterName.Text != "")
+					if (name != "")
 						if (!(file.Name != "" ? file.Name : file.FName)
-								.Contains(FilterName.Text, StringComparison.CurrentCultureIgnoreCase))
+								.Contains(name, StringComparison.CurrentCultureIgnoreCase))
 							continue;
 					if (FilterHidden.SelectedIndex == 0)
 						if (file.Data.Hidden) continue;
@@ -191,6 +198,11 @@ namespace Melodorium
 						continue;
 					if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
 						continue;
+					if (FilterTags.SelectedIndex == 1)
+						if (file.Data.Tag != "") continue;
+					if (FilterTags.SelectedIndex > 1)
+						if (file.Data.Tag != Program.MusicData.Tags[FilterTags.SelectedIndex - 2]) continue;
+
 					var tags = "";
 					if (file.Data.IsLoaded)
 					{
@@ -206,6 +218,30 @@ namespace Melodorium
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
+		}
+
+		private void UpdateTags(bool updateData = false)
+		{
+			var selectedTagI = FilterTags.SelectedIndex;
+			var selectedTag = selectedTagI >= 2 ? Program.MusicData.Tags[FilterTags.SelectedIndex - 2] : "";
+			if (updateData)
+				Program.MusicData.UpdateTagsList();
+			FilterTags.Items.Clear();
+			FilterTags.Items.Add("");
+			FilterTags.Items.Add("<no tag>");
+			var selectI = 0;
+			for (int i = 0; i < Program.MusicData.Tags.Count; i++)
+			{
+				var tag = Program.MusicData.Tags[i];
+				if (tag == selectedTag)
+					selectI = i;
+				FilterTags.Items.Add(tag);
+			}
+			FilterTags.SelectedIndex = selectedTagI >= 2 ? selectI : selectedTagI;
+
+			InpTags.Items.Clear();
+			foreach (var tag in Program.MusicData.Tags)
+				InpTags.Items.Add(tag);
 		}
 
 		private void ListFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -226,6 +262,7 @@ namespace Melodorium
 			InpLike.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Like : -1;
 			InpLang.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Lang : -1;
 			InpHidden.Checked = file.Data.Hidden;
+			InpTags.Text = file.Data.Tag;
 			InpTitle.Text = file.Title;
 			InpAlbum.Text = file.Album;
 			InpArtists.Text = string.Join(";", file.Artists);
@@ -234,11 +271,13 @@ namespace Melodorium
 				PBMusicImage.Image?.Dispose();
 				var ms = new MemoryStream(file.Picture.Data.Data);
 				PBMusicImage.Image = System.Drawing.Image.FromStream(ms);
+				BtnDeleteImage.Enabled = true;
 			}
 			else
 			{
 				PBMusicImage.Image?.Dispose();
 				PBMusicImage.Image = null;
+				BtnDeleteImage.Enabled = false;
 			}
 			LblState.Text = "";
 			LblTime.Text = $"00:00/{file.Duration:mm\\:ss}";
@@ -268,8 +307,10 @@ namespace Melodorium
 			_selectedFile.Data.Like = (MusicLike)InpLike.SelectedIndex;
 			_selectedFile.Data.Lang = (MusicLang)InpLang.SelectedIndex;
 			_selectedFile.Data.Hidden = InpHidden.Checked;
+			_selectedFile.Data.Tag = InpTags.Text;
 
 			_selectedFile.Save();
+
 			if (_metaChanged)
 			{
 				_metaChanged = false;
@@ -308,6 +349,7 @@ namespace Melodorium
 			tags += _selectedFile.Data.Like.ToString()[..2] + ";";
 			tags += _selectedFile.Data.Lang.ToString()[..2] + "]";
 			ListFiles.Items[_selectedFileI].Text = _selectedFile.RPath + tags;
+			UpdateTags(updateData: true);
 		}
 
 		private void BtnPlay_Click(object sender, EventArgs e)
@@ -409,6 +451,7 @@ namespace Melodorium
 		{
 			if (_selectedFile == null) return;
 			if (_selectedFile.Picture == null && _metaNewImg == null) return;
+			BtnDeleteImage.Enabled = false;
 			_metaChanged = true;
 			_metaDeleteImg = true;
 			_metaNewImg = null;
@@ -424,10 +467,17 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			if (dialog.NewImage != null)
 			{
+				BtnDeleteImage.Enabled = true;
 				PBMusicImage.Image = dialog.Image;
 				_metaNewImg = dialog.NewImage;
 				LblState.Text = "Unsaved";
 			}
+		}
+
+		private void InpTags_TextChanged(object sender, EventArgs e)
+		{
+			if (_selectedFile == null) return;
+			LblState.Text = "Unsaved";
 		}
 	}
 }

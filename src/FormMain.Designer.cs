@@ -35,6 +35,8 @@
 			BtnManage = new Button();
 			FilterMood = new CheckedListBox();
 			groupBox1 = new GroupBox();
+			FilterTags = new ComboBox();
+			label7 = new Label();
 			BtnResetFilter = new Button();
 			label2 = new Label();
 			FilterName = new TextBox();
@@ -48,6 +50,8 @@
 			splitContainer1 = new SplitContainer();
 			ListFiles = new ListView();
 			columnHeader1 = new ColumnHeader();
+			InpTags = new ComboBox();
+			label6 = new Label();
 			InpVolume = new NAudio.Gui.Pot();
 			groupBox2 = new GroupBox();
 			PBMusicImage = new PictureBox();
@@ -124,6 +128,8 @@
 			// 
 			// groupBox1
 			// 
+			groupBox1.Controls.Add(FilterTags);
+			groupBox1.Controls.Add(label7);
 			groupBox1.Controls.Add(BtnResetFilter);
 			groupBox1.Controls.Add(label2);
 			groupBox1.Controls.Add(FilterName);
@@ -141,6 +147,25 @@
 			groupBox1.TabIndex = 4;
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Filters";
+			// 
+			// FilterTags
+			// 
+			FilterTags.DropDownStyle = ComboBoxStyle.DropDownList;
+			FilterTags.FormattingEnabled = true;
+			FilterTags.Items.AddRange(new object[] { "normal", "all", "hidden" });
+			FilterTags.Location = new Point(374, 79);
+			FilterTags.Name = "FilterTags";
+			FilterTags.Size = new Size(183, 23);
+			FilterTags.TabIndex = 15;
+			// 
+			// label7
+			// 
+			label7.AutoSize = true;
+			label7.Location = new Point(324, 82);
+			label7.Name = "label7";
+			label7.Size = new Size(25, 15);
+			label7.TabIndex = 14;
+			label7.Text = "Tag";
 			// 
 			// BtnResetFilter
 			// 
@@ -248,6 +273,8 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(InpTags);
+			splitContainer1.Panel2.Controls.Add(label6);
 			splitContainer1.Panel2.Controls.Add(InpVolume);
 			splitContainer1.Panel2.Controls.Add(groupBox2);
 			splitContainer1.Panel2.Controls.Add(LblTime);
@@ -284,6 +311,27 @@
 			// 
 			columnHeader1.Text = "Music";
 			columnHeader1.Width = 350;
+			// 
+			// InpTags
+			// 
+			InpTags.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			InpTags.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+			InpTags.AutoCompleteSource = AutoCompleteSource.ListItems;
+			InpTags.FormattingEnabled = true;
+			InpTags.Location = new Point(246, 46);
+			InpTags.Name = "InpTags";
+			InpTags.Size = new Size(144, 23);
+			InpTags.TabIndex = 20;
+			InpTags.TextChanged += InpTags_TextChanged;
+			// 
+			// label6
+			// 
+			label6.AutoSize = true;
+			label6.Location = new Point(246, 76);
+			label6.Name = "label6";
+			label6.Size = new Size(80, 15);
+			label6.TabIndex = 19;
+			label6.Text = "Custom tag ^";
 			// 
 			// InpVolume
 			// 
@@ -609,5 +657,9 @@
 		private Label label3;
 		private PictureBox PBMusicImage;
 		private Button BtnDeleteImage;
+		private ComboBox InpTags;
+		private Label label6;
+		private ComboBox FilterTags;
+		private Label label7;
 	}
 }

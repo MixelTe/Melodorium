@@ -84,6 +84,7 @@
 			Controls.Add(PBImage);
 			Icon = (Icon)resources.GetObject("$this.Icon");
 			Name = "FormImage";
+			StartPosition = FormStartPosition.CenterParent;
 			Text = "Melodorium | Music picture";
 			((System.ComponentModel.ISupportInitialize)PBImage).EndInit();
 			ResumeLayout(false);
