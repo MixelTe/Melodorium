@@ -242,5 +242,42 @@ namespace Melodorium
 				Arguments = $"/e, {select}\"{path}\"",
 			});
 		}
+
+		public static string GetFreeFileName(string name, string ext, bool relative = true)
+		{
+			var path = relative ? Program.Settings.GetFullPath(name + ext) : name + ext;
+			var i = 1;
+			while (File.Exists(path))
+				path = relative ? Program.Settings.GetFullPath(name + $"_{i++}" + ext) : name + $"_{i++}" + ext;
+			return path;
+		}
+
+		public static string GetFreeDirectoryName(string name, bool relative = true)
+		{
+			var path = relative ? Program.Settings.GetFullPath(name) : name;
+			var i = 1;
+			while (Directory.Exists(path))
+				path = relative ? Program.Settings.GetFullPath(name + $"_{i++}") : name + $"_{i++}";
+			return path;
+		}
+
+		public static string RemoveInvalidFileNameChars(string filename)
+		{
+			return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
+		}
+
+		public static bool IsPathInsideFolder(string path, string folder)
+		{
+			var di1 = new DirectoryInfo(folder);
+			var di2 = new DirectoryInfo(path);
+			if (di2.FullName == di1.FullName)
+				return true;
+			while (di2.Parent != null)
+				if (di2.Parent.FullName == di1.FullName)
+					return true;
+				else 
+					di2 = di2.Parent;
+			return false;
+		}
 	}
 }

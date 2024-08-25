@@ -45,10 +45,7 @@ namespace Melodorium
 
 		private void BtnExport_Click(object sender, EventArgs e)
 		{
-			var path = Program.Settings.GetFullPath(_musicFile.Name + ".png");
-			var i = 0;
-			while (File.Exists(path))
-				path = Program.Settings.GetFullPath(_musicFile.Name + $"_{i++}" + ".png");
+			var path = Utils.GetFreeFileName(_musicFile.Name, ".png");
 			PBImage.Image.Save(path, System.Drawing.Imaging.ImageFormat.Png);
 			Utils.OpenExplorer(path);
 		}

@@ -11,9 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
-using TagLib.Mpeg;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Melodorium
 {
@@ -22,8 +19,9 @@ namespace Melodorium
 		private readonly WaveOutEvent _outputDevice = new();
 		private AudioFileReader? _audioFile;
 		private string _audioFileCur = "";
+		private List<MusicFile> _filteredFiles = [];
 		private MusicFile? _selectedFile;
-		private int _selectedFileI = 0;
+		private int? _selectedFileI;
 		private bool _closing = false;
 		private bool _updatingTime = false;
 		private bool _autoplaying = false;
@@ -48,7 +46,8 @@ namespace Melodorium
 					if (_autoplaying) return;
 					ListFiles.Invoke(() =>
 					{
-						var toSelectI = (_selectedFileI + 1) % ListFiles.Items.Count;
+						if (_selectedFileI == null) return;
+						var toSelectI = ((int)_selectedFileI + 1) % ListFiles.Items.Count;
 						_autoplaying = true;
 						ListFiles.Items[toSelectI].Selected = true;
 						_autoplaying = false;
@@ -106,7 +105,7 @@ namespace Melodorium
 		{
 			if (Program.Settings.RootFolder == "")
 				OpenFolder();
-			UpdateTags();
+			UpdateUI();
 			ShowMusicList();
 		}
 
@@ -122,7 +121,7 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			Show();
 			MusicData.LoadFull();
-			UpdateTags();
+			UpdateUI();
 			ShowMusicList();
 		}
 
@@ -140,7 +139,7 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			Show();
 			MusicData.LoadFull();
-			UpdateTags();
+			UpdateUI();
 			ShowMusicList();
 		}
 
@@ -174,6 +173,8 @@ namespace Melodorium
 				var author = FilterAuthor.Text.Replace(" ", "_");
 				var name = FilterName.Text.Replace(" ", "_");
 				ListFiles.Items.Clear();
+				_selectedFileI = null;
+				_filteredFiles = [];
 				var c = 0;
 				foreach (var file in Program.MusicData.Files)
 				{
@@ -211,6 +212,7 @@ namespace Melodorium
 						tags += file.Data.Like.ToString()[..2] + ";";
 						tags += file.Data.Lang.ToString()[..2] + "]";
 					}
+					_filteredFiles.Add(file);
 					ListFiles.Items.Add(new ListViewItem(file.RPath + tags) { Tag = file });
 					c++;
 				}
@@ -220,7 +222,7 @@ namespace Melodorium
 			loadingDialog.ShowDialog(this);
 		}
 
-		private void UpdateTags(bool updateData = false)
+		private void UpdateUI(bool updateData = false)
 		{
 			var selectedTagI = FilterTags.SelectedIndex;
 			var selectedTag = selectedTagI >= 2 ? Program.MusicData.Tags[FilterTags.SelectedIndex - 2] : "";
@@ -242,6 +244,26 @@ namespace Melodorium
 			InpTags.Items.Clear();
 			foreach (var tag in Program.MusicData.Tags)
 				InpTags.Items.Add(tag);
+
+			var di = new DirectoryInfo(Program.Settings.RootFolder);
+			InpCopyFolder.Text = di.Root.FullName;
+
+			if (Program.Settings.ExportFolder == "")
+				InpExportFolder.Text = "." + Path.DirectorySeparatorChar;
+			else
+				if (Utils.IsPathInsideFolder(Program.Settings.ExportFolder, Program.Settings.RootFolder))
+			{
+				InpExportRel.Checked = true;
+				var rel = Path.GetRelativePath(Program.Settings.RootFolder, Program.Settings.ExportFolder);
+				InpExportFolder.Text = "." + Path.DirectorySeparatorChar;
+				if (rel != ".")
+					InpExportFolder.Text += rel;
+			}
+			else
+			{
+				InpExportRel.Checked = false;
+				InpExportFolder.Text = Program.Settings.ExportFolder;
+			}
 		}
 
 		private void ListFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -270,7 +292,7 @@ namespace Melodorium
 			{
 				PBMusicImage.Image?.Dispose();
 				var ms = new MemoryStream(file.Picture.Data.Data);
-				PBMusicImage.Image = System.Drawing.Image.FromStream(ms);
+				PBMusicImage.Image = Image.FromStream(ms);
 				BtnDeleteImage.Enabled = true;
 			}
 			else
@@ -348,8 +370,9 @@ namespace Melodorium
 			tags += _selectedFile.Data.Mood.ToString()[..2] + ";";
 			tags += _selectedFile.Data.Like.ToString()[..2] + ";";
 			tags += _selectedFile.Data.Lang.ToString()[..2] + "]";
-			ListFiles.Items[_selectedFileI].Text = _selectedFile.RPath + tags;
-			UpdateTags(updateData: true);
+			if (_selectedFileI != null)
+				ListFiles.Items[(int)_selectedFileI].Text = _selectedFile.RPath + tags;
+			UpdateUI(updateData: true);
 		}
 
 		private void BtnPlay_Click(object sender, EventArgs e)
@@ -479,5 +502,276 @@ namespace Melodorium
 			if (_selectedFile == null) return;
 			LblState.Text = "Unsaved";
 		}
+
+		private void BtnExportPlaylist_Click(object sender, EventArgs e)
+		{
+			ShowMusicList();
+
+			var rel = InpExportRel.Checked;
+			var name = GetPlaylistName();
+			var exportFolder = GetExportFolder(InpExportFolder.Text);
+			if (InpExportRel.Checked && !Utils.IsPathInsideFolder(exportFolder, Program.Settings.RootFolder))
+			{
+				MessageBox.Show("Selected export folder is not relative to root", "Export playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			Program.Settings.ExportFolder = exportFolder;
+			Program.Settings.Save();
+
+			var path = Utils.GetFreeFileName(Path.Join(exportFolder, name), ".m3u8", relative: false);
+			try
+			{
+				if (!Directory.Exists(exportFolder))
+					Directory.CreateDirectory(exportFolder);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				MessageBox.Show("Access denied to selected export folder", "Export playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			catch
+			{
+				MessageBox.Show("Cant create file", "Export playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				using var f = File.CreateText(path);
+				f.WriteLine("#EXTM3U");
+				for (int i = 0; i < _filteredFiles.Count; i++)
+				{
+					loadingDialog.SetProgress((float)i / _filteredFiles.Count);
+					var file = _filteredFiles[i];
+					file.LoadMeta();
+					var line = "#EXTINF:";
+					line += (int)file.Duration.TotalSeconds + ",";
+					var author = file.Artists.Length > 0 ? file.Artists[0] : file.Author.Replace("_", " ");
+					var title = file.Title != "" ? file.Title : file.SName.Replace("_", " ");
+					if (author != "" && title != "")
+						line += author + " - " + title;
+					else
+						line += file.Name.Replace("_", " ");
+					f.WriteLine(line);
+					f.WriteLine(rel ? file.RPath : file.FPath);
+				}
+				Utils.OpenExplorer(path);
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
+
+		private string GetPlaylistName()
+		{
+			var name = "";
+			if (FilterAuthor.Text != "" && FilterName.Text != "")
+				name += $"{FilterAuthor.Text.Replace(" ", "_")}_-_{FilterName.Text.Replace(" ", "_")}";
+			else if (FilterAuthor.Text != "")
+				name += FilterAuthor.Text.Replace(" ", "_");
+			else if (FilterName.Text != "")
+				name += FilterName.Text.Replace(" ", "_");
+
+			if (FilterUncategorized.Checked)
+				if (name != "")
+					return name;
+				else
+					return "Melodoruim";
+
+			var opt = "";
+			var mood = "";
+			var moodAll = true;
+			for (int i = 0; i < FilterMood.Items.Count; i++)
+				if (FilterMood.GetItemChecked(i))
+					mood += ((MusicMood)i).ToString()[..2];
+				else
+					moodAll = false;
+			if (!moodAll)
+				opt += mood;
+
+			var like = "";
+			var likeAll = true;
+			for (int i = 0; i < FilterLike.Items.Count; i++)
+				if (FilterLike.GetItemChecked(i))
+					like += ((MusicLike)i).ToString()[..2];
+				else
+					likeAll = false;
+			if (!likeAll)
+			{
+				if (opt != "")
+					opt += "_";
+				opt += like;
+			}
+
+			var lang = "";
+			var langAll = true;
+			for (int i = 0; i < FilterLang.Items.Count; i++)
+				if (FilterLang.GetItemChecked(i))
+					lang += ((MusicLang)i).ToString()[..2];
+				else
+					langAll = false;
+			if (!langAll)
+			{
+				if (opt != "")
+					opt += "_";
+				opt += lang;
+			}
+
+			if (FilterTags.SelectedIndex >= 2)
+			{
+				if (opt != "")
+					opt += "_";
+				var tag = Program.MusicData.Tags[FilterTags.SelectedIndex - 2].Replace(" ", "_");
+				opt += Utils.RemoveInvalidFileNameChars(tag);
+			}
+			if (FilterHidden.SelectedIndex == 1)
+			{
+				if (opt != "")
+					opt += "_";
+				opt += "all";
+			}
+			if (FilterHidden.SelectedIndex == 2)
+			{
+				if (opt != "")
+					opt += "_";
+				opt += "hidden";
+			}
+			if (name != "" && opt != "")
+				return name + "_-_" + opt;
+			if (name != "")
+				return name;
+			if (opt != "")
+				return opt;
+			return "Melodoruim";
+		}
+
+		private static string GetExportFolder(string selectedFolder)
+		{
+			if (selectedFolder.StartsWith("." + Path.DirectorySeparatorChar))
+				return Program.Settings.GetFullPath(selectedFolder[2..]);
+			if (selectedFolder.StartsWith('.'))
+				return Program.Settings.GetFullPath(selectedFolder[1..]);
+			if (selectedFolder == "")
+				return Program.Settings.RootFolder;
+			if (selectedFolder[1..].StartsWith(":" + Path.DirectorySeparatorChar))
+				return selectedFolder;
+			return Program.Settings.GetFullPath(selectedFolder);
+		}
+
+		private void BtnExportHelp_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("""
+				relative:
+					- you can move root music folder
+					- you can not move playlist file
+				not relative:
+					- you can not move root music folder
+					- you can move playlist file
+				""", "Relatice playlist");
+		}
+
+		private void InpExportRel_CheckedChanged(object sender, EventArgs e)
+		{
+			var folder = GetExportFolder(InpExportFolder.Text);
+			if (InpExportRel.Checked)
+				if (Utils.IsPathInsideFolder(folder, Program.Settings.RootFolder))
+				{
+					var rel = Path.GetRelativePath(Program.Settings.RootFolder, folder);
+					InpExportFolder.Text = "." + Path.DirectorySeparatorChar;
+					if (rel != ".")
+						InpExportFolder.Text += rel;
+				}
+				else
+				{
+					InpExportFolder.Text = "." + Path.DirectorySeparatorChar;
+				}
+			else
+				InpExportFolder.Text = folder;
+		}
+
+		private void BtnSelectExportFolder_Click(object sender, EventArgs e)
+		{
+			FolderBrowser.InitialDirectory = GetExportFolder(InpExportFolder.Text);
+			FolderBrowser.SelectedPath = FolderBrowser.InitialDirectory;
+			if (FolderBrowser.ShowDialog() != DialogResult.OK)
+				return;
+			if (InpExportRel.Checked)
+			{
+				if (!Utils.IsPathInsideFolder(FolderBrowser.SelectedPath, Program.Settings.RootFolder))
+				{
+					MessageBox.Show("You cant export outside of the root music folder because the relative path is enabled");
+					return;
+				}
+				var rel = Path.GetRelativePath(Program.Settings.RootFolder, FolderBrowser.SelectedPath);
+				InpExportFolder.Text = "." + Path.DirectorySeparatorChar;
+				if (rel != ".")
+					InpExportFolder.Text += rel;
+			}
+			else
+			{
+				InpExportFolder.Text = FolderBrowser.SelectedPath;
+			}
+		}
+
+		private void BtnSelectCopyFolder_Click(object sender, EventArgs e)
+		{
+			FolderBrowser.InitialDirectory = InpCopyFolder.Text;
+			FolderBrowser.SelectedPath = InpCopyFolder.Text;
+			if (FolderBrowser.ShowDialog() != DialogResult.OK)
+				return;
+			InpCopyFolder.Text = FolderBrowser.SelectedPath;
+		}
+
+		private void BtnCopyPlaylist_Click(object sender, EventArgs e)
+		{
+			ShowMusicList();
+
+			var name = GetPlaylistName();
+			var folder = Utils.GetFreeDirectoryName(Path.Join(InpCopyFolder.Text, name), relative: false);
+			try
+			{
+				if (!Directory.Exists(folder))
+					Directory.CreateDirectory(folder);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				MessageBox.Show("Access denied to selected export folder", "Copy playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			catch
+			{
+				MessageBox.Show("Cant create folder", "Copy playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			var diRoot = new DirectoryInfo(Program.Settings.RootFolder);
+			var diDest = new DirectoryInfo(folder);
+			var useHardLink = diDest.Root.FullName == diRoot.Root.FullName;
+
+			using var loadingDialog = new FormLoading();
+			loadingDialog.EnableCancel();
+			loadingDialog.Job = () =>
+			{
+				for (int i = 0; i < _filteredFiles.Count; i++)
+				{
+					loadingDialog.SetProgress((float)i / _filteredFiles.Count);
+					Application.DoEvents();
+					if (loadingDialog.Canceled)
+						break;
+
+					var file = _filteredFiles[i];
+					var path = Path.Combine(folder, file.FName);
+					if (Path.Exists(path))
+						path = Path.Combine(folder, file.Name + $" ({file.RFolder.Replace(Path.DirectorySeparatorChar, '-')})" + file.Ext);
+					var success = useHardLink && HardLink.Create(path, file.FPath);
+					if (!success)
+						File.Copy(file.FPath, path);
+				}
+				Utils.OpenExplorer(folder);
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
+		}
 	}
 }
+ 

@@ -31,6 +31,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLoading));
 			label1 = new Label();
 			ProgBar = new ProgressBar();
+			BtnCancel = new Button();
 			SuspendLayout();
 			// 
 			// label1
@@ -53,12 +54,23 @@
 			ProgBar.TabIndex = 1;
 			ProgBar.Value = 41;
 			// 
+			// BtnCancel
+			// 
+			BtnCancel.Location = new Point(233, 12);
+			BtnCancel.Name = "BtnCancel";
+			BtnCancel.Size = new Size(55, 23);
+			BtnCancel.TabIndex = 2;
+			BtnCancel.Text = "Cancel";
+			BtnCancel.UseVisualStyleBackColor = true;
+			BtnCancel.Click += BtnCancel_Click;
+			// 
 			// FormLoading
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Black;
 			ClientSize = new Size(300, 150);
+			Controls.Add(BtnCancel);
 			Controls.Add(ProgBar);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.None;
@@ -76,5 +88,6 @@
 
 		private Label label1;
 		private ProgressBar ProgBar;
+		private Button BtnCancel;
 	}
 }

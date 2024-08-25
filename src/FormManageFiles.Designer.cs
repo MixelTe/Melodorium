@@ -315,7 +315,7 @@
 			splitContainer2.Panel2.Controls.Add(label8);
 			splitContainer2.Panel2.Controls.Add(InpFolder);
 			splitContainer2.Panel2.Controls.Add(label7);
-			splitContainer2.Size = new Size(774, 512);
+			splitContainer2.Size = new Size(774, 382);
 			splitContainer2.SplitterDistance = 372;
 			splitContainer2.TabIndex = 3;
 			// 
@@ -326,7 +326,7 @@
 			ListFolders.Location = new Point(0, 0);
 			ListFolders.MultiSelect = false;
 			ListFolders.Name = "ListFolders";
-			ListFolders.Size = new Size(372, 512);
+			ListFolders.Size = new Size(372, 382);
 			ListFolders.TabIndex = 0;
 			ListFolders.UseCompatibleStateImageBehavior = false;
 			ListFolders.View = View.Details;
@@ -568,7 +568,7 @@
 			InpMismatchFolderExpected.Location = new Point(63, 0);
 			InpMismatchFolderExpected.Name = "InpMismatchFolderExpected";
 			InpMismatchFolderExpected.ReadOnly = true;
-			InpMismatchFolderExpected.Size = new Size(236, 23);
+			InpMismatchFolderExpected.Size = new Size(239, 23);
 			InpMismatchFolderExpected.TabIndex = 16;
 			// 
 			// InpMismatchName

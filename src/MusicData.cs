@@ -16,7 +16,7 @@ namespace Melodorium
 	{
 		public int Version { get; set; } = -1;
 	}
-	public class MusicData
+	public partial class MusicData
 	{
 		public static int DataVersion = 1;
 		public int Version { get; set; } = DataVersion;
@@ -70,11 +70,16 @@ namespace Melodorium
 		}
 		public bool IsFileInIgnore(string relpath)
 		{
+			if (RegexM3U8().Match(relpath).Success)
+				return true;
 			foreach (var pattern in Ignore)
 				if (Regex.Match(relpath, pattern).Success)
 					return true;
 			return false;
 		}
+
+		[GeneratedRegex(".*\\.m3u8")]
+		private static partial Regex RegexM3U8();
 
 		public void LoadFiles()
 		{
@@ -156,6 +161,7 @@ namespace Melodorium
 		public string NormilizedFullName { get; private set; } = "";
 		public MusicFileData Data { get; set; } = new();
 		private bool _metaLoaded = false;
+		private bool _metaError = false;
 		public string Title = "";
 		public string Album = "";
 		public string[] Artists = [];
@@ -187,19 +193,34 @@ namespace Melodorium
 		{
 			if (_metaLoaded) return;
 			_metaLoaded = true;
+			_metaError = false;
 
-			using var tfile = TagLib.File.Create(FPath);
-			Title = tfile.Tag.Title;
-			Album = tfile.Tag.Album;
-			Artists = tfile.Tag.Performers;
-			if (tfile.Tag.Pictures.Length > 0)
-				Picture = tfile.Tag.Pictures[0];
-			Duration = tfile.Properties.Duration;
+			try
+			{
+				using var tfile = TagLib.File.Create(FPath);
+				Title = tfile.Tag.Title ?? "";
+				Album = tfile.Tag.Album ?? "";
+				Artists = tfile.Tag.Performers ?? [];
+				if (tfile.Tag.Pictures.Length > 0)
+					Picture = tfile.Tag.Pictures[0];
+				Duration = tfile.Properties.Duration;
+			}
+			catch (TagLib.CorruptFileException)
+			{
+				_metaError = true;
+				MessageBox.Show($"Cant load metadata of file:\n./{RPath}", "Corrupted file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			catch (TagLib.UnsupportedFormatException)
+			{
+				_metaError = true;
+				MessageBox.Show($"Cant load metadata of file:\n./{RPath}", "Unsupported file format", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		public void SaveMeta()
 		{
 			if (!_metaLoaded) return;
+			if (_metaError) return;
 			using var tfile = TagLib.File.Create(FPath);
 
 			tfile.Tag.Title = Title;

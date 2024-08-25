@@ -372,6 +372,7 @@ namespace Melodorium
 		private void FindSimilar()
 		{
 			using var loadingDialog = new FormLoading();
+			loadingDialog.EnableCancel();
 			loadingDialog.Job = () =>
 			{
 				//var watch = Stopwatch.StartNew();
@@ -381,8 +382,11 @@ namespace Melodorium
 				var c = 0;
 				for (var i = 0; i < Program.MusicData.Files.Count; i++)
 				{
-					if (i % 10 == 0) Application.DoEvents();
 					loadingDialog.SetProgress((float)c / C);
+					if (i % 10 == 0) Application.DoEvents();
+					if (loadingDialog.Canceled)
+						break;
+					
 					var file1 = Program.MusicData.Files[i];
 					if (r.Where(v => v.Item2.Contains(file1)).Any())
 					{
