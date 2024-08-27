@@ -143,6 +143,14 @@ namespace Melodorium
 			ShowMusicList();
 		}
 
+		private void BtnSync_Click(object sender, EventArgs e)
+		{
+			using var dialog = new FormSync();
+			Hide();
+			dialog.ShowDialog(this);
+			Show();
+		}
+
 		private void BtnFilter_Click(object sender, EventArgs e)
 		{
 			ShowMusicList();

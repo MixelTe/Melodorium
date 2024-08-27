@@ -173,6 +173,13 @@ namespace Melodorium
 			FPath = path;
 		}
 
+		public static bool DataAreEqual(string file1, string file2)
+		{
+			var json1 = AlternativeDataStream.ReadString(file1, Settings.AlternativeDataStreamName);
+			var json2 = AlternativeDataStream.ReadString(file2, Settings.AlternativeDataStreamName);
+			return json1 == json2;
+		}
+
 		public void Load()
 		{
 			var json = AlternativeDataStream.ReadString(FPath, Settings.AlternativeDataStreamName);

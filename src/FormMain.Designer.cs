@@ -90,6 +90,7 @@
 			InpExportFolder = new TextBox();
 			label9 = new Label();
 			FolderBrowser = new FolderBrowserDialog();
+			BtnSync = new Button();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -727,11 +728,22 @@
 			label9.TabIndex = 9;
 			label9.Text = "To";
 			// 
+			// BtnSync
+			// 
+			BtnSync.Location = new Point(700, 12);
+			BtnSync.Name = "BtnSync";
+			BtnSync.Size = new Size(88, 23);
+			BtnSync.TabIndex = 10;
+			BtnSync.Text = "Sync folders";
+			BtnSync.UseVisualStyleBackColor = true;
+			BtnSync.Click += BtnSync_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 533);
+			Controls.Add(BtnSync);
 			Controls.Add(groupBox4);
 			Controls.Add(groupBox3);
 			Controls.Add(splitContainer1);
@@ -825,5 +837,6 @@
 		private Label label9;
 		private FolderBrowserDialog FolderBrowser;
 		private Label label10;
+		private Button BtnSync;
 	}
 }

@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -279,5 +280,65 @@ namespace Melodorium
 					di2 = di2.Parent;
 			return false;
 		}
+
+		public static bool IsDirectoryWritable(string dirPath)
+		{
+			try
+			{
+				using FileStream fs = File.Create(
+					Path.Combine(dirPath, Path.GetRandomFileName()),
+					1,
+					FileOptions.DeleteOnClose);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public static List<string> GetFileNames(string directory, bool relative = false, bool order = false)
+		{
+			var files = Directory.EnumerateFiles(directory, "*", new EnumerationOptions { RecurseSubdirectories = true });
+			if (relative) files = files.Select(path => Path.GetRelativePath(directory, path));
+			if (order) files = files.Order();
+			return files.ToList();
+		}
+
+		public static bool FilesContentsAreEqual(string filename1, string filename2)
+		{
+			var fileInfo1 = new FileInfo(filename1);
+			var fileInfo2 = new FileInfo(filename2);
+			if (fileInfo1.Length != fileInfo2.Length)
+				return false;
+			using var file1 = fileInfo1.OpenRead();
+			using var file2 = fileInfo2.OpenRead();
+			return StreamsContentsAreEqual(file1, file2);
+		}
+
+		private static bool StreamsContentsAreEqual(Stream stream1, Stream stream2)
+		{
+			const int bufferSize = 1024 * sizeof(long);
+			var buffer1 = new byte[bufferSize];
+			var buffer2 = new byte[bufferSize];
+
+			while (true)
+			{
+				int count1 = stream1.Read(buffer1, 0, bufferSize);
+				int count2 = stream2.Read(buffer2, 0, bufferSize);
+
+				if (count1 != count2)
+					return false;
+
+				if (count1 == 0)
+					return true;
+
+				int iterations = (int)Math.Ceiling((double)count1 / sizeof(long));
+				for (int i = 0; i < iterations; i++)
+					if (BitConverter.ToInt64(buffer1, i * sizeof(long)) != BitConverter.ToInt64(buffer2, i * sizeof(long)))
+						return false;
+			}
+		}
 	}
 }
+
