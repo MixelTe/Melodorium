@@ -104,8 +104,8 @@ namespace Melodorium
 			name = Utils.CleanName(name);
 			name = new string(Encoding.ASCII.GetChars(Encoding.ASCII.GetBytes(name)));
 			if (name.Contains("_-_"))
-				name = string.Join("_-_", name.Split("_-_").Select(v => v.Capitalize()));
-			return name;
+				name = string.Join("_-_", name.Split("_-_").Select(v => v.Replace('-', '_').Capitalize()));
+			return name.Capitalize();
 		}
 
 		private void InpRenameNew_TextChanged(object sender, EventArgs e)
@@ -132,6 +132,8 @@ namespace Melodorium
 			var path = Path.Combine(_selectedRenameFile.Folder, name + _selectedRenameFile.Ext);
 			_selectedRenameFile.Move(path);
 
+			var itemI = ListProblems.Items.IndexOf(_selectedRenameFileItem!);
+
 			if (_selectedRenameFileItem != null)
 				if (IsGoodName(name))
 					ListProblems.Items.Remove(_selectedRenameFileItem);
@@ -147,7 +149,9 @@ namespace Melodorium
 			BtnRename.Enabled = false;
 			BtnOpenInExplorer.Enabled = false;
 			ListProblems.SelectedItems.Clear();
-			if (ListProblems.Items.Count > 0)
+			if (itemI < ListProblems.Items.Count)
+				ListProblems.Items[itemI].Selected = true;
+			else if (ListProblems.Items.Count > 0)
 				ListProblems.Items[0].Selected = true;
 		}
 
@@ -347,6 +351,7 @@ namespace Melodorium
 			if (_selectedMismatch == null) return;
 			if (_selectedMismatchItem == null) return;
 			File.Move(_selectedMismatch.Value.MusicFile.FPath, GetMismatchCorrectPath());
+			var itemI = ListMismatch.Items.IndexOf(_selectedMismatchItem);
 			ListMismatch.Items.Remove(_selectedMismatchItem);
 			_selectedMismatchItem = null;
 			_selectedMismatch = null;
@@ -358,6 +363,11 @@ namespace Melodorium
 			BtnOpenInExplorerMismatch.Enabled = false;
 			BtnMoveMismatch.Enabled = false;
 			PBAlreadyExistMismatch.Image = null;
+
+			if (itemI < ListMismatch.Items.Count)
+				ListMismatch.Items[itemI].Selected = true;
+			else if (ListMismatch.Items.Count > 0)
+				ListMismatch.Items[0].Selected = true;
 		}
 
 		private string GetMismatchCorrectPath()
