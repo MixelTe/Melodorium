@@ -78,6 +78,7 @@
 			BtnExportPlaylist = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			groupBox3 = new GroupBox();
+			BtnSpExport = new Button();
 			BtnCopyPlaylist = new Button();
 			BtnSelectCopyFolder = new Button();
 			InpCopyFolder = new TextBox();
@@ -90,7 +91,7 @@
 			label9 = new Label();
 			FolderBrowser = new FolderBrowserDialog();
 			BtnSync = new Button();
-			BtnSpExport = new Button();
+			label10 = new Label();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -601,7 +602,7 @@
 			// groupBox3
 			// 
 			groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			groupBox3.Controls.Add(BtnSpExport);
+			groupBox3.Controls.Add(label10);
 			groupBox3.Controls.Add(BtnCopyPlaylist);
 			groupBox3.Controls.Add(BtnSelectCopyFolder);
 			groupBox3.Controls.Add(InpCopyFolder);
@@ -612,6 +613,16 @@
 			groupBox3.TabIndex = 7;
 			groupBox3.TabStop = false;
 			groupBox3.Text = "Export playlist";
+			// 
+			// BtnSpExport
+			// 
+			BtnSpExport.Location = new Point(598, 12);
+			BtnSpExport.Name = "BtnSpExport";
+			BtnSpExport.Size = new Size(96, 23);
+			BtnSpExport.TabIndex = 13;
+			BtnSpExport.Text = "Special export";
+			BtnSpExport.UseVisualStyleBackColor = true;
+			BtnSpExport.Click += BtnSpExport_Click;
 			// 
 			// BtnCopyPlaylist
 			// 
@@ -729,21 +740,21 @@
 			BtnSync.UseVisualStyleBackColor = true;
 			BtnSync.Click += BtnSync_Click;
 			// 
-			// BtnSpExport
+			// label10
 			// 
-			BtnSpExport.Location = new Point(6, 66);
-			BtnSpExport.Name = "BtnSpExport";
-			BtnSpExport.Size = new Size(96, 23);
-			BtnSpExport.TabIndex = 13;
-			BtnSpExport.Text = "Special export";
-			BtnSpExport.UseVisualStyleBackColor = true;
-			BtnSpExport.Click += BtnSpExport_Click;
+			label10.AutoSize = true;
+			label10.Location = new Point(6, 70);
+			label10.Name = "label10";
+			label10.Size = new Size(137, 15);
+			label10.TabIndex = 13;
+			label10.Text = "Subfolder will be created";
 			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 533);
+			Controls.Add(BtnSpExport);
 			Controls.Add(BtnSync);
 			Controls.Add(groupBox4);
 			Controls.Add(groupBox3);
@@ -839,5 +850,6 @@
 		private FolderBrowserDialog FolderBrowser;
 		private Button BtnSync;
 		private Button BtnSpExport;
+		private Label label10;
 	}
 }
