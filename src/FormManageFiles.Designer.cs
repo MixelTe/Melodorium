@@ -150,7 +150,7 @@
 			// splitContainer1
 			// 
 			splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			splitContainer1.Location = new Point(0, 21);
+			splitContainer1.Location = new Point(3, 21);
 			splitContainer1.Name = "splitContainer1";
 			// 
 			// splitContainer1.Panel1
@@ -169,8 +169,8 @@
 			splitContainer1.Panel2.Controls.Add(InpRenameNew);
 			splitContainer1.Panel2.Controls.Add(InpRenameOld);
 			splitContainer1.Panel2.Controls.Add(label2);
-			splitContainer1.Size = new Size(777, 382);
-			splitContainer1.SplitterDistance = 372;
+			splitContainer1.Size = new Size(786, 398);
+			splitContainer1.SplitterDistance = 376;
 			splitContainer1.TabIndex = 1;
 			// 
 			// ListProblems
@@ -180,7 +180,7 @@
 			ListProblems.Location = new Point(0, 0);
 			ListProblems.MultiSelect = false;
 			ListProblems.Name = "ListProblems";
-			ListProblems.Size = new Size(372, 382);
+			ListProblems.Size = new Size(376, 398);
 			ListProblems.TabIndex = 0;
 			ListProblems.UseCompatibleStateImageBehavior = false;
 			ListProblems.View = View.Details;
@@ -195,7 +195,7 @@
 			// 
 			BtnOpenInExplorer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			BtnOpenInExplorer.Enabled = false;
-			BtnOpenInExplorer.Location = new Point(291, 101);
+			BtnOpenInExplorer.Location = new Point(302, 101);
 			BtnOpenInExplorer.Name = "BtnOpenInExplorer";
 			BtnOpenInExplorer.Size = new Size(107, 23);
 			BtnOpenInExplorer.TabIndex = 9;
@@ -250,7 +250,7 @@
 			// 
 			BtnRename.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			BtnRename.Enabled = false;
-			BtnRename.Location = new Point(323, 76);
+			BtnRename.Location = new Point(334, 76);
 			BtnRename.Name = "BtnRename";
 			BtnRename.Size = new Size(75, 23);
 			BtnRename.TabIndex = 3;
@@ -263,7 +263,7 @@
 			InpRenameNew.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpRenameNew.Location = new Point(3, 47);
 			InpRenameNew.Name = "InpRenameNew";
-			InpRenameNew.Size = new Size(395, 23);
+			InpRenameNew.Size = new Size(400, 23);
 			InpRenameNew.TabIndex = 2;
 			InpRenameNew.TextChanged += InpRenameNew_TextChanged;
 			// 
@@ -273,7 +273,7 @@
 			InpRenameOld.Location = new Point(3, 18);
 			InpRenameOld.Name = "InpRenameOld";
 			InpRenameOld.ReadOnly = true;
-			InpRenameOld.Size = new Size(395, 23);
+			InpRenameOld.Size = new Size(400, 23);
 			InpRenameOld.TabIndex = 1;
 			// 
 			// label2
@@ -485,8 +485,7 @@
 			// 
 			// PBAlreadyExistMismatch
 			// 
-			PBAlreadyExistMismatch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			PBAlreadyExistMismatch.Location = new Point(274, 69);
+			PBAlreadyExistMismatch.Location = new Point(86, 69);
 			PBAlreadyExistMismatch.Name = "PBAlreadyExistMismatch";
 			PBAlreadyExistMismatch.Size = new Size(16, 16);
 			PBAlreadyExistMismatch.TabIndex = 20;
@@ -494,9 +493,8 @@
 			// 
 			// label13
 			// 
-			label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			label13.AutoSize = true;
-			label13.Location = new Point(191, 69);
+			label13.Location = new Point(3, 69);
 			label13.Name = "label13";
 			label13.Size = new Size(77, 15);
 			label13.TabIndex = 19;
@@ -568,7 +566,7 @@
 			InpMismatchFolderExpected.Location = new Point(63, 0);
 			InpMismatchFolderExpected.Name = "InpMismatchFolderExpected";
 			InpMismatchFolderExpected.ReadOnly = true;
-			InpMismatchFolderExpected.Size = new Size(239, 23);
+			InpMismatchFolderExpected.Size = new Size(290, 23);
 			InpMismatchFolderExpected.TabIndex = 16;
 			// 
 			// InpMismatchName
@@ -603,16 +601,16 @@
 			// 
 			// Tabs
 			// 
-			Tabs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			Tabs.Controls.Add(tabPage1);
 			Tabs.Controls.Add(tabPage2);
 			Tabs.Controls.Add(tabPage3);
 			Tabs.Controls.Add(tabPage4);
 			Tabs.Controls.Add(tabPage5);
-			Tabs.Location = new Point(9, 12);
+			Tabs.Dock = DockStyle.Fill;
+			Tabs.Location = new Point(0, 0);
 			Tabs.Name = "Tabs";
 			Tabs.SelectedIndex = 0;
-			Tabs.Size = new Size(785, 431);
+			Tabs.Size = new Size(800, 450);
 			Tabs.TabIndex = 6;
 			Tabs.SelectedIndexChanged += Tabs_SelectedIndexChanged;
 			// 
@@ -623,7 +621,7 @@
 			tabPage1.Location = new Point(4, 24);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new Padding(3);
-			tabPage1.Size = new Size(777, 403);
+			tabPage1.Size = new Size(792, 422);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "Filename";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -635,7 +633,7 @@
 			tabPage2.Location = new Point(4, 24);
 			tabPage2.Name = "tabPage2";
 			tabPage2.Padding = new Padding(3);
-			tabPage2.Size = new Size(777, 403);
+			tabPage2.Size = new Size(792, 422);
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Authors";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -646,7 +644,7 @@
 			tabPage3.Controls.Add(splitContainer3);
 			tabPage3.Location = new Point(4, 24);
 			tabPage3.Name = "tabPage3";
-			tabPage3.Size = new Size(777, 403);
+			tabPage3.Size = new Size(792, 422);
 			tabPage3.TabIndex = 2;
 			tabPage3.Text = "Mismatch";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -658,7 +656,7 @@
 			tabPage4.Location = new Point(4, 24);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new Padding(3);
-			tabPage4.Size = new Size(777, 403);
+			tabPage4.Size = new Size(792, 422);
 			tabPage4.TabIndex = 3;
 			tabPage4.Text = "Doubles";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -708,6 +706,7 @@
 			// 
 			// BtnApplySimilarity
 			// 
+			BtnApplySimilarity.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			BtnApplySimilarity.Enabled = false;
 			BtnApplySimilarity.Location = new Point(320, 284);
 			BtnApplySimilarity.Name = "BtnApplySimilarity";
@@ -827,7 +826,7 @@
 			tabPage5.Location = new Point(4, 24);
 			tabPage5.Name = "tabPage5";
 			tabPage5.Padding = new Padding(3);
-			tabPage5.Size = new Size(777, 403);
+			tabPage5.Size = new Size(792, 422);
 			tabPage5.TabIndex = 4;
 			tabPage5.Text = "Group";
 			tabPage5.UseVisualStyleBackColor = true;

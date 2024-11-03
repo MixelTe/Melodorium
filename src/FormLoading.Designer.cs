@@ -32,6 +32,7 @@
 			label1 = new Label();
 			ProgBar = new ProgressBar();
 			BtnCancel = new Button();
+			LblInfo = new Label();
 			SuspendLayout();
 			// 
 			// label1
@@ -64,12 +65,26 @@
 			BtnCancel.UseVisualStyleBackColor = true;
 			BtnCancel.Click += BtnCancel_Click;
 			// 
+			// LblInfo
+			// 
+			LblInfo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			LblInfo.BackColor = Color.Transparent;
+			LblInfo.Font = new Font("Segoe UI", 12F);
+			LblInfo.ForeColor = Color.White;
+			LblInfo.Location = new Point(0, 90);
+			LblInfo.Name = "LblInfo";
+			LblInfo.Size = new Size(300, 20);
+			LblInfo.TabIndex = 3;
+			LblInfo.Text = "label2";
+			LblInfo.TextAlign = ContentAlignment.MiddleCenter;
+			// 
 			// FormLoading
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Black;
 			ClientSize = new Size(300, 150);
+			Controls.Add(LblInfo);
 			Controls.Add(BtnCancel);
 			Controls.Add(ProgBar);
 			Controls.Add(label1);
@@ -89,5 +104,6 @@
 		private Label label1;
 		private ProgressBar ProgBar;
 		private Button BtnCancel;
+		private Label LblInfo;
 	}
 }

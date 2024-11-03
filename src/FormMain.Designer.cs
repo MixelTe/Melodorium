@@ -78,11 +78,12 @@
 			BtnExportPlaylist = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			groupBox3 = new GroupBox();
-			BtnSpExport = new Button();
+			label10 = new Label();
 			BtnCopyPlaylist = new Button();
 			BtnSelectCopyFolder = new Button();
 			InpCopyFolder = new TextBox();
 			label8 = new Label();
+			BtnSpExport = new Button();
 			BtnExportHelp = new Button();
 			InpExportRel = new CheckBox();
 			groupBox4 = new GroupBox();
@@ -91,7 +92,6 @@
 			label9 = new Label();
 			FolderBrowser = new FolderBrowserDialog();
 			BtnSync = new Button();
-			label10 = new Label();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -307,8 +307,8 @@
 			splitContainer1.Panel2.Controls.Add(InpMood);
 			splitContainer1.Panel2.Controls.Add(LblMusicAuthor);
 			splitContainer1.Panel2.Controls.Add(LblMusicName);
-			splitContainer1.Size = new Size(776, 296);
-			splitContainer1.SplitterDistance = 378;
+			splitContainer1.Size = new Size(787, 296);
+			splitContainer1.SplitterDistance = 368;
 			splitContainer1.TabIndex = 5;
 			// 
 			// ListFiles
@@ -318,7 +318,7 @@
 			ListFiles.Location = new Point(0, 0);
 			ListFiles.MultiSelect = false;
 			ListFiles.Name = "ListFiles";
-			ListFiles.Size = new Size(378, 296);
+			ListFiles.Size = new Size(368, 296);
 			ListFiles.TabIndex = 0;
 			ListFiles.UseCompatibleStateImageBehavior = false;
 			ListFiles.View = View.Details;
@@ -585,7 +585,7 @@
 			// BtnExportPlaylist
 			// 
 			BtnExportPlaylist.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnExportPlaylist.Location = new Point(142, 46);
+			BtnExportPlaylist.Location = new Point(153, 46);
 			BtnExportPlaylist.Name = "BtnExportPlaylist";
 			BtnExportPlaylist.Size = new Size(56, 23);
 			BtnExportPlaylist.TabIndex = 6;
@@ -609,25 +609,24 @@
 			groupBox3.Controls.Add(label8);
 			groupBox3.Location = new Point(584, 41);
 			groupBox3.Name = "groupBox3";
-			groupBox3.Size = new Size(204, 97);
+			groupBox3.Size = new Size(215, 97);
 			groupBox3.TabIndex = 7;
 			groupBox3.TabStop = false;
 			groupBox3.Text = "Export playlist";
 			// 
-			// BtnSpExport
+			// label10
 			// 
-			BtnSpExport.Location = new Point(598, 12);
-			BtnSpExport.Name = "BtnSpExport";
-			BtnSpExport.Size = new Size(96, 23);
-			BtnSpExport.TabIndex = 13;
-			BtnSpExport.Text = "Special export";
-			BtnSpExport.UseVisualStyleBackColor = true;
-			BtnSpExport.Click += BtnSpExport_Click;
+			label10.AutoSize = true;
+			label10.Location = new Point(6, 70);
+			label10.Name = "label10";
+			label10.Size = new Size(137, 15);
+			label10.TabIndex = 13;
+			label10.Text = "Subfolder will be created";
 			// 
 			// BtnCopyPlaylist
 			// 
 			BtnCopyPlaylist.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnCopyPlaylist.Location = new Point(142, 66);
+			BtnCopyPlaylist.Location = new Point(153, 66);
 			BtnCopyPlaylist.Name = "BtnCopyPlaylist";
 			BtnCopyPlaylist.Size = new Size(56, 23);
 			BtnCopyPlaylist.TabIndex = 12;
@@ -638,7 +637,7 @@
 			// BtnSelectCopyFolder
 			// 
 			BtnSelectCopyFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnSelectCopyFolder.Location = new Point(175, 37);
+			BtnSelectCopyFolder.Location = new Point(186, 37);
 			BtnSelectCopyFolder.Name = "BtnSelectCopyFolder";
 			BtnSelectCopyFolder.Size = new Size(23, 23);
 			BtnSelectCopyFolder.TabIndex = 11;
@@ -651,7 +650,7 @@
 			InpCopyFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpCopyFolder.Location = new Point(6, 37);
 			InpCopyFolder.Name = "InpCopyFolder";
-			InpCopyFolder.Size = new Size(167, 23);
+			InpCopyFolder.Size = new Size(178, 23);
 			InpCopyFolder.TabIndex = 10;
 			// 
 			// label8
@@ -663,9 +662,19 @@
 			label8.TabIndex = 9;
 			label8.Text = "Copy files to";
 			// 
+			// BtnSpExport
+			// 
+			BtnSpExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnSpExport.Location = new Point(609, 12);
+			BtnSpExport.Name = "BtnSpExport";
+			BtnSpExport.Size = new Size(96, 23);
+			BtnSpExport.TabIndex = 13;
+			BtnSpExport.Text = "Special export";
+			BtnSpExport.UseVisualStyleBackColor = true;
+			BtnSpExport.Click += BtnSpExport_Click;
+			// 
 			// BtnExportHelp
 			// 
-			BtnExportHelp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			BtnExportHelp.Location = new Point(79, 46);
 			BtnExportHelp.Name = "BtnExportHelp";
 			BtnExportHelp.Size = new Size(23, 23);
@@ -676,7 +685,6 @@
 			// 
 			// InpExportRel
 			// 
-			InpExportRel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			InpExportRel.AutoSize = true;
 			InpExportRel.Checked = true;
 			InpExportRel.CheckState = CheckState.Checked;
@@ -690,6 +698,7 @@
 			// 
 			// groupBox4
 			// 
+			groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			groupBox4.Controls.Add(BtnSelectExportFolder);
 			groupBox4.Controls.Add(InpExportFolder);
 			groupBox4.Controls.Add(label9);
@@ -698,7 +707,7 @@
 			groupBox4.Controls.Add(BtnExportHelp);
 			groupBox4.Location = new Point(584, 144);
 			groupBox4.Name = "groupBox4";
-			groupBox4.Size = new Size(204, 75);
+			groupBox4.Size = new Size(215, 75);
 			groupBox4.TabIndex = 9;
 			groupBox4.TabStop = false;
 			groupBox4.Text = "Export playlist .m3u8";
@@ -706,7 +715,7 @@
 			// BtnSelectExportFolder
 			// 
 			BtnSelectExportFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnSelectExportFolder.Location = new Point(175, 19);
+			BtnSelectExportFolder.Location = new Point(186, 19);
 			BtnSelectExportFolder.Name = "BtnSelectExportFolder";
 			BtnSelectExportFolder.Size = new Size(23, 23);
 			BtnSelectExportFolder.TabIndex = 12;
@@ -716,9 +725,10 @@
 			// 
 			// InpExportFolder
 			// 
+			InpExportFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpExportFolder.Location = new Point(31, 19);
 			InpExportFolder.Name = "InpExportFolder";
-			InpExportFolder.Size = new Size(142, 23);
+			InpExportFolder.Size = new Size(153, 23);
 			InpExportFolder.TabIndex = 10;
 			// 
 			// label9
@@ -732,7 +742,8 @@
 			// 
 			// BtnSync
 			// 
-			BtnSync.Location = new Point(700, 12);
+			BtnSync.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnSync.Location = new Point(711, 12);
 			BtnSync.Name = "BtnSync";
 			BtnSync.Size = new Size(88, 23);
 			BtnSync.TabIndex = 10;
@@ -740,20 +751,11 @@
 			BtnSync.UseVisualStyleBackColor = true;
 			BtnSync.Click += BtnSync_Click;
 			// 
-			// label10
-			// 
-			label10.AutoSize = true;
-			label10.Location = new Point(6, 70);
-			label10.Name = "label10";
-			label10.Size = new Size(137, 15);
-			label10.TabIndex = 13;
-			label10.Text = "Subfolder will be created";
-			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800, 533);
+			ClientSize = new Size(811, 533);
 			Controls.Add(BtnSpExport);
 			Controls.Add(BtnSync);
 			Controls.Add(groupBox4);

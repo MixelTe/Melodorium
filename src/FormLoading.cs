@@ -9,7 +9,8 @@
 		{
 			InitializeComponent();
 			ProgBar.Visible = false;
-			BtnCancel.Visible = false;
+            BtnCancel.Visible = false;
+			LblInfo.Visible = false;
 		}
 
 		private void FormLoading_Shown(object sender, EventArgs e)
@@ -22,10 +23,17 @@
 		public void SetProgress(float progress)
 		{
 			ProgBar.Visible = true;
-			ProgBar.Value = (int)(progress * 100);
-		}
+			ProgBar.Value = Math.Min(Math.Max((int)(progress * 100), 0), 100);
+            Application.DoEvents();
+        }
+        public void SetInfo(string info)
+        {
+            LblInfo.Visible = true;
+            LblInfo.Text = info;
+            Application.DoEvents();
+        }
 
-		public void EnableCancel()
+        public void EnableCancel()
 		{
 			BtnCancel.Visible = true;
 		}

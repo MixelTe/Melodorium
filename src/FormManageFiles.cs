@@ -39,6 +39,26 @@ namespace Melodorium
 		public FormManageFiles()
 		{
 			InitializeComponent();
+			InpRenameOld.Width = splitContainer1.Panel2.Width - 8;
+			InpRenameNew.Width = splitContainer1.Panel2.Width - 8;
+			BtnRename.Left = splitContainer1.Panel2.Width - 8 - BtnRename.Width;
+			BtnOpenInExplorer.Left = splitContainer1.Panel2.Width - 8 - BtnOpenInExplorer.Width;
+			
+			InpFolder.Width = splitContainer2.Panel2.Width - 8 - InpFolder.Left;
+			InpAuthor.Width = splitContainer2.Panel2.Width - 8 - InpAuthor.Left;
+			BtnOpenInExplorerFolder.Left = splitContainer2.Panel2.Width - 8 - BtnOpenInExplorerFolder.Width;
+			BtnSave.Left = splitContainer2.Panel2.Width - 8 - BtnSave.Width;
+			
+			InpMismatchName.Width = splitContainer3.Panel2.Width - 8 - InpMismatchName.Left;
+			splitContainer4.Width = splitContainer3.Panel2.Width - 8;
+			InpMismatchFolder.Width = splitContainer4.Panel1.Width - InpMismatchFolder.Left;
+			InpMismatchFolderExpected.Width = splitContainer4.Panel2.Width - InpMismatchFolderExpected.Left;
+			BtnMoveMismatch.Left = splitContainer3.Panel2.Width - 8 - BtnMoveMismatch.Width;
+			BtnOpenInExplorerMismatch.Left = splitContainer3.Panel2.Width - 8 - BtnOpenInExplorerMismatch.Width;
+		
+			ListSimilarFiles.Width = splitContainer5.Panel2.Width - 8;
+			InpSimiarityLevel.Width = splitContainer5.Panel2.Width - 8 - InpSimiarityLevel.Left;
+			BtnApplySimilarity.Left = splitContainer5.Panel2.Width - 8 - BtnApplySimilarity.Width;
 		}
 
 		private void FormManageFiles_Shown(object sender, EventArgs e)
@@ -49,7 +69,14 @@ namespace Melodorium
 
 		private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			MusicData.LoadFull();
+			using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				var c = 0;
+				MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
+				loadingDialog.Close();
+			};
+			loadingDialog.ShowDialog(this);
 			switch (Tabs.SelectedIndex)
 			{
 				case 0: FindProblems(); break;
@@ -392,11 +419,10 @@ namespace Melodorium
 				var c = 0;
 				for (var i = 0; i < Program.MusicData.Files.Count; i++)
 				{
-					loadingDialog.SetProgress((float)c / C);
-					if (i % 10 == 0) Application.DoEvents();
+					if (i % 10 == 0) loadingDialog.SetProgress((float)c / C);
 					if (loadingDialog.Canceled)
 						break;
-					
+
 					var file1 = Program.MusicData.Files[i];
 					if (r.Where(v => v.Item2.Contains(file1)).Any())
 					{

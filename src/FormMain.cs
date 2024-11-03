@@ -105,8 +105,8 @@ namespace Melodorium
 		{
 			if (Program.Settings.RootFolder == "")
 				OpenFolder();
-			UpdateUI();
-			ShowMusicList();
+			else
+				UpdateMusicFull();
 		}
 
 		private void BtnChangeFolder_Click(object sender, EventArgs e)
@@ -120,9 +120,7 @@ namespace Melodorium
 			Hide();
 			dialog.ShowDialog(this);
 			Show();
-			MusicData.LoadFull();
-			UpdateUI();
-			ShowMusicList();
+			UpdateMusicFull();
 		}
 
 		private void BtnExport_Click(object sender, EventArgs e)
@@ -138,12 +136,24 @@ namespace Melodorium
 			Hide();
 			dialog.ShowDialog(this);
 			Show();
-			MusicData.LoadFull();
-			UpdateUI();
-			ShowMusicList();
-		}
+			UpdateMusicFull();
+        }
 
-		private void BtnSync_Click(object sender, EventArgs e)
+        private void UpdateMusicFull()
+        {
+            using var loadingDialog = new FormLoading();
+			loadingDialog.Job = () =>
+			{
+				var c = 0;
+                MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
+                UpdateUI();
+				ShowMusicList();
+                loadingDialog.Close();
+            };
+			loadingDialog.ShowDialog(this);
+        }
+
+        private void BtnSync_Click(object sender, EventArgs e)
 		{
 			using var dialog = new FormSync();
 			Hide();
@@ -762,7 +772,6 @@ namespace Melodorium
 				for (int i = 0; i < _filteredFiles.Count; i++)
 				{
 					loadingDialog.SetProgress((float)i / _filteredFiles.Count);
-					Application.DoEvents();
 					if (loadingDialog.Canceled)
 						break;
 

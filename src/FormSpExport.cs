@@ -103,7 +103,6 @@ namespace Melodorium
 				for (int i = 0; i < Program.MusicData.Files.Count; i++)
 				{
 					loadingDialog.SetProgress((float)i / Program.MusicData.Files.Count);
-					Application.DoEvents();
 					if (loadingDialog.Canceled)
 						break;
 

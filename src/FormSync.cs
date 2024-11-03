@@ -95,7 +95,6 @@ namespace Melodorium
 			for (int i = 0; i < oldFiles.Count; i++)
             {
 				loadingDialog.SetProgress((float)i / oldFiles.Count);
-				Application.DoEvents();
 				if (loadingDialog.Canceled)
 					return log;
 
@@ -114,7 +113,6 @@ namespace Melodorium
 			for (int i = 0; i < files.Count; i++)
 			{
 				loadingDialog.SetProgress((float)i / files.Count);
-				Application.DoEvents();
 				if (loadingDialog.Canceled)
 					return log;
 
