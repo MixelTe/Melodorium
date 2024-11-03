@@ -1,14 +1,6 @@
-﻿	using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Melodorium
 {
@@ -84,16 +76,15 @@ namespace Melodorium
 		public void LoadFiles(Action? onFileLoaded = null)
 		{
 			var tags = new HashSet<string>();
-            foreach (var path in GetFileNames(fullpath: true))
+			foreach (var path in GetFileNames(fullpath: true))
 			{
 				var data = new MusicFile(path);
 				data.Load();
 				if (data.Data.Tag != "")
 					tags.Add(data.Data.Tag);
 				Files.Add(data);
-                onFileLoaded?.Invoke();
-				break;
-            }
+				onFileLoaded?.Invoke();
+			}
 			Tags = tags.Order().ToList();
 		}
 
@@ -251,8 +242,11 @@ namespace Melodorium
 	{
 		public string RPath = "";
 		public bool IsLoaded = false;
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public MusicMood Mood { get; set; } = MusicMood.Energistic;
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public MusicLike Like { get; set; } = MusicLike.Good;
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public MusicLang Lang { get; set; } = MusicLang.An;
 		public bool Hidden { get; set; } = false;
 		public string Tag { get; set; } = "";
@@ -265,14 +259,14 @@ namespace Melodorium
 		Calm = 2,
 		Sleep = 3,
 	}
-    public enum MusicLike
-    {
+	public enum MusicLike
+	{
         Best = 0,
         Like = 1,
         Good = 2,
-    }
-    public enum MusicLang
-    {
+	}
+	public enum MusicLang
+	{
 		No = 0,
 		Ru = 1,
 		An = 2,
@@ -281,5 +275,5 @@ namespace Melodorium
 		Ge = 5,
 		It = 6,
 		Ja = 7,
-    }
+	}
 }
