@@ -43,19 +43,19 @@ namespace Melodorium
 			InpRenameNew.Width = splitContainer1.Panel2.Width - 8;
 			BtnRename.Left = splitContainer1.Panel2.Width - 8 - BtnRename.Width;
 			BtnOpenInExplorer.Left = splitContainer1.Panel2.Width - 8 - BtnOpenInExplorer.Width;
-			
+
 			InpFolder.Width = splitContainer2.Panel2.Width - 8 - InpFolder.Left;
 			InpAuthor.Width = splitContainer2.Panel2.Width - 8 - InpAuthor.Left;
 			BtnOpenInExplorerFolder.Left = splitContainer2.Panel2.Width - 8 - BtnOpenInExplorerFolder.Width;
 			BtnSave.Left = splitContainer2.Panel2.Width - 8 - BtnSave.Width;
-			
+
 			InpMismatchName.Width = splitContainer3.Panel2.Width - 8 - InpMismatchName.Left;
 			splitContainer4.Width = splitContainer3.Panel2.Width - 8;
 			InpMismatchFolder.Width = splitContainer4.Panel1.Width - InpMismatchFolder.Left;
 			InpMismatchFolderExpected.Width = splitContainer4.Panel2.Width - InpMismatchFolderExpected.Left;
 			BtnMoveMismatch.Left = splitContainer3.Panel2.Width - 8 - BtnMoveMismatch.Width;
 			BtnOpenInExplorerMismatch.Left = splitContainer3.Panel2.Width - 8 - BtnOpenInExplorerMismatch.Width;
-		
+
 			ListSimilarFiles.Width = splitContainer5.Panel2.Width - 8;
 			InpSimiarityLevel.Width = splitContainer5.Panel2.Width - 8 - InpSimiarityLevel.Left;
 			BtnApplySimilarity.Left = splitContainer5.Panel2.Width - 8 - BtnApplySimilarity.Width;
@@ -73,7 +73,10 @@ namespace Melodorium
 			loadingDialog.Job = () =>
 			{
 				var c = 0;
-				MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
+				MusicData.LoadFull(
+					() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); },
+					loadData: false
+					);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -100,6 +103,7 @@ namespace Melodorium
 					if (!IsGoodName(file.Name))
 						ListProblems.Items.Add(new ListViewItem(file.RPath) { Tag = i });
 				}
+				ListProblems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -206,6 +210,7 @@ namespace Melodorium
 
 					ListFolders.Items.Add(new ListViewItem(folder) { Tag = i });
 				}
+				ListFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -343,6 +348,7 @@ namespace Melodorium
 					var mismatch = _mismatch[i];
 					ListMismatch.Items.Add(new ListViewItem(mismatch.MusicFile.RPath) { Tag = i });
 				}
+				ListMismatch.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -458,6 +464,7 @@ namespace Melodorium
 					var title = ignoreAuthor ? item.SName : item.Name;
 					ListSimilar.Items.Add(new ListViewItem(title) { Tag = i });
 				}
+				ListSimilar.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -492,6 +499,7 @@ namespace Melodorium
 				var similar = _selectedSimilar[i];
 				ListSimilarFiles.Items.Add(new ListViewItem(similar.RPath) { Tag = i });
 			}
+			ListSimilarFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		private void ListSimilarFiles_SelectedIndexChanged(object sender, EventArgs e)

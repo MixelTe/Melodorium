@@ -37,10 +37,10 @@ namespace Melodorium
 				throw new Exception($"Unsuported version of data file: {version}");
 			Program.MusicData = JsonSerializer.Deserialize<MusicData>(json)!;
 		}
-		public static void LoadFull(Action? onFileLoaded = null)
+		public static void LoadFull(Action? onFileLoaded = null, bool loadData = true)
 		{
 			Load();
-			Program.MusicData.LoadFiles(onFileLoaded);
+			Program.MusicData.LoadFiles(onFileLoaded, loadData);
 		}
 
 		public List<string> GetFileNames(bool fullpath = false, bool includeIgnore = false)
@@ -73,13 +73,14 @@ namespace Melodorium
 		[GeneratedRegex(".*\\.m3u8")]
 		private static partial Regex RegexM3U8();
 
-		public void LoadFiles(Action? onFileLoaded = null)
+		public void LoadFiles(Action? onFileLoaded = null, bool loadData = true)
 		{
 			var tags = new HashSet<string>();
 			foreach (var path in GetFileNames(fullpath: true))
 			{
 				var data = new MusicFile(path);
-				data.Load();
+				if (loadData)
+					data.Load();
 				if (data.Data.Tag != "")
 					tags.Add(data.Data.Tag);
 				Files.Add(data);

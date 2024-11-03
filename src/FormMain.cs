@@ -148,7 +148,8 @@ namespace Melodorium
                 MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
                 UpdateUI();
 				ShowMusicList();
-                loadingDialog.Close();
+				ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+				loadingDialog.Close();
             };
 			loadingDialog.ShowDialog(this);
         }
