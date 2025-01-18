@@ -248,7 +248,7 @@ namespace Melodorium
 			if (updateData)
 				Program.MusicData.UpdateTagsList();
 			FilterTags.Items.Clear();
-			FilterTags.Items.Add("");
+			FilterTags.Items.Add("<any>");
 			FilterTags.Items.Add("<no tag>");
 			var selectI = 0;
 			for (int i = 0; i < Program.MusicData.Tags.Count; i++)
@@ -259,6 +259,7 @@ namespace Melodorium
 				FilterTags.Items.Add(tag);
 			}
 			FilterTags.SelectedIndex = selectedTagI >= 2 ? selectI : selectedTagI;
+			if (FilterTags.SelectedIndex < 0) FilterTags.SelectedIndex = 0;
 
 			InpTags.Items.Clear();
 			foreach (var tag in Program.MusicData.Tags)
