@@ -41,6 +41,7 @@
 			BtnPrev = new Button();
 			BtnNext = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
+			BtnOpenManager = new Button();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			SuspendLayout();
 			// 
@@ -158,11 +159,24 @@
 			MusicTimer.Interval = 1000;
 			MusicTimer.Tick += MusicTimer_Tick;
 			// 
+			// BtnOpenManager
+			// 
+			BtnOpenManager.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnOpenManager.Location = new Point(257, 3);
+			BtnOpenManager.Margin = new Padding(4, 3, 4, 3);
+			BtnOpenManager.Name = "BtnOpenManager";
+			BtnOpenManager.Size = new Size(23, 23);
+			BtnOpenManager.TabIndex = 24;
+			BtnOpenManager.Text = "M";
+			BtnOpenManager.UseVisualStyleBackColor = true;
+			BtnOpenManager.Click += BtnOpenManager_Click;
+			// 
 			// FormPlayer
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(292, 267);
+			Controls.Add(BtnOpenManager);
 			Controls.Add(BtnNext);
 			Controls.Add(BtnPrev);
 			Controls.Add(ListFiles);
@@ -181,6 +195,7 @@
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Melodorium | Player";
 			FormClosing += FormPlayer_FormClosing;
+			Shown += FormPlayer_Shown;
 			ResizeEnd += FormPlayer_ResizeEnd;
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).EndInit();
 			ResumeLayout(false);
@@ -200,5 +215,6 @@
 		private Button BtnNext;
 		private System.Windows.Forms.Timer MusicTimer;
 		private ColumnHeader Playlist;
+		private Button BtnOpenManager;
 	}
 }

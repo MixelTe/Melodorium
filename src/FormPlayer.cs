@@ -15,6 +15,7 @@ namespace Melodorium
 {
 	public partial class FormPlayer : Form
 	{
+		public bool WasOpened = false;
 		private List<MusicFile> _playlist = [];
 		private readonly AudioPlayer _audioPlayer = new();
 		private MusicFile? _selectedFile;
@@ -29,10 +30,6 @@ namespace Melodorium
 			{
 				ListFiles.Invoke(PlayNext);
 			};
-		}
-
-		public void UpdateBySettings()
-		{
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			if (Program.Settings.PlayerRect.X >= 0)
@@ -49,10 +46,15 @@ namespace Melodorium
 			ListFiles.Items.Add(new ListViewItem(file.PlaylistName) { Tag = file });
 		}
 
-		public void ClosePlayer()
+		public void CloseForm()
 		{
 			_closing = true;
 			Close();
+		}
+
+		private void FormPlayer_Shown(object sender, EventArgs e)
+		{
+			WasOpened = true;
 		}
 
 		private void FormPlayer_FormClosing(object sender, FormClosingEventArgs e)
@@ -149,6 +151,12 @@ namespace Melodorium
 			if (item == null) return;
 			var i = ListFiles.Items.IndexOf(item);
 			Play(i);
+		}
+
+		private void BtnOpenManager_Click(object sender, EventArgs e)
+		{
+			Program.Manager.Show();
+			Program.Manager.Activate();
 		}
 	}
 }

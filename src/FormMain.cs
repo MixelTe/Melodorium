@@ -55,6 +55,7 @@ namespace Melodorium
 					});
 				}
 			};
+			InpPlayerAtStartup.Checked = Program.Settings.OpenPlayerAtStartup;
 			_outputDevice.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
@@ -96,11 +97,31 @@ namespace Melodorium
 			InpLang.Items.Add("Japanese");
 		}
 
-		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+		public void CloseForm()
 		{
 			_closing = true;
+			Close();
+		}
+
+		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (!Program.Player.WasOpened)
+				_closing = true;
+			
+			if (!_closing)
+			{
+				e.Cancel = true;
+				Hide();
+				return;
+			}
 			_outputDevice.Stop();
-			Program.Player.ClosePlayer();
+
+			if (!Program.Player.WasOpened)
+			{
+				Program.App.CloseIcon();
+				Program.Player.CloseForm();
+				Application.Exit();
+			}
 		}
 
 		private void FormMain_Shown(object sender, EventArgs e)
@@ -818,6 +839,12 @@ namespace Melodorium
 		{
 			Program.Player.Show();
 			Program.Player.Activate();
+		}
+
+		private void InpPlayerAtStartup_CheckedChanged(object sender, EventArgs e)
+		{
+			Program.Settings.OpenPlayerAtStartup = InpPlayerAtStartup.Checked;
+			Program.Settings.Save();
 		}
 
 		private void ListFilesMenuItem_Add_Click(object sender, EventArgs e)

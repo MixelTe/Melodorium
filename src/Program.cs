@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Melodorium
 {
 	internal static class Program
@@ -5,19 +7,38 @@ namespace Melodorium
 		public static readonly string KeyName = @"HKEY_CURRENT_USER\Software\MixelTe\Melodorium";
 		public static Settings Settings = new();
 		public static MusicData MusicData = new();
-		public static FormPlayer Player = new();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+		public static FormPlayer Player = null;
+		public static FormMain Manager = null;
+		public static App App = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+		public static Mutex? mutex;
+
 		/// <summary>
 		///  The main entry point for the application.
 		/// </summary>
 		[STAThread]
 		static void Main()
 		{
-			// To customize application configuration such as set high DPI settings or default font,
-			// see https://aka.ms/applicationconfiguration.
-			ApplicationConfiguration.Initialize();
-			Settings.Load();
-			Player.UpdateBySettings();
-			Application.Run(new FormMain());
+			mutex = new Mutex(true, "Melodorium{27b4fde6-827f-41dd-b0da-c325bc820645}", out var isNewCreated);
+			if (!isNewCreated)
+			{
+				MessageBox.Show("Already launched", "Melodorium");
+				return;
+			}
+			try
+			{
+				ApplicationConfiguration.Initialize();
+				Settings.Load();
+				Player = new();
+				Manager = new();
+				App = new();
+				Application.Run(App);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error\n{ex.Message}", "Screen Capture", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 	}
 }
