@@ -5,6 +5,7 @@ namespace Melodorium
 		public static readonly string KeyName = @"HKEY_CURRENT_USER\Software\MixelTe\Melodorium";
 		public static Settings Settings = new();
 		public static MusicData MusicData = new();
+		public static FormPlayer Player = new();
 		/// <summary>
 		///  The main entry point for the application.
 		/// </summary>
@@ -15,6 +16,7 @@ namespace Melodorium
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
 			Settings.Load();
+			Player.UpdateBySettings();
 			Application.Run(new FormMain());
 		}
 	}

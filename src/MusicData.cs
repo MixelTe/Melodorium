@@ -64,6 +64,8 @@ namespace Melodorium
 		{
 			if (RegexM3U8().Match(relpath).Success)
 				return true;
+			if (RegexJSON().Match(relpath).Success)
+				return true;
 			foreach (var pattern in Ignore)
 				if (Regex.Match(relpath, pattern).Success)
 					return true;
@@ -72,6 +74,9 @@ namespace Melodorium
 
 		[GeneratedRegex(".*\\.m3u8")]
 		private static partial Regex RegexM3U8();
+
+		[GeneratedRegex(".*\\.json")]
+		private static partial Regex RegexJSON();
 
 		public void LoadFiles(Action? onFileLoaded = null, bool loadData = true)
 		{
@@ -133,11 +138,13 @@ namespace Melodorium
 				Ext = Path.GetExtension(_fPath);
 				Author = "";
 				SName = "";
+				PlaylistName = Name;
 				if (Name.Contains("_-_"))
 				{
 					var parts = Name.Split("_-_");
 					Author = parts[0];
 					SName = parts[1];
+					PlaylistName = Author + " - " + SName;
 				}
 				NormilizedFullName = Utils.NormalizeName(Name);
 				NormilizedName = SName != "" ? Utils.NormalizeName(SName) : NormilizedFullName;
@@ -153,6 +160,7 @@ namespace Melodorium
 		public string SName { get; private set; } = "";
 		public string NormilizedName { get; private set; } = "";
 		public string NormilizedFullName { get; private set; } = "";
+		public string PlaylistName { get; private set; } = "";
 		public MusicFileData Data { get; set; } = new();
 		private bool _metaLoaded = false;
 		private bool _metaError = false;

@@ -50,6 +50,9 @@
 			splitContainer1 = new SplitContainer();
 			ListFiles = new ListView();
 			columnHeader1 = new ColumnHeader();
+			ListFilesMenu = new ContextMenuStrip(components);
+			ListFilesMenuItem_Add = new ToolStripMenuItem();
+			ListFilesMenuItem_AddRnd = new ToolStripMenuItem();
 			InpTags = new ComboBox();
 			label6 = new Label();
 			InpVolume = new NAudio.Gui.Pot();
@@ -92,11 +95,14 @@
 			label9 = new Label();
 			FolderBrowser = new FolderBrowserDialog();
 			BtnSync = new Button();
+			BtnPlayer = new Button();
+			ListFilesMenuItem_AddAll = new ToolStripMenuItem();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
 			splitContainer1.SuspendLayout();
+			ListFilesMenu.SuspendLayout();
 			groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)PBMusicImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
@@ -314,9 +320,9 @@
 			// ListFiles
 			// 
 			ListFiles.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
+			ListFiles.ContextMenuStrip = ListFilesMenu;
 			ListFiles.Dock = DockStyle.Fill;
 			ListFiles.Location = new Point(0, 0);
-			ListFiles.MultiSelect = false;
 			ListFiles.Name = "ListFiles";
 			ListFiles.Size = new Size(368, 296);
 			ListFiles.TabIndex = 0;
@@ -328,6 +334,26 @@
 			// 
 			columnHeader1.Text = "Music";
 			columnHeader1.Width = 350;
+			// 
+			// ListFilesMenu
+			// 
+			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Add, ListFilesMenuItem_AddRnd, ListFilesMenuItem_AddAll });
+			ListFilesMenu.Name = "contextMenuStrip1";
+			ListFilesMenu.Size = new Size(181, 92);
+			// 
+			// ListFilesMenuItem_Add
+			// 
+			ListFilesMenuItem_Add.Name = "ListFilesMenuItem_Add";
+			ListFilesMenuItem_Add.Size = new Size(180, 22);
+			ListFilesMenuItem_Add.Text = "Add to playlist";
+			ListFilesMenuItem_Add.Click += ListFilesMenuItem_Add_Click;
+			// 
+			// ListFilesMenuItem_AddRnd
+			// 
+			ListFilesMenuItem_AddRnd.Name = "ListFilesMenuItem_AddRnd";
+			ListFilesMenuItem_AddRnd.Size = new Size(180, 22);
+			ListFilesMenuItem_AddRnd.Text = "Add to playlist (rnd)";
+			ListFilesMenuItem_AddRnd.Click += ListFilesMenuItem_AddRnd_Click;
 			// 
 			// InpTags
 			// 
@@ -751,11 +777,29 @@
 			BtnSync.UseVisualStyleBackColor = true;
 			BtnSync.Click += BtnSync_Click;
 			// 
+			// BtnPlayer
+			// 
+			BtnPlayer.Location = new Point(269, 12);
+			BtnPlayer.Name = "BtnPlayer";
+			BtnPlayer.Size = new Size(61, 23);
+			BtnPlayer.TabIndex = 14;
+			BtnPlayer.Text = "Player";
+			BtnPlayer.UseVisualStyleBackColor = true;
+			BtnPlayer.Click += BtnPlayer_Click;
+			// 
+			// ListFilesMenuItem_AddAll
+			// 
+			ListFilesMenuItem_AddAll.Name = "ListFilesMenuItem_AddAll";
+			ListFilesMenuItem_AddAll.Size = new Size(180, 22);
+			ListFilesMenuItem_AddAll.Text = "Add all to playlist";
+			ListFilesMenuItem_AddAll.Click += ListFilesMenuItem_AddAll_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(811, 533);
+			Controls.Add(BtnPlayer);
 			Controls.Add(BtnSpExport);
 			Controls.Add(BtnSync);
 			Controls.Add(groupBox4);
@@ -778,6 +822,7 @@
 			splitContainer1.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
 			splitContainer1.ResumeLayout(false);
+			ListFilesMenu.ResumeLayout(false);
 			groupBox2.ResumeLayout(false);
 			groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)PBMusicImage).EndInit();
@@ -853,5 +898,10 @@
 		private Button BtnSync;
 		private Button BtnSpExport;
 		private Label label10;
+		private ContextMenuStrip ListFilesMenu;
+		private ToolStripMenuItem ListFilesMenuItem_Add;
+		private ToolStripMenuItem ListFilesMenuItem_AddRnd;
+		private Button BtnPlayer;
+		private ToolStripMenuItem ListFilesMenuItem_AddAll;
 	}
 }

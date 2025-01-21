@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Wave;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Melodorium
 {
@@ -99,6 +100,7 @@ namespace Melodorium
 		{
 			_closing = true;
 			_outputDevice.Stop();
+			Program.Player.ClosePlayer();
 		}
 
 		private void FormMain_Shown(object sender, EventArgs e)
@@ -137,24 +139,24 @@ namespace Melodorium
 			dialog.ShowDialog(this);
 			Show();
 			UpdateMusicFull();
-        }
+		}
 
-        private void UpdateMusicFull()
-        {
-            using var loadingDialog = new FormLoading();
+		private void UpdateMusicFull()
+		{
+			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
 				var c = 0;
-                MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
-                UpdateUI();
+				MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
+				UpdateUI();
 				ShowMusicList();
 				ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
-            };
+			};
 			loadingDialog.ShowDialog(this);
-        }
+		}
 
-        private void BtnSync_Click(object sender, EventArgs e)
+		private void BtnSync_Click(object sender, EventArgs e)
 		{
 			using var dialog = new FormSync();
 			Hide();
@@ -413,12 +415,27 @@ namespace Melodorium
 				_outputDevice.Init(_audioFile);
 			}
 			LblTime.Text = $"{_audioFile.CurrentTime:mm\\:ss}/{_audioFile.TotalTime:mm\\:ss}";
-			_outputDevice.Play();
+			if (_outputDevice.PlaybackState == PlaybackState.Playing)
+			{
+				_outputDevice.Pause();
+				BtnPlay.Text = "Play";
+			}
+			else
+			{
+				_outputDevice.Play();
+				BtnPlay.Text = "Pause";
+			}
 		}
 
 		private void BtnStop_Click(object sender, EventArgs e)
 		{
-			_outputDevice?.Pause();
+			if (_audioFile != null)
+			{
+				_outputDevice.Stop();
+				_audioFile.Dispose();
+				_audioFile = null;
+				BtnPlay.Text = "Play";
+			}
 		}
 
 		private void InpVolume_VolumeChanged(object sender, EventArgs e)
@@ -795,6 +812,42 @@ namespace Melodorium
 		{
 			using var dialog = new FormSpExport();
 			dialog.ShowDialog(this);
+		}
+
+		private void BtnPlayer_Click(object sender, EventArgs e)
+		{
+			Program.Player.Show();
+			Program.Player.Activate();
+		}
+
+		private void ListFilesMenuItem_Add_Click(object sender, EventArgs e)
+		{
+			AddSelectedToPlaylist();
+		}
+
+		private void ListFilesMenuItem_AddRnd_Click(object sender, EventArgs e)
+		{
+			AddSelectedToPlaylist(randomize: false);
+		}
+
+		private void AddSelectedToPlaylist(bool randomize = false)
+		{
+			var files = ListFiles.SelectedItems.Cast<ListViewItem>().Select(v => v.Tag as MusicFile).ToList();
+			if (randomize)
+				files.Shuffle();
+			foreach (var file in files)
+			{
+				Debug.Assert(file != null);
+				Program.Player.AddTrackToPlaylist(file);
+			}
+		}
+
+		private void ListFilesMenuItem_AddAll_Click(object sender, EventArgs e)
+		{
+			foreach (var file in _filteredFiles)
+			{
+				Program.Player.AddTrackToPlaylist(file);
+			}
 		}
 	}
 }

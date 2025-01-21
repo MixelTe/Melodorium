@@ -14,6 +14,7 @@
 		}
 		public float Volume = 0.5f;
 		public string ExportFolder = "";
+		public Rectangle PlayerRect = new(-1, -1, 308, 306);
 
 		public void Save()
 		{
