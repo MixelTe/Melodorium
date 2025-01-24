@@ -38,11 +38,14 @@
 			InpVolume = new NAudio.Gui.Pot();
 			ListFiles = new ListView();
 			Playlist = new ColumnHeader();
+			ListFilesMenu = new ContextMenuStrip(components);
+			ListFilesMenuItem_Delete = new ToolStripMenuItem();
 			BtnPrev = new Button();
 			BtnNext = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			BtnOpenManager = new Button();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
+			ListFilesMenu.SuspendLayout();
 			SuspendLayout();
 			// 
 			// LblTime
@@ -116,6 +119,7 @@
 			// 
 			ListFiles.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			ListFiles.Columns.AddRange(new ColumnHeader[] { Playlist });
+			ListFiles.ContextMenuStrip = ListFilesMenu;
 			ListFiles.Font = new Font("Segoe UI", 8F);
 			ListFiles.Location = new Point(9, 90);
 			ListFiles.Margin = new Padding(4, 3, 4, 3);
@@ -124,12 +128,26 @@
 			ListFiles.TabIndex = 21;
 			ListFiles.UseCompatibleStateImageBehavior = false;
 			ListFiles.View = View.Details;
+			ListFiles.KeyDown += ListFiles_KeyDown;
 			ListFiles.MouseDoubleClick += ListFiles_MouseDoubleClick;
 			// 
 			// Playlist
 			// 
 			Playlist.Text = "Playlist";
 			Playlist.Width = 240;
+			// 
+			// ListFilesMenu
+			// 
+			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Delete });
+			ListFilesMenu.Name = "ListFilesMenu";
+			ListFilesMenu.Size = new Size(108, 26);
+			// 
+			// ListFilesMenuItem_Delete
+			// 
+			ListFilesMenuItem_Delete.Name = "ListFilesMenuItem_Delete";
+			ListFilesMenuItem_Delete.Size = new Size(107, 22);
+			ListFilesMenuItem_Delete.Text = "Delete";
+			ListFilesMenuItem_Delete.Click += ListFilesMenuItem_Delete_Click;
 			// 
 			// BtnPrev
 			// 
@@ -198,6 +216,7 @@
 			Shown += FormPlayer_Shown;
 			ResizeEnd += FormPlayer_ResizeEnd;
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).EndInit();
+			ListFilesMenu.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -216,5 +235,7 @@
 		private System.Windows.Forms.Timer MusicTimer;
 		private ColumnHeader Playlist;
 		private Button BtnOpenManager;
+		private ContextMenuStrip ListFilesMenu;
+		private ToolStripMenuItem ListFilesMenuItem_Delete;
 	}
 }

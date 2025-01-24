@@ -82,7 +82,7 @@ namespace Melodorium
 		{
 			if (!Program.Player.WasOpened)
 				_closing = true;
-			
+
 			if (!_closing)
 			{
 				e.Cancel = true;
@@ -221,16 +221,8 @@ namespace Melodorium
 					if (FilterTags.SelectedIndex > 1)
 						if (file.Data.Tag != Program.MusicData.Tags[FilterTags.SelectedIndex - 2]) continue;
 
-					var tags = "";
-					if (file.Data.IsLoaded)
-					{
-						tags += " [";
-						tags += file.Data.Mood.ToString()[..2] + ";";
-						tags += file.Data.Like.ToString()[..2] + ";";
-						tags += file.Data.Lang.ToString()[..2] + "]";
-					}
 					_filteredFiles.Add(file);
-					ListFiles.Items.Add(new ListViewItem(file.RPath + tags) { Tag = file });
+					ListFiles.Items.Add(new ListViewItem(file.RPath + file.Tags) { Tag = file });
 					c++;
 				}
 				ListFiles.Columns[0].Text = $"Music [{c}]";
@@ -293,11 +285,9 @@ namespace Melodorium
 			_selectedFile = file;
 			_selectedFileI = ListFiles.SelectedIndices[0];
 			file.LoadMeta();
-			_metaChanged = false;
-			_metaDeleteImg = false;
 
 			LblMusicAuthor.Text = file.Author.Replace("_", " ");
-			LblMusicName.Text = file.SName == "" ? file.Name : file.SName.Replace("_", " ");
+			LblMusicName.Text = file.SName.Replace("_", " ");
 			InpMood.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Mood : -1;
 			InpLike.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Like : -1;
 			InpLang.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Lang : -1;
@@ -321,6 +311,9 @@ namespace Melodorium
 			}
 			LblState.Text = "";
 			LblTime.Text = $"00:00/{file.Duration:mm\\:ss}";
+
+			_metaChanged = false;
+			_metaDeleteImg = false;
 
 			if (InpAutoplay.Checked)
 				PlayMusic();
@@ -378,12 +371,8 @@ namespace Melodorium
 			}
 			LblState.Text = "Saved";
 
-			var tags = " [";
-			tags += _selectedFile.Data.Mood.ToString()[..2] + ";";
-			tags += _selectedFile.Data.Like.ToString()[..2] + ";";
-			tags += _selectedFile.Data.Lang.ToString()[..2] + "]";
 			if (_selectedFileI != null)
-				ListFiles.Items[_selectedFileI.Value].Text = _selectedFile.RPath + tags;
+				ListFiles.Items[_selectedFileI.Value].Text = _selectedFile.RPath + _selectedFile.Tags;
 			UpdateUI(updateData: true);
 		}
 
@@ -396,9 +385,9 @@ namespace Melodorium
 		{
 			if (_selectedFile == null) return;
 
-			var plaiyng = _audioPlayer.PlayPause(_selectedFile);
+			_audioPlayer.PlayPause(_selectedFile);
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
-			BtnPlay.Text = plaiyng ? "Pause" : "Play";
+			BtnPlay.Text = _audioPlayer.IsPlaying ? "Pause" : "Play";
 		}
 
 		private void BtnStop_Click(object sender, EventArgs e)
@@ -801,7 +790,7 @@ namespace Melodorium
 
 		private void ListFilesMenuItem_AddRnd_Click(object sender, EventArgs e)
 		{
-			AddSelectedToPlaylist(randomize: false);
+			AddSelectedToPlaylist(randomize: true);
 		}
 
 		private void AddSelectedToPlaylist(bool randomize = false)
@@ -821,6 +810,16 @@ namespace Melodorium
 			foreach (var file in _filteredFiles)
 			{
 				Program.Player.AddTrackToPlaylist(file);
+			}
+		}
+
+		private void ListFilesMenuItem_Explorer_Click(object sender, EventArgs e)
+		{
+			if (ListFiles.SelectedItems.Count == 0) return;
+			var item = ListFiles.SelectedItems[0];
+			if (item.Tag is MusicFile file) 
+			{
+				Utils.OpenExplorer(file.FPath);
 			}
 		}
 	}

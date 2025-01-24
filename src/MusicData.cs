@@ -126,7 +126,7 @@ namespace Melodorium
 		private string _fPath = "";
 		public string FPath
 		{
-			get => _fPath; set
+			get => _fPath; private set
 			{
 				_fPath = value;
 				RPath = Path.GetRelativePath(Program.Settings.RootFolder, _fPath);
@@ -137,7 +137,7 @@ namespace Melodorium
 				FName = Path.GetFileName(_fPath);
 				Ext = Path.GetExtension(_fPath);
 				Author = "";
-				SName = "";
+				SName = Name;
 				PlaylistName = Name;
 				if (Name.Contains("_-_"))
 				{
@@ -148,6 +148,21 @@ namespace Melodorium
 				}
 				NormilizedFullName = Utils.NormalizeName(Name);
 				NormilizedName = SName != "" ? Utils.NormalizeName(SName) : NormilizedFullName;
+			}
+		}
+		public string Tags
+		{
+			get
+			{
+				var tags = "";
+				if (Data.IsLoaded)
+				{
+					tags += " [";
+					tags += Data.Mood.ToString()[..2] + ";";
+					tags += Data.Like.ToString()[..2] + ";";
+					tags += Data.Lang.ToString()[..2] + "]";
+				}
+				return tags;
 			}
 		}
 		public string RPath { get; private set; } = "";
@@ -163,7 +178,6 @@ namespace Melodorium
 		public string PlaylistName { get; private set; } = "";
 		public MusicFileData Data { get; set; } = new();
 		private bool _metaLoaded = false;
-		private bool _metaError = false;
 		public string Title = "";
 		public string Album = "";
 		public string[] Artists = [];
@@ -193,6 +207,11 @@ namespace Melodorium
 
 		public void Save()
 		{
+			if (!File.Exists(FPath))
+			{
+				MessageBox.Show($"File does not exist:\n./{RPath}", "Disappeared file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
 			Data.IsLoaded = true;
 			var json = JsonSerializer.Serialize(Data);
 			AlternativeDataStream.WriteString(FPath, Settings.AlternativeDataStreamName, json);
@@ -202,7 +221,6 @@ namespace Melodorium
 		{
 			if (_metaLoaded) return;
 			_metaLoaded = true;
-			_metaError = false;
 
 			try
 			{
@@ -213,31 +231,50 @@ namespace Melodorium
 				if (tfile.Tag.Pictures.Length > 0)
 					Picture = tfile.Tag.Pictures[0];
 				Duration = tfile.Properties.Duration;
+				var artists = string.Join(", ", Artists);
+				artists = artists != "" ? artists : Author;
+				PlaylistName = (artists != "" ? artists + " - " : "") + (Title != "" ? Title : SName);
 			}
 			catch (TagLib.CorruptFileException)
 			{
-				_metaError = true;
+				_metaLoaded = false;
 				MessageBox.Show($"Cant load metadata of file:\n./{RPath}", "Corrupted file", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch (TagLib.UnsupportedFormatException)
 			{
-				_metaError = true;
+				_metaLoaded = false;
 				MessageBox.Show($"Cant load metadata of file:\n./{RPath}", "Unsupported file format", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			catch
+			{
+				_metaLoaded = false;
+				MessageBox.Show($"Cant load metadata of file:\n./{RPath}", "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
 		public void SaveMeta()
 		{
 			if (!_metaLoaded) return;
-			if (_metaError) return;
-			using var tfile = TagLib.File.Create(FPath);
+			if (!File.Exists(FPath))
+			{
+				MessageBox.Show($"File does not exist:\n./{RPath}", "Disappeared file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			try
+			{
+				using var tfile = TagLib.File.Create(FPath);
 
-			tfile.Tag.Title = Title;
-			tfile.Tag.Album = Album;
-			tfile.Tag.Performers = Artists;
-			tfile.Tag.Pictures = Picture == null ? [] : [Picture];
+				tfile.Tag.Title = Title;
+				tfile.Tag.Album = Album;
+				tfile.Tag.Performers = Artists;
+				tfile.Tag.Pictures = Picture == null ? [] : [Picture];
 
-			tfile.Save();
+				tfile.Save();
+			}
+			catch
+			{
+				MessageBox.Show($"Cant save metadata of file:\n./{RPath}", "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		public void Move(string fullDestFileName)

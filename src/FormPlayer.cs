@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace Melodorium
 		public FormPlayer()
 		{
 			InitializeComponent();
-			_audioPlayer.TrackEnded += (object? sender, StoppedEventArgs args) =>
+			_audioPlayer.TrackEnded += (object? sender, EventArgs args) =>
 			{
 				ListFiles.Invoke(PlayNext);
 			};
@@ -42,7 +43,7 @@ namespace Melodorium
 		public void AddTrackToPlaylist(MusicFile file)
 		{
 			_playlist.Add(file);
-			ListFiles.Items.Add(new ListViewItem(file.PlaylistName) { Tag = file });
+			ListFiles.Items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
 			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
@@ -70,19 +71,28 @@ namespace Melodorium
 
 		private void Play(int i)
 		{
-			if (i < 0 || i > _playlist.Count) return;
+			if (i < 0) i = 0;
+			if (i > _playlist.Count) i = _playlist.Count - 1;
 			_selectedFileI = i;
 			Play();
 		}
 		private void Play()
 		{
-			var file = _selectedFileI < _playlist.Count ? _playlist[_selectedFileI] : null;
+			var file = _selectedFileI >= 0 && _selectedFileI < _playlist.Count ? _playlist[_selectedFileI] : null;
 			if (file == null) return;
 
-			var plaiyng = _audioPlayer.PlayPause(file);
+			var ok = _audioPlayer.PlayPause(file);
+			if (ok) file.LoadMeta();
+			ListFiles.Items[_selectedFileI].Text = file.PlaylistName + file.Tags;
+            foreach (ListViewItem item in ListFiles.Items)
+				item.BackColor = Color.Transparent;
+			ListFiles.Items[_selectedFileI].BackColor = Color.LightBlue;
+
 			LblMusicName.Text = file.PlaylistName;
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
-			BtnPlay.Text = plaiyng ? "Pause" : "Play";
+			BtnPlay.Text = _audioPlayer.IsPlaying ? "Pause" : "Play";
+
+			if (!ok) PlayNext();
 		}
 
 		private void PlayNext()
@@ -157,6 +167,28 @@ namespace Melodorium
 		{
 			Program.Manager.Show();
 			Program.Manager.Activate();
+		}
+
+		private void ListFilesMenuItem_Delete_Click(object sender, EventArgs e)
+		{
+			var indexes = ListFiles.SelectedIndices.Cast<int>().OrderDescending().ToList();
+			foreach (var i in indexes)
+			{
+				if (i <= _selectedFileI) _selectedFileI--;
+				ListFiles.Items.RemoveAt(i);
+				_playlist.RemoveAt(i);
+			}
+		}
+
+		private void ListFiles_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.A && e.Control)
+			{
+				foreach (ListViewItem item in ListFiles.Items)
+				{
+					item.Selected = true;
+				}
+			}
 		}
 	}
 }

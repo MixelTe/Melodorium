@@ -10,7 +10,7 @@ namespace Melodorium
 {
 	internal class AudioPlayer : IDisposable
 	{
-		public event EventHandler<StoppedEventArgs>? TrackEnded;
+		public event EventHandler<EventArgs>? TrackEnded;
 		private readonly WaveOutEvent _outputDevice = new();
 		private AudioFileReader? _fileReader;
 		private string _curPath = "";
@@ -70,26 +70,35 @@ namespace Melodorium
 			_outputDevice.Stop();
 		}
 
-		public void Play()
+		public bool Play()
 		{
-			if (_file == null) return;
-			Play(_file);
+			if (_file == null) return false;
+			return Play(_file);
 		}
-		public void Play(MusicFile file)
+		public bool Play(MusicFile file)
 		{
 			_file = file;
-
-			if (_fileReader == null || _curPath != file.FPath)
+			try
 			{
-				_changingTrack = true;
-				_outputDevice.Stop();
-				_fileReader?.Dispose();
-				_fileReader = new AudioFileReader(file.FPath);
-				_curPath = file.FPath;
-				_outputDevice.Init(_fileReader);
-				_changingTrack = false;
+				if (_fileReader == null || _curPath != file.FPath)
+				{
+					_changingTrack = true;
+					_outputDevice.Stop();
+					_fileReader?.Dispose();
+					_fileReader = new AudioFileReader(file.FPath);
+					_curPath = file.FPath;
+					_outputDevice.Init(_fileReader);
+					_changingTrack = false;
+				}
+				_outputDevice.Play();
+				return true;
 			}
-			_outputDevice.Play();
+			catch
+			{
+				_fileReader?.Dispose();
+				_fileReader = null;
+				return false;
+			}
 		}
 
 		public void Pause()
@@ -106,24 +115,21 @@ namespace Melodorium
 			_changingTrack = false;
 		}
 
-		/// <returns>Is audio playing</returns>
 		public bool PlayPause()
 		{
 			if (_file == null) return false;
 			return PlayPause(_file);
 		}
-		/// <returns>Is audio playing</returns>
 		public bool PlayPause(MusicFile file)
 		{
 			if (_outputDevice.PlaybackState == PlaybackState.Playing && _curPath == file.FPath)
 			{
 				Pause();
-				return false;
+				return true;
 			}
 			else
 			{
-				Play(file);
-				return true;
+				return Play(file);
 			}
 		}
 	}

@@ -37,7 +37,7 @@ namespace Melodorium
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Error\n{ex.Message}", "Screen Capture", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Error\n{ex.Message}", "Melodorium", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 	}
