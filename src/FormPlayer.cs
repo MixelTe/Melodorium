@@ -1,6 +1,7 @@
 ﻿using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -22,6 +23,8 @@ namespace Melodorium
 		private int _selectedFileI = 0;
 		private bool _closing = false;
 		private bool _updatingTime = false;
+
+		public ReadOnlyCollection<MusicFile> Playlist { get => _playlist.AsReadOnly(); }
 
 		public FormPlayer()
 		{

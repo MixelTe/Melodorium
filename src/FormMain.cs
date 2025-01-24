@@ -499,10 +499,7 @@ namespace Melodorium
 
 		private void BtnExportPlaylist_Click(object sender, EventArgs e)
 		{
-			ShowMusicList();
-
 			var rel = InpExportRel.Checked;
-			var name = GetPlaylistName();
 			var exportFolder = GetExportFolder(InpExportFolder.Text);
 			if (InpExportRel.Checked && !Utils.IsPathInsideFolder(exportFolder, Program.Settings.RootFolder))
 			{
@@ -512,7 +509,7 @@ namespace Melodorium
 			Program.Settings.ExportFolder = exportFolder;
 			Program.Settings.Save();
 
-			var path = Utils.GetFreeFileName(Path.Join(exportFolder, name), ".m3u8", relative: false);
+			var path = Utils.GetFreeFileName(Path.Join(exportFolder, "Melodorium"), ".m3u8", relative: false);
 			try
 			{
 				if (!Directory.Exists(exportFolder))
@@ -529,15 +526,16 @@ namespace Melodorium
 				return;
 			}
 
+			var files = Program.Player.Playlist;
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
 				using var f = File.CreateText(path);
 				f.WriteLine("#EXTM3U");
-				for (int i = 0; i < _filteredFiles.Count; i++)
+				for (int i = 0; i < files.Count; i++)
 				{
-					loadingDialog.SetProgress((float)i / _filteredFiles.Count);
-					var file = _filteredFiles[i];
+					loadingDialog.SetProgress((float)i / files.Count);
+					var file = files[i];
 					file.LoadMeta();
 					var line = "#EXTINF:";
 					line += (int)file.Duration.TotalSeconds + ",";
@@ -554,89 +552,6 @@ namespace Melodorium
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
-		}
-
-		private string GetPlaylistName()
-		{
-			var name = "";
-			if (FilterAuthor.Text != "" && FilterName.Text != "")
-				name += $"{FilterAuthor.Text.Replace(" ", "_")}_-_{FilterName.Text.Replace(" ", "_")}";
-			else if (FilterAuthor.Text != "")
-				name += FilterAuthor.Text.Replace(" ", "_");
-			else if (FilterName.Text != "")
-				name += FilterName.Text.Replace(" ", "_");
-
-			if (FilterUncategorized.Checked)
-				if (name != "")
-					return name;
-				else
-					return "Melodoruim";
-
-			var opt = "";
-			var mood = "";
-			var moodAll = true;
-			for (int i = 0; i < FilterMood.Items.Count; i++)
-				if (FilterMood.GetItemChecked(i))
-					mood += ((MusicMood)i).ToString()[..2];
-				else
-					moodAll = false;
-			if (!moodAll)
-				opt += mood;
-
-			var like = "";
-			var likeAll = true;
-			for (int i = 0; i < FilterLike.Items.Count; i++)
-				if (FilterLike.GetItemChecked(i))
-					like += ((MusicLike)i).ToString()[..2];
-				else
-					likeAll = false;
-			if (!likeAll)
-			{
-				if (opt != "")
-					opt += "_";
-				opt += like;
-			}
-
-			var lang = "";
-			var langAll = true;
-			for (int i = 0; i < FilterLang.Items.Count; i++)
-				if (FilterLang.GetItemChecked(i))
-					lang += ((MusicLang)i).ToString()[..2];
-				else
-					langAll = false;
-			if (!langAll)
-			{
-				if (opt != "")
-					opt += "_";
-				opt += lang;
-			}
-
-			if (FilterTags.SelectedIndex >= 2)
-			{
-				if (opt != "")
-					opt += "_";
-				var tag = Program.MusicData.Tags[FilterTags.SelectedIndex - 2].Replace(" ", "_");
-				opt += Utils.RemoveInvalidFileNameChars(tag);
-			}
-			if (FilterHidden.SelectedIndex == 1)
-			{
-				if (opt != "")
-					opt += "_";
-				opt += "all";
-			}
-			if (FilterHidden.SelectedIndex == 2)
-			{
-				if (opt != "")
-					opt += "_";
-				opt += "hidden";
-			}
-			if (name != "" && opt != "")
-				return name + "_-_" + opt;
-			if (name != "")
-				return name;
-			if (opt != "")
-				return opt;
-			return "Melodoruim";
 		}
 
 		private static string GetExportFolder(string selectedFolder)
@@ -718,10 +633,7 @@ namespace Melodorium
 
 		private void BtnCopyPlaylist_Click(object sender, EventArgs e)
 		{
-			ShowMusicList();
-
-			var name = GetPlaylistName();
-			var folder = Utils.GetFreeDirectoryName(Path.Join(InpCopyFolder.Text, name), relative: false);
+			var folder = Utils.GetFreeDirectoryName(Path.Join(InpCopyFolder.Text, "Melodorium"), relative: false);
 			try
 			{
 				Directory.CreateDirectory(folder);
@@ -741,17 +653,18 @@ namespace Melodorium
 			var diDest = new DirectoryInfo(folder);
 			var useHardLink = diDest.Root.FullName == diRoot.Root.FullName;
 
+			var files = Program.Player.Playlist;
 			using var loadingDialog = new FormLoading();
 			loadingDialog.EnableCancel();
 			loadingDialog.Job = () =>
 			{
-				for (int i = 0; i < _filteredFiles.Count; i++)
+				for (int i = 0; i < files.Count; i++)
 				{
-					loadingDialog.SetProgress((float)i / _filteredFiles.Count);
+					loadingDialog.SetProgress((float)i / files.Count);
 					if (loadingDialog.Canceled)
 						break;
 
-					var file = _filteredFiles[i];
+					var file = files[i];
 					var path = Path.Combine(folder, file.FName);
 					if (Path.Exists(path))
 						path = Path.Combine(folder, file.Name + $" ({file.RFolder.Replace(Path.DirectorySeparatorChar, '-')})" + file.Ext);

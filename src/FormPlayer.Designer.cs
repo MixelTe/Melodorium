@@ -37,17 +37,17 @@
 			InpMusicTime = new TrackBar();
 			InpVolume = new NAudio.Gui.Pot();
 			ListFiles = new ListView();
-			Playlist = new ColumnHeader();
+			PlaylistColumn = new ColumnHeader();
 			ListFilesMenu = new ContextMenuStrip(components);
 			ListFilesMenuItem_Delete = new ToolStripMenuItem();
+			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
+			toolStripSeparator1 = new ToolStripSeparator();
 			ListFilesMenuItem_Clear = new ToolStripMenuItem();
 			ListFilesMenuItem_Shuffle = new ToolStripMenuItem();
 			BtnPrev = new Button();
 			BtnNext = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			BtnOpenManager = new Button();
-			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
-			toolStripSeparator1 = new ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			ListFilesMenu.SuspendLayout();
 			SuspendLayout();
@@ -122,7 +122,7 @@
 			// ListFiles
 			// 
 			ListFiles.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			ListFiles.Columns.AddRange(new ColumnHeader[] { Playlist });
+			ListFiles.Columns.AddRange(new ColumnHeader[] { PlaylistColumn });
 			ListFiles.ContextMenuStrip = ListFilesMenu;
 			ListFiles.Font = new Font("Segoe UI", 8F);
 			ListFiles.Location = new Point(9, 90);
@@ -135,35 +135,47 @@
 			ListFiles.KeyDown += ListFiles_KeyDown;
 			ListFiles.MouseDoubleClick += ListFiles_MouseDoubleClick;
 			// 
-			// Playlist
+			// PlaylistColumn
 			// 
-			Playlist.Text = "Playlist";
-			Playlist.Width = 240;
+			PlaylistColumn.Text = "Playlist";
+			PlaylistColumn.Width = 240;
 			// 
 			// ListFilesMenu
 			// 
 			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Delete, ListFilesMenuItem_Explorer, toolStripSeparator1, ListFilesMenuItem_Clear, ListFilesMenuItem_Shuffle });
 			ListFilesMenu.Name = "ListFilesMenu";
-			ListFilesMenu.Size = new Size(181, 120);
+			ListFilesMenu.Size = new Size(163, 98);
 			// 
 			// ListFilesMenuItem_Delete
 			// 
 			ListFilesMenuItem_Delete.Name = "ListFilesMenuItem_Delete";
-			ListFilesMenuItem_Delete.Size = new Size(180, 22);
+			ListFilesMenuItem_Delete.Size = new Size(162, 22);
 			ListFilesMenuItem_Delete.Text = "Delete";
 			ListFilesMenuItem_Delete.Click += ListFilesMenuItem_Delete_Click;
+			// 
+			// ListFilesMenuItem_Explorer
+			// 
+			ListFilesMenuItem_Explorer.Name = "ListFilesMenuItem_Explorer";
+			ListFilesMenuItem_Explorer.Size = new Size(162, 22);
+			ListFilesMenuItem_Explorer.Text = "Open in explorer";
+			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
+			// 
+			// toolStripSeparator1
+			// 
+			toolStripSeparator1.Name = "toolStripSeparator1";
+			toolStripSeparator1.Size = new Size(159, 6);
 			// 
 			// ListFilesMenuItem_Clear
 			// 
 			ListFilesMenuItem_Clear.Name = "ListFilesMenuItem_Clear";
-			ListFilesMenuItem_Clear.Size = new Size(180, 22);
+			ListFilesMenuItem_Clear.Size = new Size(162, 22);
 			ListFilesMenuItem_Clear.Text = "Clear playlist";
 			ListFilesMenuItem_Clear.Click += ListFilesMenuItem_Clear_Click;
 			// 
 			// ListFilesMenuItem_Shuffle
 			// 
 			ListFilesMenuItem_Shuffle.Name = "ListFilesMenuItem_Shuffle";
-			ListFilesMenuItem_Shuffle.Size = new Size(180, 22);
+			ListFilesMenuItem_Shuffle.Size = new Size(162, 22);
 			ListFilesMenuItem_Shuffle.Text = "Shuffle playlist";
 			ListFilesMenuItem_Shuffle.Click += ListFilesMenuItem_Shuffle_Click;
 			// 
@@ -206,18 +218,6 @@
 			BtnOpenManager.Text = "M";
 			BtnOpenManager.UseVisualStyleBackColor = true;
 			BtnOpenManager.Click += BtnOpenManager_Click;
-			// 
-			// ListFilesMenuItem_Explorer
-			// 
-			ListFilesMenuItem_Explorer.Name = "ListFilesMenuItem_Explorer";
-			ListFilesMenuItem_Explorer.Size = new Size(180, 22);
-			ListFilesMenuItem_Explorer.Text = "Open in explorer";
-			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
-			// 
-			// toolStripSeparator1
-			// 
-			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(177, 6);
 			// 
 			// FormPlayer
 			// 
@@ -263,7 +263,7 @@
 		private Button BtnPrev;
 		private Button BtnNext;
 		private System.Windows.Forms.Timer MusicTimer;
-		private ColumnHeader Playlist;
+		private ColumnHeader PlaylistColumn;
 		private Button BtnOpenManager;
 		private ContextMenuStrip ListFilesMenu;
 		private ToolStripMenuItem ListFilesMenuItem_Delete;
