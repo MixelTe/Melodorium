@@ -18,10 +18,20 @@ namespace Melodorium
 		private bool _changingTrack = false;
 		private bool _disposing = false;
 
+		public bool IsPlaying { get => _outputDevice.PlaybackState == PlaybackState.Playing; }
 		public float Volume
 		{
 			get => _outputDevice.Volume;
 			set => _outputDevice.Volume = value;
+		}
+		public TimeSpan TimeCurrent
+		{
+			get => _fileReader == null ? TimeSpan.Zero : _fileReader.CurrentTime;
+			set
+			{
+				if (_fileReader != null)
+					_fileReader.CurrentTime = value;
+			}
 		}
 		public double TimeNormalized
 		{
@@ -32,8 +42,10 @@ namespace Melodorium
 					_fileReader.CurrentTime = _fileReader.TotalTime * value;
 			}
 		}
+		public string CurtimeDisplay => _fileReader == null ? "00:00" :
+			$"{_fileReader.CurrentTime:mm\\:ss}";
 		public string PlaytimeDisplay => _fileReader == null ? "00:00" :
-			$"{_fileReader.CurrentTime:mm\\:ss}/{_fileReader.TotalTime:mm\\:ss}";
+			$"{CurtimeDisplay}/{_fileReader.TotalTime:mm\\:ss}";
 
 		public AudioPlayer()
 		{

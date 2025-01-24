@@ -17,15 +17,12 @@ namespace Melodorium
 {
 	public partial class FormMain : Form
 	{
-		private readonly WaveOutEvent _outputDevice = new();
-		private AudioFileReader? _audioFile;
-		private string _audioFileCur = "";
+		private readonly AudioPlayer _audioPlayer = new();
 		private List<MusicFile> _filteredFiles = [];
 		private MusicFile? _selectedFile;
 		private int? _selectedFileI;
 		private bool _closing = false;
 		private bool _updatingTime = false;
-		private bool _autoplaying = false;
 		private bool _metaChanged = false;
 		private bool _metaDeleteImg = false;
 		private string? _metaNewImg;
@@ -33,30 +30,8 @@ namespace Melodorium
 		public FormMain()
 		{
 			InitializeComponent();
-			_outputDevice.PlaybackStopped += (object? sender, StoppedEventArgs args) =>
-			{
-				if (_closing)
-				{
-					_outputDevice.Dispose();
-					_audioFile?.Dispose();
-				}
-				else
-				{
-					if (_selectedFile == null) return;
-					if (!InpAutoplay.Checked) return;
-					if (_autoplaying) return;
-					ListFiles.Invoke(() =>
-					{
-						if (_selectedFileI == null) return;
-						var toSelectI = ((int)_selectedFileI + 1) % ListFiles.Items.Count;
-						_autoplaying = true;
-						ListFiles.Items[toSelectI].Selected = true;
-						_autoplaying = false;
-					});
-				}
-			};
 			InpPlayerAtStartup.Checked = Program.Settings.OpenPlayerAtStartup;
-			_outputDevice.Volume = Program.Settings.Volume;
+			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
 			FilterMood.Items.Add("Rock", true);
@@ -114,7 +89,7 @@ namespace Melodorium
 				Hide();
 				return;
 			}
-			_outputDevice.Stop();
+			_audioPlayer.Dispose();
 
 			if (!Program.Player.WasOpened)
 			{
@@ -379,14 +354,9 @@ namespace Melodorium
 			if (_metaChanged)
 			{
 				_metaChanged = false;
-				TimeSpan? curTime = null;
-				if (_audioFile != null)
-				{
-					_outputDevice.Stop();
-					curTime = _audioFile.CurrentTime;
-					_audioFile.Dispose();
-					_audioFile = null;
-				}
+				bool musicPlaying = _audioPlayer.IsPlaying;
+				TimeSpan curTime = _audioPlayer.TimeCurrent;
+				_audioPlayer.Stop();
 				_selectedFile.Title = InpTitle.Text;
 				_selectedFile.Album = InpAlbum.Text;
 				_selectedFile.Artists = InpArtists.Text.Split(";");
@@ -400,11 +370,10 @@ namespace Melodorium
 					_selectedFile.Picture = new TagLib.Picture(_metaNewImg);
 				}
 				_selectedFile.SaveMeta();
-				if (curTime != null)
+				if (musicPlaying)
 				{
 					PlayMusic();
-					if (_audioFile != null)
-						_audioFile.CurrentTime = (TimeSpan)curTime;
+					_audioPlayer.TimeCurrent = curTime;
 				}
 			}
 			LblState.Text = "Saved";
@@ -414,7 +383,7 @@ namespace Melodorium
 			tags += _selectedFile.Data.Like.ToString()[..2] + ";";
 			tags += _selectedFile.Data.Lang.ToString()[..2] + "]";
 			if (_selectedFileI != null)
-				ListFiles.Items[(int)_selectedFileI].Text = _selectedFile.RPath + tags;
+				ListFiles.Items[_selectedFileI.Value].Text = _selectedFile.RPath + tags;
 			UpdateUI(updateData: true);
 		}
 
@@ -427,59 +396,37 @@ namespace Melodorium
 		{
 			if (_selectedFile == null) return;
 
-			if (_audioFile == null || _audioFileCur != _selectedFile.FPath)
-			{
-				_outputDevice.Stop();
-				_audioFile?.Dispose();
-				_audioFile = new AudioFileReader(_selectedFile.FPath);
-				_audioFileCur = _selectedFile.FPath;
-				_outputDevice.Init(_audioFile);
-			}
-			LblTime.Text = $"{_audioFile.CurrentTime:mm\\:ss}/{_audioFile.TotalTime:mm\\:ss}";
-			if (_outputDevice.PlaybackState == PlaybackState.Playing)
-			{
-				_outputDevice.Pause();
-				BtnPlay.Text = "Play";
-			}
-			else
-			{
-				_outputDevice.Play();
-				BtnPlay.Text = "Pause";
-			}
+			var plaiyng = _audioPlayer.PlayPause(_selectedFile);
+			LblTime.Text = _audioPlayer.PlaytimeDisplay;
+			BtnPlay.Text = plaiyng ? "Pause" : "Play";
 		}
 
 		private void BtnStop_Click(object sender, EventArgs e)
 		{
-			if (_audioFile != null)
-			{
-				_outputDevice.Stop();
-				_audioFile.Dispose();
-				_audioFile = null;
-				BtnPlay.Text = "Play";
-			}
+			_audioPlayer.Stop();
+			BtnPlay.Text = "Play";
 		}
 
 		private void InpVolume_VolumeChanged(object sender, EventArgs e)
 		{
 			Program.Settings.Volume = (float)InpVolume.Value;
 			Program.Settings.Save();
-			_outputDevice.Volume = Program.Settings.Volume;
+			_audioPlayer.Volume = Program.Settings.Volume;
 		}
 
 		private void InpMusicTime_ValueChanged(object sender, EventArgs e)
 		{
 			if (_updatingTime) return;
-			if (_audioFile == null) return;
-			_audioFile.CurrentTime = _audioFile.TotalTime * InpMusicTime.Value / 100;
-			LblTime.Text = $"{_audioFile.CurrentTime:mm\\:ss}/{_audioFile.TotalTime:mm\\:ss}";
+			_audioPlayer.TimeNormalized = InpMusicTime.Value / 100f;
+			LblTime.Text = _audioPlayer.PlaytimeDisplay;
 		}
 
 		private void MusicTimer_Tick(object sender, EventArgs e)
 		{
-			if (_audioFile == null) return;
+			if (_selectedFile == null) return;
 			_updatingTime = true;
-			InpMusicTime.Value = (int)(_audioFile.CurrentTime / _audioFile.TotalTime * 100);
-			LblTime.Text = $"{_audioFile.CurrentTime:mm\\:ss}/{_audioFile.TotalTime:mm\\:ss}";
+			InpMusicTime.Value = (int)(_audioPlayer.TimeNormalized * 100);
+			LblTime.Text = $"{_audioPlayer.CurtimeDisplay}/{_selectedFile.Duration:mm\\:ss}";
 			_updatingTime = false;
 		}
 

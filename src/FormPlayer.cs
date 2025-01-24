@@ -18,7 +18,6 @@ namespace Melodorium
 		public bool WasOpened = false;
 		private List<MusicFile> _playlist = [];
 		private readonly AudioPlayer _audioPlayer = new();
-		private MusicFile? _selectedFile;
 		private int _selectedFileI = 0;
 		private bool _closing = false;
 		private bool _updatingTime = false;
@@ -44,6 +43,7 @@ namespace Melodorium
 		{
 			_playlist.Add(file);
 			ListFiles.Items.Add(new ListViewItem(file.PlaylistName) { Tag = file });
+			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		public void CloseForm()
@@ -76,11 +76,11 @@ namespace Melodorium
 		}
 		private void Play()
 		{
-			_selectedFile = _selectedFileI < _playlist.Count ? _playlist[_selectedFileI] : null;
-			if (_selectedFile == null) return;
+			var file = _selectedFileI < _playlist.Count ? _playlist[_selectedFileI] : null;
+			if (file == null) return;
 
-			var plaiyng = _audioPlayer.PlayPause(_selectedFile);
-			LblMusicName.Text = _selectedFile.PlaylistName;
+			var plaiyng = _audioPlayer.PlayPause(file);
+			LblMusicName.Text = file.PlaylistName;
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
 			BtnPlay.Text = plaiyng ? "Pause" : "Play";
 		}
