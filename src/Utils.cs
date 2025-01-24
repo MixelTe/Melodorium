@@ -342,7 +342,7 @@ namespace Melodorium
 
 		public static void Shuffle<T>(this IList<T> list)
 		{
-            for (int i = list.Count; i > 1; i--)
+            for (int i = list.Count - 1; i > 1; i--)
             {
 				int k = Random.Shared.Next(i + 1);
 				(list[i], list[k]) = (list[k], list[i]);

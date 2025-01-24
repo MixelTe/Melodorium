@@ -84,7 +84,7 @@ namespace Melodorium
 			var ok = _audioPlayer.PlayPause(file);
 			if (ok) file.LoadMeta();
 			ListFiles.Items[_selectedFileI].Text = file.PlaylistName + file.Tags;
-            foreach (ListViewItem item in ListFiles.Items)
+			foreach (ListViewItem item in ListFiles.Items)
 				item.BackColor = Color.Transparent;
 			ListFiles.Items[_selectedFileI].BackColor = Color.LightBlue;
 
@@ -180,6 +180,38 @@ namespace Melodorium
 			}
 		}
 
+		private void ListFilesMenuItem_Explorer_Click(object sender, EventArgs e)
+		{
+			if (ListFiles.SelectedItems.Count == 0) return;
+			var item = ListFiles.SelectedItems[0];
+			if (item.Tag is MusicFile file)
+			{
+				Utils.OpenExplorer(file.FPath);
+			}
+		}
+
+		private void ListFilesMenuItem_Clear_Click(object sender, EventArgs e)
+		{
+			_playlist = [];
+			ListFiles.Items.Clear();
+		}
+
+		private void ListFilesMenuItem_Shuffle_Click(object sender, EventArgs e)
+		{
+			if (_playlist.Count == 0) return;
+			var selected = _playlist[_selectedFileI];
+			_playlist.Shuffle();
+			_selectedFileI = _playlist.IndexOf(selected);
+			for (int i = 0; i < _playlist.Count; i++)
+			{
+				var file = _playlist[i];
+				var item = ListFiles.Items[i];
+				item.Text = file.PlaylistName + file.Tags;
+				item.Tag = file;
+				item.BackColor = i == _selectedFileI ? Color.LightBlue : Color.Transparent;
+			}
+		}
+
 		private void ListFiles_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.A && e.Control)
@@ -268,5 +300,6 @@ namespace Melodorium
 				ListFiles.Items[(indexes[0] + 1) % _playlist.Count].Selected = true;
 			}
 		}
+
 	}
 }

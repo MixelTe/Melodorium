@@ -138,13 +138,13 @@ namespace Melodorium
 				Ext = Path.GetExtension(_fPath);
 				Author = "";
 				SName = Name;
-				PlaylistName = Name;
+				PlaylistName = Name.Replace("_", " ");
 				if (Name.Contains("_-_"))
 				{
 					var parts = Name.Split("_-_");
 					Author = parts[0];
 					SName = parts[1];
-					PlaylistName = Author + " - " + SName;
+					PlaylistName = Author.Replace("_", " ") + " - " + SName.Replace("_", " ");
 				}
 				NormilizedFullName = Utils.NormalizeName(Name);
 				NormilizedName = SName != "" ? Utils.NormalizeName(SName) : NormilizedFullName;
@@ -232,8 +232,8 @@ namespace Melodorium
 					Picture = tfile.Tag.Pictures[0];
 				Duration = tfile.Properties.Duration;
 				var artists = string.Join(", ", Artists);
-				artists = artists != "" ? artists : Author;
-				PlaylistName = (artists != "" ? artists + " - " : "") + (Title != "" ? Title : SName);
+				artists = artists != "" ? artists : Author.Replace("_", " ");
+				PlaylistName = (artists != "" ? artists + " - " : "") + (Title != "" ? Title : SName.Replace("_", " "));
 			}
 			catch (TagLib.CorruptFileException)
 			{

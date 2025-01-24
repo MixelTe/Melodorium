@@ -40,10 +40,14 @@
 			Playlist = new ColumnHeader();
 			ListFilesMenu = new ContextMenuStrip(components);
 			ListFilesMenuItem_Delete = new ToolStripMenuItem();
+			ListFilesMenuItem_Clear = new ToolStripMenuItem();
+			ListFilesMenuItem_Shuffle = new ToolStripMenuItem();
 			BtnPrev = new Button();
 			BtnNext = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			BtnOpenManager = new Button();
+			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
+			toolStripSeparator1 = new ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			ListFilesMenu.SuspendLayout();
 			SuspendLayout();
@@ -138,16 +142,30 @@
 			// 
 			// ListFilesMenu
 			// 
-			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Delete });
+			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Delete, ListFilesMenuItem_Explorer, toolStripSeparator1, ListFilesMenuItem_Clear, ListFilesMenuItem_Shuffle });
 			ListFilesMenu.Name = "ListFilesMenu";
-			ListFilesMenu.Size = new Size(108, 26);
+			ListFilesMenu.Size = new Size(181, 120);
 			// 
 			// ListFilesMenuItem_Delete
 			// 
 			ListFilesMenuItem_Delete.Name = "ListFilesMenuItem_Delete";
-			ListFilesMenuItem_Delete.Size = new Size(107, 22);
+			ListFilesMenuItem_Delete.Size = new Size(180, 22);
 			ListFilesMenuItem_Delete.Text = "Delete";
 			ListFilesMenuItem_Delete.Click += ListFilesMenuItem_Delete_Click;
+			// 
+			// ListFilesMenuItem_Clear
+			// 
+			ListFilesMenuItem_Clear.Name = "ListFilesMenuItem_Clear";
+			ListFilesMenuItem_Clear.Size = new Size(180, 22);
+			ListFilesMenuItem_Clear.Text = "Clear playlist";
+			ListFilesMenuItem_Clear.Click += ListFilesMenuItem_Clear_Click;
+			// 
+			// ListFilesMenuItem_Shuffle
+			// 
+			ListFilesMenuItem_Shuffle.Name = "ListFilesMenuItem_Shuffle";
+			ListFilesMenuItem_Shuffle.Size = new Size(180, 22);
+			ListFilesMenuItem_Shuffle.Text = "Shuffle playlist";
+			ListFilesMenuItem_Shuffle.Click += ListFilesMenuItem_Shuffle_Click;
 			// 
 			// BtnPrev
 			// 
@@ -188,6 +206,18 @@
 			BtnOpenManager.Text = "M";
 			BtnOpenManager.UseVisualStyleBackColor = true;
 			BtnOpenManager.Click += BtnOpenManager_Click;
+			// 
+			// ListFilesMenuItem_Explorer
+			// 
+			ListFilesMenuItem_Explorer.Name = "ListFilesMenuItem_Explorer";
+			ListFilesMenuItem_Explorer.Size = new Size(180, 22);
+			ListFilesMenuItem_Explorer.Text = "Open in explorer";
+			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
+			// 
+			// toolStripSeparator1
+			// 
+			toolStripSeparator1.Name = "toolStripSeparator1";
+			toolStripSeparator1.Size = new Size(177, 6);
 			// 
 			// FormPlayer
 			// 
@@ -237,5 +267,9 @@
 		private Button BtnOpenManager;
 		private ContextMenuStrip ListFilesMenu;
 		private ToolStripMenuItem ListFilesMenuItem_Delete;
+		private ToolStripMenuItem ListFilesMenuItem_Clear;
+		private ToolStripMenuItem ListFilesMenuItem_Shuffle;
+		private ToolStripMenuItem ListFilesMenuItem_Explorer;
+		private ToolStripSeparator toolStripSeparator1;
 	}
 }

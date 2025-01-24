@@ -26,19 +26,12 @@ namespace Melodorium
 				MessageBox.Show("Already launched", "Melodorium");
 				return;
 			}
-			try
-			{
-				ApplicationConfiguration.Initialize();
-				Settings.Load();
-				Player = new();
-				Manager = new();
-				App = new();
-				Application.Run(App);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Error\n{ex.Message}", "Melodorium", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			ApplicationConfiguration.Initialize();
+			Settings.Load();
+			Player = new();
+			Manager = new();
+			App = new();
+			Application.Run(App);
 		}
 	}
 }
