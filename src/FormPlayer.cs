@@ -189,6 +189,84 @@ namespace Melodorium
 					item.Selected = true;
 				}
 			}
+			else if (e.KeyCode == Keys.Up && e.Alt)
+			{
+				if (ListFiles.SelectedIndices.Count == 0) return;
+				var indexes = ListFiles.SelectedIndices.Cast<int>().Order().ToList();
+				if (indexes[0] == 0) return;
+				var tmp = new ListViewItem();
+				foreach (var i in indexes)
+				{
+					if (i == _selectedFileI) _selectedFileI--;
+					else if (i == _selectedFileI + 1) _selectedFileI++;
+					var item1 = ListFiles.Items[i];
+					var item2 = ListFiles.Items[i - 1];
+					ListFiles.Items[i - 1] = tmp;
+					ListFiles.Items[i] = item2;
+					ListFiles.Items[i - 1] = item1;
+					(_playlist[i], _playlist[i - 1]) = (_playlist[i - 1], _playlist[i]);
+				}
+			}
+			else if (e.KeyCode == Keys.Down && e.Alt)
+			{
+				if (ListFiles.SelectedIndices.Count == 0) return;
+				var indexes = ListFiles.SelectedIndices.Cast<int>().OrderDescending().ToList();
+				if (indexes[0] == _playlist.Count - 1) return;
+				var tmp = new ListViewItem();
+				foreach (var i in indexes)
+				{
+					if (i == _selectedFileI) _selectedFileI++;
+					else if (i == _selectedFileI - 1) _selectedFileI--;
+					var item1 = ListFiles.Items[i];
+					var item2 = ListFiles.Items[i + 1];
+					ListFiles.Items[i + 1] = tmp;
+					ListFiles.Items[i] = item2;
+					ListFiles.Items[i + 1] = item1;
+					(_playlist[i], _playlist[i + 1]) = (_playlist[i + 1], _playlist[i]);
+				}
+			}
+			else if (e.KeyCode == Keys.Up && e.Shift)
+			{
+				e.Handled = true;
+				if (ListFiles.SelectedIndices.Count == 0) return;
+				var mi = ListFiles.SelectedIndices.Cast<int>().Min();
+				if (mi - 1 >= 0) ListFiles.Items[mi - 1].Selected = true;
+			}
+			else if (e.KeyCode == Keys.Down && e.Shift)
+			{
+				e.Handled = true;
+				if (ListFiles.SelectedIndices.Count == 0) return;
+				var mi = ListFiles.SelectedIndices.Cast<int>().Max();
+				if (mi + 1 < _playlist.Count) ListFiles.Items[mi + 1].Selected = true;
+			}
+			else if (e.KeyCode == Keys.Up)
+			{
+				e.Handled = true;
+				if (_playlist.Count == 0) return;
+				if (ListFiles.SelectedIndices.Count == 0)
+				{
+					ListFiles.Items[_playlist.Count - 1].Selected = true;
+					return;
+				}
+				var indexes = ListFiles.SelectedIndices.Cast<int>().Order().ToList();
+				foreach (var i in indexes)
+					ListFiles.Items[i].Selected = false;
+				ListFiles.Items[(indexes[0] - 1 + _playlist.Count) % _playlist.Count].Selected = true;
+			}
+			else if (e.KeyCode == Keys.Down)
+			{
+				e.Handled = true;
+				if (_playlist.Count == 0) return;
+				if (ListFiles.SelectedIndices.Count == 0)
+				{
+					ListFiles.Items[0].Selected = true;
+					return;
+				}
+				var indexes = ListFiles.SelectedIndices.Cast<int>().OrderDescending().ToList();
+				foreach (var i in indexes)
+					ListFiles.Items[i].Selected = false;
+				ListFiles.Items[(indexes[0] + 1) % _playlist.Count].Selected = true;
+			}
 		}
 	}
 }
