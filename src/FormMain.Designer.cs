@@ -98,6 +98,11 @@
 			FolderBrowser = new FolderBrowserDialog();
 			BtnSync = new Button();
 			BtnPlayer = new Button();
+			TrayIcon = new NotifyIcon(components);
+			TrayIconMenu = new ContextMenuStrip(components);
+			TrayIconMenuItem_Player = new ToolStripMenuItem();
+			TrayIconMenuItem_Manager = new ToolStripMenuItem();
+			TrayIconMenuItem_Exit = new ToolStripMenuItem();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -109,6 +114,7 @@
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			groupBox3.SuspendLayout();
 			groupBox4.SuspendLayout();
+			TrayIconMenu.SuspendLayout();
 			SuspendLayout();
 			// 
 			// BtnChangeFolder
@@ -802,6 +808,41 @@
 			BtnPlayer.UseVisualStyleBackColor = true;
 			BtnPlayer.Click += BtnPlayer_Click;
 			// 
+			// TrayIcon
+			// 
+			TrayIcon.ContextMenuStrip = TrayIconMenu;
+			TrayIcon.Icon = (Icon)resources.GetObject("TrayIcon.Icon");
+			TrayIcon.Text = "Melodorium";
+			TrayIcon.Visible = true;
+			TrayIcon.Click += TrayIcon_Click;
+			// 
+			// TrayIconMenu
+			// 
+			TrayIconMenu.Items.AddRange(new ToolStripItem[] { TrayIconMenuItem_Player, TrayIconMenuItem_Manager, TrayIconMenuItem_Exit });
+			TrayIconMenu.Name = "TrayIconMenu";
+			TrayIconMenu.Size = new Size(142, 70);
+			// 
+			// TrayIconMenuItem_Player
+			// 
+			TrayIconMenuItem_Player.Name = "TrayIconMenuItem_Player";
+			TrayIconMenuItem_Player.Size = new Size(141, 22);
+			TrayIconMenuItem_Player.Text = "Player (LMB)";
+			TrayIconMenuItem_Player.Click += TrayIconMenuItem_Player_Click;
+			// 
+			// TrayIconMenuItem_Manager
+			// 
+			TrayIconMenuItem_Manager.Name = "TrayIconMenuItem_Manager";
+			TrayIconMenuItem_Manager.Size = new Size(141, 22);
+			TrayIconMenuItem_Manager.Text = "Manager";
+			TrayIconMenuItem_Manager.Click += TrayIconMenuItem_Manager_Click;
+			// 
+			// TrayIconMenuItem_Exit
+			// 
+			TrayIconMenuItem_Exit.Name = "TrayIconMenuItem_Exit";
+			TrayIconMenuItem_Exit.Size = new Size(141, 22);
+			TrayIconMenuItem_Exit.Text = "Exit";
+			TrayIconMenuItem_Exit.Click += TrayIconMenuItem_Exit_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -839,6 +880,7 @@
 			groupBox3.PerformLayout();
 			groupBox4.ResumeLayout(false);
 			groupBox4.PerformLayout();
+			TrayIconMenu.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -912,5 +954,10 @@
 		private Button BtnPlayer;
 		private ToolStripMenuItem ListFilesMenuItem_AddAll;
 		private ToolStripMenuItem ListFilesMenuItem_Explorer;
+		private NotifyIcon TrayIcon;
+		private ContextMenuStrip TrayIconMenu;
+		private ToolStripMenuItem TrayIconMenuItem_Player;
+		private ToolStripMenuItem TrayIconMenuItem_Manager;
+		private ToolStripMenuItem TrayIconMenuItem_Exit;
 	}
 }

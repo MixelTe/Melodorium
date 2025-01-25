@@ -30,6 +30,7 @@ namespace Melodorium
 		public FormMain()
 		{
 			InitializeComponent();
+			TrayIcon.Text = "Melodorium v" + Application.ProductVersion;
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
@@ -80,7 +81,10 @@ namespace Melodorium
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (!Program.Player.WasOpened)
+			{
+				Program.Player.CloseForm();
 				_closing = true;
+			}
 
 			if (!_closing)
 			{
@@ -89,13 +93,6 @@ namespace Melodorium
 				return;
 			}
 			_audioPlayer.Dispose();
-
-			if (!Program.Player.WasOpened)
-			{
-				Program.App.CloseIcon();
-				Program.Player.CloseForm();
-				Application.Exit();
-			}
 		}
 
 		private void FormMain_Shown(object sender, EventArgs e)
@@ -104,6 +101,33 @@ namespace Melodorium
 				OpenFolder();
 			else
 				UpdateMusicFull();
+		}
+
+		private void TrayIcon_Click(object sender, EventArgs e)
+		{
+			if (e is MouseEventArgs me && me.Button == MouseButtons.Left)
+			{
+				Program.Player.Show();
+				Program.Player.Activate();
+			}
+		}
+
+		private void TrayIconMenuItem_Player_Click(object sender, EventArgs e)
+		{
+			Program.Player.Show();
+			Program.Player.Activate();
+		}
+
+		private void TrayIconMenuItem_Manager_Click(object sender, EventArgs e)
+		{
+			Show();
+			Activate();
+		}
+
+		private void TrayIconMenuItem_Exit_Click(object sender, EventArgs e)
+		{
+			Program.Player.CloseForm();
+			CloseForm();
 		}
 
 		private void BtnChangeFolder_Click(object sender, EventArgs e)

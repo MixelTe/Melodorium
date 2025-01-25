@@ -10,7 +10,6 @@ namespace Melodorium
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 		public static FormPlayer Player = null;
 		public static FormMain Manager = null;
-		public static App App = null;
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 		public static Mutex? mutex;
 
@@ -30,8 +29,7 @@ namespace Melodorium
 			Settings.Load();
 			Player = new();
 			Manager = new();
-			App = new();
-			Application.Run(App);
+			Application.Run(Manager);
 		}
 	}
 }
