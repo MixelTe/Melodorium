@@ -350,6 +350,11 @@ namespace Melodorium
 			}
 		}
 
+		public static T RandomItem<T>(this IList<T> list)
+		{
+			return list[Random.Shared.Next(list.Count)];
+		}
+
 		public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
 		{
 			foreach (var item in source)

@@ -90,6 +90,8 @@ namespace Melodorium
 					_outputDevice.Init(_fileReader);
 					_changingTrack = false;
 				}
+				if (_outputDevice.PlaybackState == PlaybackState.Stopped)
+					_fileReader.CurrentTime = TimeSpan.Zero;
 				_outputDevice.Play();
 				return true;
 			}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -22,10 +23,13 @@ namespace Melodorium
 		private MusicFile? _selectedFile;
 		private int? _selectedFileI;
 		private bool _closing = false;
+		private bool _updatingValues = true;
 		private bool _updatingTime = false;
 		private bool _metaChanged = false;
 		private bool _metaDeleteImg = false;
 		private string? _metaNewImg;
+		
+		public ReadOnlyCollection<MusicFile> FilteredFiles { get => _filteredFiles.AsReadOnly(); }
 
 		public FormMain()
 		{
@@ -70,6 +74,7 @@ namespace Melodorium
 			InpLang.Items.Add("German");
 			InpLang.Items.Add("Italian");
 			InpLang.Items.Add("Japanese");
+			_updatingValues = false;
 		}
 
 		public void CloseForm()
@@ -427,6 +432,7 @@ namespace Melodorium
 
 		private void InpVolume_VolumeChanged(object sender, EventArgs e)
 		{
+			if (_updatingValues) return;
 			Program.Settings.Volume = (float)InpVolume.Value;
 			Program.Settings.Save();
 			_audioPlayer.Volume = Program.Settings.Volume;

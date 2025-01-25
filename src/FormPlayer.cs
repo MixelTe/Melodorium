@@ -23,6 +23,7 @@ namespace Melodorium
 		private int _selectedFileI = 0;
 		private bool _closing = false;
 		private bool _updatingTime = false;
+		private bool _updatingValues = true;
 
 		public ReadOnlyCollection<MusicFile> Playlist { get => _playlist.AsReadOnly(); }
 
@@ -31,25 +32,31 @@ namespace Melodorium
 			InitializeComponent();
 			_audioPlayer.TrackEnded += (object? sender, EventArgs args) =>
 			{
-				ListFiles.Invoke(PlayNext);
+				if (Program.Settings.LoopTrack)
+					ListFiles.Invoke(Play);
+				else
+					ListFiles.Invoke(PlayNext);
 			};
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
+			InpAutoplay.Checked = Program.Settings.Autoplay;
+			InpLoop.Checked = Program.Settings.LoopTrack;
 			if (Program.Settings.PlayerRect.X >= 0)
 			{
 				StartPosition = FormStartPosition.Manual;
 				Location = Program.Settings.PlayerRect.Location;
 				Size = Program.Settings.PlayerRect.Size;
 			}
+			_updatingValues = false;
 		}
 
 		public void AddTracksToPlaylist(IEnumerable<MusicFile> files)
 		{
-            foreach (var file in files)
-            {
+			foreach (var file in files)
+			{
 				_playlist.Add(file);
 				ListFiles.Items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
-            }
+			}
 			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 			SavePlaylist();
 		}
@@ -100,9 +107,13 @@ namespace Melodorium
 
 		private void Play(int i)
 		{
+			if (Program.Settings.Autoplay && _playlist.Count == 0)
+				Autoplay();
 			if (i < 0) i = 0;
 			if (i > _playlist.Count) i = _playlist.Count - 1;
 			_selectedFileI = i;
+			if (Program.Settings.Autoplay && _selectedFileI == _playlist.Count - 1)
+				Autoplay();
 			Play();
 		}
 		private void Play()
@@ -116,6 +127,7 @@ namespace Melodorium
 			foreach (ListViewItem item in ListFiles.Items)
 				item.BackColor = Color.Transparent;
 			ListFiles.Items[_selectedFileI].BackColor = Color.LightBlue;
+			ListFiles.EnsureVisible(_selectedFileI);
 
 			LblMusicName.Text = file.PlaylistName;
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
@@ -156,6 +168,7 @@ namespace Melodorium
 
 		private void InpVolume_ValueChanged(object sender, EventArgs e)
 		{
+			if (_updatingValues) return;
 			Program.Settings.Volume = (float)InpVolume.Value;
 			Program.Settings.Save();
 			_audioPlayer.Volume = Program.Settings.Volume;
@@ -178,6 +191,7 @@ namespace Melodorium
 
 		private void FormPlayer_ResizeEnd(object sender, EventArgs e)
 		{
+			if (_updatingValues) return;
 			Program.Settings.PlayerRect = new(Location, Size);
 			Program.Settings.Save();
 		}
@@ -332,5 +346,32 @@ namespace Melodorium
 			}
 		}
 
+		private void InpAutoplay_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			Program.Settings.Autoplay = InpAutoplay.Checked;
+			Program.Settings.Save();
+		}
+
+		private void Autoplay()
+		{
+			var d = Program.Manager.FilteredFiles.ToDictionary(f => f, f => _playlist.Count(v => v == f));
+			var min = d.Values.Min();
+			var files = d.Where(v => v.Value == min).Select(v => v.Key).ToList();
+			var file = files.RandomItem();
+			AddTrackToPlaylist(file);
+		}
+
+		private void InpLoop_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			Program.Settings.LoopTrack = InpLoop.Checked;
+			Program.Settings.Save();
+		}
+
+		private void BtnAddTrack_Click(object sender, EventArgs e)
+		{
+			Autoplay();
+		}
 	}
 }

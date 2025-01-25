@@ -48,6 +48,9 @@
 			BtnNext = new Button();
 			MusicTimer = new System.Windows.Forms.Timer(components);
 			BtnOpenManager = new Button();
+			InpAutoplay = new CheckBox();
+			InpLoop = new CheckBox();
+			BtnAddTrack = new Button();
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			ListFilesMenu.SuspendLayout();
 			SuspendLayout();
@@ -55,7 +58,7 @@
 			// LblTime
 			// 
 			LblTime.AutoSize = true;
-			LblTime.Location = new Point(115, 65);
+			LblTime.Location = new Point(113, 61);
 			LblTime.Margin = new Padding(4, 0, 4, 0);
 			LblTime.Name = "LblTime";
 			LblTime.Size = new Size(66, 15);
@@ -64,7 +67,7 @@
 			// 
 			// BtnStop
 			// 
-			BtnStop.Location = new Point(66, 61);
+			BtnStop.Location = new Point(65, 57);
 			BtnStop.Margin = new Padding(4, 3, 4, 3);
 			BtnStop.Name = "BtnStop";
 			BtnStop.Size = new Size(42, 23);
@@ -75,7 +78,7 @@
 			// 
 			// BtnPlay
 			// 
-			BtnPlay.Location = new Point(12, 61);
+			BtnPlay.Location = new Point(12, 57);
 			BtnPlay.Margin = new Padding(4, 3, 4, 3);
 			BtnPlay.Name = "BtnPlay";
 			BtnPlay.Size = new Size(49, 23);
@@ -88,7 +91,7 @@
 			// 
 			LblMusicName.AutoSize = true;
 			LblMusicName.Font = new Font("Segoe UI", 11F);
-			LblMusicName.Location = new Point(12, 9);
+			LblMusicName.Location = new Point(4, 4);
 			LblMusicName.Margin = new Padding(4, 0, 4, 0);
 			LblMusicName.Name = "LblMusicName";
 			LblMusicName.Size = new Size(82, 20);
@@ -98,18 +101,18 @@
 			// InpMusicTime
 			// 
 			InpMusicTime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			InpMusicTime.Location = new Point(12, 32);
+			InpMusicTime.Location = new Point(4, 27);
 			InpMusicTime.Margin = new Padding(4, 3, 4, 3);
 			InpMusicTime.Maximum = 100;
 			InpMusicTime.Name = "InpMusicTime";
-			InpMusicTime.Size = new Size(268, 45);
+			InpMusicTime.Size = new Size(276, 45);
 			InpMusicTime.TabIndex = 19;
 			InpMusicTime.ValueChanged += InpMusicTime_ValueChanged;
 			// 
 			// InpVolume
 			// 
 			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			InpVolume.Location = new Point(241, 61);
+			InpVolume.Location = new Point(243, 57);
 			InpVolume.Margin = new Padding(4, 3, 4, 3);
 			InpVolume.Maximum = 1D;
 			InpVolume.Minimum = 0D;
@@ -125,10 +128,10 @@
 			ListFiles.Columns.AddRange(new ColumnHeader[] { PlaylistColumn });
 			ListFiles.ContextMenuStrip = ListFilesMenu;
 			ListFiles.Font = new Font("Segoe UI", 8F);
-			ListFiles.Location = new Point(9, 90);
+			ListFiles.Location = new Point(4, 86);
 			ListFiles.Margin = new Padding(4, 3, 4, 3);
 			ListFiles.Name = "ListFiles";
-			ListFiles.Size = new Size(270, 164);
+			ListFiles.Size = new Size(276, 147);
 			ListFiles.TabIndex = 21;
 			ListFiles.UseCompatibleStateImageBehavior = false;
 			ListFiles.View = View.Details;
@@ -150,7 +153,7 @@
 			// 
 			ListFilesMenuItem_Delete.Name = "ListFilesMenuItem_Delete";
 			ListFilesMenuItem_Delete.Size = new Size(162, 22);
-			ListFilesMenuItem_Delete.Text = "Delete";
+			ListFilesMenuItem_Delete.Text = "Remove";
 			ListFilesMenuItem_Delete.Click += ListFilesMenuItem_Delete_Click;
 			// 
 			// ListFilesMenuItem_Explorer
@@ -181,7 +184,7 @@
 			// 
 			// BtnPrev
 			// 
-			BtnPrev.Location = new Point(187, 61);
+			BtnPrev.Location = new Point(187, 57);
 			BtnPrev.Margin = new Padding(4, 3, 4, 3);
 			BtnPrev.Name = "BtnPrev";
 			BtnPrev.Size = new Size(23, 23);
@@ -192,7 +195,7 @@
 			// 
 			// BtnNext
 			// 
-			BtnNext.Location = new Point(216, 61);
+			BtnNext.Location = new Point(216, 57);
 			BtnNext.Margin = new Padding(4, 3, 4, 3);
 			BtnNext.Name = "BtnNext";
 			BtnNext.Size = new Size(23, 23);
@@ -209,8 +212,8 @@
 			// 
 			// BtnOpenManager
 			// 
-			BtnOpenManager.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnOpenManager.Location = new Point(257, 3);
+			BtnOpenManager.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			BtnOpenManager.Location = new Point(4, 237);
 			BtnOpenManager.Margin = new Padding(4, 3, 4, 3);
 			BtnOpenManager.Name = "BtnOpenManager";
 			BtnOpenManager.Size = new Size(23, 23);
@@ -219,11 +222,50 @@
 			BtnOpenManager.UseVisualStyleBackColor = true;
 			BtnOpenManager.Click += BtnOpenManager_Click;
 			// 
+			// InpAutoplay
+			// 
+			InpAutoplay.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			InpAutoplay.AutoSize = true;
+			InpAutoplay.Location = new Point(55, 240);
+			InpAutoplay.Name = "InpAutoplay";
+			InpAutoplay.Size = new Size(72, 19);
+			InpAutoplay.TabIndex = 25;
+			InpAutoplay.Text = "autoplay";
+			InpAutoplay.UseVisualStyleBackColor = true;
+			InpAutoplay.CheckedChanged += InpAutoplay_CheckedChanged;
+			// 
+			// InpLoop
+			// 
+			InpLoop.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			InpLoop.AutoSize = true;
+			InpLoop.Location = new Point(131, 240);
+			InpLoop.Name = "InpLoop";
+			InpLoop.Size = new Size(79, 19);
+			InpLoop.TabIndex = 26;
+			InpLoop.Text = "loop track";
+			InpLoop.UseVisualStyleBackColor = true;
+			InpLoop.CheckedChanged += InpLoop_CheckedChanged;
+			// 
+			// BtnAddTrack
+			// 
+			BtnAddTrack.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			BtnAddTrack.Location = new Point(29, 237);
+			BtnAddTrack.Margin = new Padding(4, 3, 4, 3);
+			BtnAddTrack.Name = "BtnAddTrack";
+			BtnAddTrack.Size = new Size(23, 23);
+			BtnAddTrack.TabIndex = 27;
+			BtnAddTrack.Text = "A";
+			BtnAddTrack.UseVisualStyleBackColor = true;
+			BtnAddTrack.Click += BtnAddTrack_Click;
+			// 
 			// FormPlayer
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(292, 267);
+			ClientSize = new Size(284, 264);
+			Controls.Add(BtnAddTrack);
+			Controls.Add(InpLoop);
+			Controls.Add(InpAutoplay);
 			Controls.Add(BtnOpenManager);
 			Controls.Add(BtnNext);
 			Controls.Add(BtnPrev);
@@ -238,7 +280,7 @@
 			Margin = new Padding(4, 3, 4, 3);
 			MaximizeBox = false;
 			MinimizeBox = false;
-			MinimumSize = new Size(308, 306);
+			MinimumSize = new Size(300, 220);
 			Name = "FormPlayer";
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Melodorium | Player";
@@ -271,5 +313,8 @@
 		private ToolStripMenuItem ListFilesMenuItem_Shuffle;
 		private ToolStripMenuItem ListFilesMenuItem_Explorer;
 		private ToolStripSeparator toolStripSeparator1;
+		private CheckBox InpAutoplay;
+		private CheckBox InpLoop;
+		private Button BtnAddTrack;
 	}
 }
