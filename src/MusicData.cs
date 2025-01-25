@@ -14,6 +14,7 @@ namespace Melodorium
 		public int Version { get; set; } = DataVersion;
 		public string[] Ignore { get; set; } = [];
 		public Dictionary<string, string> FolderAuthor { get; set; } = [];
+		public string[] Playlist { get; set; } = [];
 
 		public List<MusicFile> Files = [];
 		public List<string> Tags = [];

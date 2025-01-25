@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -346,6 +347,15 @@ namespace Melodorium
             {
 				int k = Random.Shared.Next(i + 1);
 				(list[i], list[k]) = (list[k], list[i]);
+			}
+		}
+
+		public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+		{
+			foreach (var item in source)
+			{
+				if (item != null)
+					yield return item;
 			}
 		}
 	}

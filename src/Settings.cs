@@ -10,12 +10,11 @@
 			get => RootFolder == "" ? "" : GetFullPath(_dataFileName); 
 		}
 		public string ExportFilePath { 
-			get => RootFolder == "" ? "" : GetFullPath($"melodorium_{DateTime.Now:yyyy_MM_dd}.json"); 
+			get => RootFolder == "" ? "" : GetFullPath($"melodorium_{DateTime.Now:yyyy_MM_dd}.json");
 		}
 		public float Volume = 0.5f;
 		public string ExportFolder = "";
 		public Rectangle PlayerRect = new(-1, -1, 308, 306);
-		public bool OpenPlayerAtStartup = false;
 
 		public void Save()
 		{

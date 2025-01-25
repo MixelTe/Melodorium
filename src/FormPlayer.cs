@@ -43,11 +43,30 @@ namespace Melodorium
 			}
 		}
 
+		public void AddTracksToPlaylist(IEnumerable<MusicFile> files)
+		{
+            foreach (var file in files)
+            {
+				_playlist.Add(file);
+				ListFiles.Items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
+            }
+			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+			SavePlaylist();
+		}
 		public void AddTrackToPlaylist(MusicFile file)
 		{
 			_playlist.Add(file);
 			ListFiles.Items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
 			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+			SavePlaylist();
+		}
+
+		public void ClearPlaylist(bool save = true)
+		{
+			_playlist = [];
+			ListFiles.Items.Clear();
+			if (save)
+				SavePlaylist();
 		}
 
 		public void CloseForm()
@@ -69,7 +88,14 @@ namespace Melodorium
 				Hide();
 				return;
 			}
+			SavePlaylist();
 			_audioPlayer.Stop();
+		}
+
+		private void SavePlaylist()
+		{
+			Program.MusicData.Playlist = _playlist.Select(v => v.RPath).ToArray();
+			Program.MusicData.Save();
 		}
 
 		private void Play(int i)
@@ -195,8 +221,7 @@ namespace Melodorium
 
 		private void ListFilesMenuItem_Clear_Click(object sender, EventArgs e)
 		{
-			_playlist = [];
-			ListFiles.Items.Clear();
+			ClearPlaylist();
 		}
 
 		private void ListFilesMenuItem_Shuffle_Click(object sender, EventArgs e)
@@ -213,6 +238,7 @@ namespace Melodorium
 				item.Tag = file;
 				item.BackColor = i == _selectedFileI ? Color.LightBlue : Color.Transparent;
 			}
+			SavePlaylist();
 		}
 
 		private void ListFiles_KeyDown(object sender, KeyEventArgs e)
@@ -241,6 +267,7 @@ namespace Melodorium
 					ListFiles.Items[i - 1] = item1;
 					(_playlist[i], _playlist[i - 1]) = (_playlist[i - 1], _playlist[i]);
 				}
+				SavePlaylist();
 			}
 			else if (e.KeyCode == Keys.Down && e.Alt)
 			{
@@ -259,6 +286,7 @@ namespace Melodorium
 					ListFiles.Items[i + 1] = item1;
 					(_playlist[i], _playlist[i + 1]) = (_playlist[i + 1], _playlist[i]);
 				}
+				SavePlaylist();
 			}
 			else if (e.KeyCode == Keys.Up && e.Shift)
 			{

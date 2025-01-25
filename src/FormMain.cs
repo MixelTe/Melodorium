@@ -30,7 +30,6 @@ namespace Melodorium
 		public FormMain()
 		{
 			InitializeComponent();
-			InpPlayerAtStartup.Checked = Program.Settings.OpenPlayerAtStartup;
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
@@ -147,6 +146,12 @@ namespace Melodorium
 				UpdateUI();
 				ShowMusicList();
 				ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+				Program.Player.ClearPlaylist(save: false);
+				Program.Player.AddTracksToPlaylist(
+					Program.MusicData.Playlist
+					.Select(v => Program.MusicData.Files.Find(file => file.RPath == v))
+					.WhereNotNull()
+					);
 				loadingDialog.Close();
 			};
 			loadingDialog.ShowDialog(this);
@@ -690,12 +695,6 @@ namespace Melodorium
 			Program.Player.Activate();
 		}
 
-		private void InpPlayerAtStartup_CheckedChanged(object sender, EventArgs e)
-		{
-			Program.Settings.OpenPlayerAtStartup = InpPlayerAtStartup.Checked;
-			Program.Settings.Save();
-		}
-
 		private void ListFilesMenuItem_Add_Click(object sender, EventArgs e)
 		{
 			AddSelectedToPlaylist();
@@ -730,7 +729,7 @@ namespace Melodorium
 		{
 			if (ListFiles.SelectedItems.Count == 0) return;
 			var item = ListFiles.SelectedItems[0];
-			if (item.Tag is MusicFile file) 
+			if (item.Tag is MusicFile file)
 			{
 				Utils.OpenExplorer(file.FPath);
 			}

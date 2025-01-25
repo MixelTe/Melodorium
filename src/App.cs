@@ -35,10 +35,7 @@ namespace Melodorium
 					OpenPlayer();
 				}
 			};
-			if (Program.Settings.OpenPlayerAtStartup)
-				OpenPlayer();
-			else
-				OpenManager();
+			OpenManager();
 		}
 
 		public void CloseIcon()

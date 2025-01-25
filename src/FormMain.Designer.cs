@@ -54,6 +54,7 @@
 			ListFilesMenuItem_Add = new ToolStripMenuItem();
 			ListFilesMenuItem_AddRnd = new ToolStripMenuItem();
 			ListFilesMenuItem_AddAll = new ToolStripMenuItem();
+			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
 			InpTags = new ComboBox();
 			label6 = new Label();
 			InpVolume = new NAudio.Gui.Pot();
@@ -97,8 +98,6 @@
 			FolderBrowser = new FolderBrowserDialog();
 			BtnSync = new Button();
 			BtnPlayer = new Button();
-			InpPlayerAtStartup = new CheckBox();
-			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -341,28 +340,35 @@
 			// 
 			ListFilesMenu.Items.AddRange(new ToolStripItem[] { ListFilesMenuItem_Add, ListFilesMenuItem_AddRnd, ListFilesMenuItem_AddAll, ListFilesMenuItem_Explorer });
 			ListFilesMenu.Name = "contextMenuStrip1";
-			ListFilesMenu.Size = new Size(181, 114);
+			ListFilesMenu.Size = new Size(180, 92);
 			// 
 			// ListFilesMenuItem_Add
 			// 
 			ListFilesMenuItem_Add.Name = "ListFilesMenuItem_Add";
-			ListFilesMenuItem_Add.Size = new Size(180, 22);
+			ListFilesMenuItem_Add.Size = new Size(179, 22);
 			ListFilesMenuItem_Add.Text = "Add to playlist";
 			ListFilesMenuItem_Add.Click += ListFilesMenuItem_Add_Click;
 			// 
 			// ListFilesMenuItem_AddRnd
 			// 
 			ListFilesMenuItem_AddRnd.Name = "ListFilesMenuItem_AddRnd";
-			ListFilesMenuItem_AddRnd.Size = new Size(180, 22);
+			ListFilesMenuItem_AddRnd.Size = new Size(179, 22);
 			ListFilesMenuItem_AddRnd.Text = "Add to playlist (rnd)";
 			ListFilesMenuItem_AddRnd.Click += ListFilesMenuItem_AddRnd_Click;
 			// 
 			// ListFilesMenuItem_AddAll
 			// 
 			ListFilesMenuItem_AddAll.Name = "ListFilesMenuItem_AddAll";
-			ListFilesMenuItem_AddAll.Size = new Size(180, 22);
+			ListFilesMenuItem_AddAll.Size = new Size(179, 22);
 			ListFilesMenuItem_AddAll.Text = "Add all to playlist";
 			ListFilesMenuItem_AddAll.Click += ListFilesMenuItem_AddAll_Click;
+			// 
+			// ListFilesMenuItem_Explorer
+			// 
+			ListFilesMenuItem_Explorer.Name = "ListFilesMenuItem_Explorer";
+			ListFilesMenuItem_Explorer.Size = new Size(179, 22);
+			ListFilesMenuItem_Explorer.Text = "Open in explorer";
+			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
 			// 
 			// InpTags
 			// 
@@ -796,30 +802,11 @@
 			BtnPlayer.UseVisualStyleBackColor = true;
 			BtnPlayer.Click += BtnPlayer_Click;
 			// 
-			// InpPlayerAtStartup
-			// 
-			InpPlayerAtStartup.AutoSize = true;
-			InpPlayerAtStartup.Location = new Point(336, 16);
-			InpPlayerAtStartup.Name = "InpPlayerAtStartup";
-			InpPlayerAtStartup.Size = new Size(143, 19);
-			InpPlayerAtStartup.TabIndex = 15;
-			InpPlayerAtStartup.Text = "Open player at startup";
-			InpPlayerAtStartup.UseVisualStyleBackColor = true;
-			InpPlayerAtStartup.CheckedChanged += InpPlayerAtStartup_CheckedChanged;
-			// 
-			// ListFilesMenuItem_Explorer
-			// 
-			ListFilesMenuItem_Explorer.Name = "ListFilesMenuItem_Explorer";
-			ListFilesMenuItem_Explorer.Size = new Size(180, 22);
-			ListFilesMenuItem_Explorer.Text = "Open in explorer";
-			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
-			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(811, 533);
-			Controls.Add(InpPlayerAtStartup);
 			Controls.Add(BtnPlayer);
 			Controls.Add(BtnSpExport);
 			Controls.Add(BtnSync);
@@ -853,7 +840,6 @@
 			groupBox4.ResumeLayout(false);
 			groupBox4.PerformLayout();
 			ResumeLayout(false);
-			PerformLayout();
 		}
 
 		#endregion
@@ -925,7 +911,6 @@
 		private ToolStripMenuItem ListFilesMenuItem_AddRnd;
 		private Button BtnPlayer;
 		private ToolStripMenuItem ListFilesMenuItem_AddAll;
-		private CheckBox InpPlayerAtStartup;
 		private ToolStripMenuItem ListFilesMenuItem_Explorer;
 	}
 }
