@@ -34,7 +34,7 @@ namespace Melodorium
 		public FormMain()
 		{
 			InitializeComponent();
-			TrayIcon.Text = "Melodorium v" + Application.ProductVersion;
+			TrayIcon.Text = "Melodorium v1.0";
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();

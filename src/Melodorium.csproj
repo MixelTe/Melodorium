@@ -9,6 +9,10 @@
     <ApplicationIcon>imgs\icon.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+    <RepositoryUrl>https://github.com/MixelTe/Melodorium</RepositoryUrl>
+    <Authors>Mixel Te</Authors>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
