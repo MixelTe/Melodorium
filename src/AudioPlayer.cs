@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using TagLib.Mpeg;
 
 namespace Melodorium
@@ -12,17 +13,20 @@ namespace Melodorium
 	{
 		public event EventHandler<EventArgs>? TrackEnded;
 		private readonly WaveOutEvent _outputDevice = new();
+		private readonly System.Timers.Timer _timer = new();
 		private AudioFileReader? _fileReader;
 		private string _curPath = "";
 		private MusicFile? _file;
+		private float _volume = 1;
+		private bool _volumeUp = true;
 		private bool _changingTrack = false;
 		private bool _disposing = false;
 
 		public bool IsPlaying { get => _outputDevice.PlaybackState == PlaybackState.Playing; }
 		public float Volume
 		{
-			get => _outputDevice.Volume;
-			set => _outputDevice.Volume = value;
+			get => _volume;
+			set { _volume = value; _outputDevice.Volume = value; }
 		}
 		public TimeSpan TimeCurrent
 		{
@@ -62,12 +66,16 @@ namespace Melodorium
 					TrackEnded?.Invoke(this, args);
 				}
 			};
+			_timer.Elapsed += Timer_Tick;
+			_timer.Interval = 50;
+			_timer.AutoReset = true;
 		}
 
 		public void Dispose()
 		{
 			_disposing = true;
 			_outputDevice.Stop();
+			_timer.Dispose();
 		}
 
 		public bool Play()
@@ -92,6 +100,10 @@ namespace Melodorium
 				}
 				if (_outputDevice.PlaybackState == PlaybackState.Stopped)
 					_fileReader.CurrentTime = TimeSpan.Zero;
+				if (_volumeUp)
+					_outputDevice.Volume = 0;
+				_volumeUp = true;
+				_timer.Enabled = true;
 				_outputDevice.Play();
 				return true;
 			}
@@ -105,7 +117,8 @@ namespace Melodorium
 
 		public void Pause()
 		{
-			_outputDevice.Pause();
+			_volumeUp = false;
+			_timer.Enabled = true;
 		}
 
 		public void Stop()
@@ -124,7 +137,7 @@ namespace Melodorium
 		}
 		public bool PlayPause(MusicFile file)
 		{
-			if (_outputDevice.PlaybackState == PlaybackState.Playing && _curPath == file.FPath)
+			if (_outputDevice.PlaybackState == PlaybackState.Playing && _volumeUp && _curPath == file.FPath)
 			{
 				Pause();
 				return true;
@@ -133,6 +146,35 @@ namespace Melodorium
 			{
 				return Play(file);
 			}
+		}
+
+		private void Timer_Tick(object? sender, ElapsedEventArgs e)
+		{
+			const int fadeTime = 500;
+			var v = _outputDevice.Volume;
+			if (_volumeUp)
+			{
+				if (v < _volume)
+					v += _volume / fadeTime * 50;
+				if (v >= _volume)
+				{
+					v = _volume;
+					_timer.Enabled = false;
+				}
+			}
+			else
+			{
+				if (v > 0)
+					v -= _volume / fadeTime * 50;
+				if (v <= 0)
+				{
+					v = 0;
+					_timer.Enabled = false;
+					_volumeUp = true;
+				}
+			}
+			_outputDevice.Volume = v;
+			if (v == 0) _outputDevice.Pause();
 		}
 	}
 }
