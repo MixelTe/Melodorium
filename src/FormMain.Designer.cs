@@ -35,8 +35,7 @@
 			BtnManage = new Button();
 			FilterMood = new CheckedListBox();
 			groupBox1 = new GroupBox();
-			FilterTags = new ComboBox();
-			label7 = new Label();
+			FilterTags = new CheckedListBox();
 			BtnResetFilter = new Button();
 			label2 = new Label();
 			FilterName = new TextBox();
@@ -153,13 +152,12 @@
 			FilterMood.FormattingEnabled = true;
 			FilterMood.Location = new Point(6, 22);
 			FilterMood.Name = "FilterMood";
-			FilterMood.Size = new Size(100, 148);
+			FilterMood.Size = new Size(78, 148);
 			FilterMood.TabIndex = 3;
 			// 
 			// groupBox1
 			// 
 			groupBox1.Controls.Add(FilterTags);
-			groupBox1.Controls.Add(label7);
 			groupBox1.Controls.Add(BtnResetFilter);
 			groupBox1.Controls.Add(label2);
 			groupBox1.Controls.Add(FilterName);
@@ -173,34 +171,24 @@
 			groupBox1.Controls.Add(FilterMood);
 			groupBox1.Location = new Point(12, 41);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(566, 178);
+			groupBox1.Size = new Size(608, 178);
 			groupBox1.TabIndex = 4;
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Filters";
 			// 
 			// FilterTags
 			// 
-			FilterTags.DropDownStyle = ComboBoxStyle.DropDownList;
+			FilterTags.CheckOnClick = true;
 			FilterTags.FormattingEnabled = true;
-			FilterTags.Items.AddRange(new object[] { "normal", "all", "hidden" });
-			FilterTags.Location = new Point(374, 79);
+			FilterTags.Location = new Point(237, 22);
 			FilterTags.Name = "FilterTags";
-			FilterTags.Size = new Size(183, 23);
-			FilterTags.TabIndex = 15;
-			// 
-			// label7
-			// 
-			label7.AutoSize = true;
-			label7.Location = new Point(324, 82);
-			label7.Name = "label7";
-			label7.Size = new Size(25, 15);
-			label7.TabIndex = 14;
-			label7.Text = "Tag";
+			FilterTags.Size = new Size(108, 148);
+			FilterTags.TabIndex = 16;
 			// 
 			// BtnResetFilter
 			// 
 			BtnResetFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnResetFilter.Location = new Point(482, 120);
+			BtnResetFilter.Location = new Point(524, 120);
 			BtnResetFilter.Name = "BtnResetFilter";
 			BtnResetFilter.Size = new Size(75, 23);
 			BtnResetFilter.TabIndex = 13;
@@ -211,7 +199,7 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(324, 53);
+			label2.Location = new Point(351, 54);
 			label2.Name = "label2";
 			label2.Size = new Size(39, 15);
 			label2.TabIndex = 12;
@@ -219,10 +207,10 @@
 			// 
 			// FilterName
 			// 
-			FilterName.Location = new Point(374, 50);
+			FilterName.Location = new Point(401, 51);
 			FilterName.Name = "FilterName";
 			FilterName.PlaceholderText = "Any";
-			FilterName.Size = new Size(183, 23);
+			FilterName.Size = new Size(198, 23);
 			FilterName.TabIndex = 11;
 			// 
 			// FilterHidden
@@ -230,7 +218,7 @@
 			FilterHidden.DropDownStyle = ComboBoxStyle.DropDownList;
 			FilterHidden.FormattingEnabled = true;
 			FilterHidden.Items.AddRange(new object[] { "normal", "all", "hidden" });
-			FilterHidden.Location = new Point(324, 120);
+			FilterHidden.Location = new Point(351, 120);
 			FilterHidden.Name = "FilterHidden";
 			FilterHidden.Size = new Size(64, 23);
 			FilterHidden.TabIndex = 10;
@@ -238,7 +226,7 @@
 			// BtnFilter
 			// 
 			BtnFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnFilter.Location = new Point(482, 146);
+			BtnFilter.Location = new Point(524, 146);
 			BtnFilter.Name = "BtnFilter";
 			BtnFilter.Size = new Size(75, 23);
 			BtnFilter.TabIndex = 9;
@@ -249,7 +237,7 @@
 			// FilterUncategorized
 			// 
 			FilterUncategorized.AutoSize = true;
-			FilterUncategorized.Location = new Point(324, 149);
+			FilterUncategorized.Location = new Point(351, 149);
 			FilterUncategorized.Name = "FilterUncategorized";
 			FilterUncategorized.Size = new Size(102, 19);
 			FilterUncategorized.TabIndex = 8;
@@ -258,16 +246,16 @@
 			// 
 			// FilterAuthor
 			// 
-			FilterAuthor.Location = new Point(374, 21);
+			FilterAuthor.Location = new Point(401, 22);
 			FilterAuthor.Name = "FilterAuthor";
 			FilterAuthor.PlaceholderText = "Any";
-			FilterAuthor.Size = new Size(183, 23);
+			FilterAuthor.Size = new Size(198, 23);
 			FilterAuthor.TabIndex = 7;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(324, 24);
+			label1.Location = new Point(351, 25);
 			label1.Name = "label1";
 			label1.Size = new Size(44, 15);
 			label1.TabIndex = 6;
@@ -277,18 +265,18 @@
 			// 
 			FilterLang.CheckOnClick = true;
 			FilterLang.FormattingEnabled = true;
-			FilterLang.Location = new Point(218, 21);
+			FilterLang.Location = new Point(155, 22);
 			FilterLang.Name = "FilterLang";
-			FilterLang.Size = new Size(100, 148);
+			FilterLang.Size = new Size(76, 148);
 			FilterLang.TabIndex = 5;
 			// 
 			// FilterLike
 			// 
 			FilterLike.CheckOnClick = true;
 			FilterLike.FormattingEnabled = true;
-			FilterLike.Location = new Point(112, 22);
+			FilterLike.Location = new Point(90, 22);
 			FilterLike.Name = "FilterLike";
-			FilterLike.Size = new Size(100, 148);
+			FilterLike.Size = new Size(59, 148);
 			FilterLike.TabIndex = 4;
 			// 
 			// splitContainer1
@@ -320,8 +308,8 @@
 			splitContainer1.Panel2.Controls.Add(InpMood);
 			splitContainer1.Panel2.Controls.Add(LblMusicAuthor);
 			splitContainer1.Panel2.Controls.Add(LblMusicName);
-			splitContainer1.Size = new Size(787, 296);
-			splitContainer1.SplitterDistance = 368;
+			splitContainer1.Size = new Size(829, 296);
+			splitContainer1.SplitterDistance = 411;
 			splitContainer1.TabIndex = 5;
 			// 
 			// ListFiles
@@ -331,7 +319,7 @@
 			ListFiles.Dock = DockStyle.Fill;
 			ListFiles.Location = new Point(0, 0);
 			ListFiles.Name = "ListFiles";
-			ListFiles.Size = new Size(368, 296);
+			ListFiles.Size = new Size(411, 296);
 			ListFiles.TabIndex = 0;
 			ListFiles.UseCompatibleStateImageBehavior = false;
 			ListFiles.View = View.Details;
@@ -384,7 +372,7 @@
 			InpTags.FormattingEnabled = true;
 			InpTags.Location = new Point(246, 46);
 			InpTags.Name = "InpTags";
-			InpTags.Size = new Size(163, 23);
+			InpTags.Size = new Size(162, 23);
 			InpTags.TabIndex = 20;
 			InpTags.TextChanged += InpTags_TextChanged;
 			// 
@@ -400,7 +388,7 @@
 			// InpVolume
 			// 
 			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			InpVolume.Location = new Point(366, 129);
+			InpVolume.Location = new Point(365, 129);
 			InpVolume.Margin = new Padding(4, 3, 4, 3);
 			InpVolume.Maximum = 1D;
 			InpVolume.Minimum = 0D;
@@ -423,7 +411,7 @@
 			groupBox2.Controls.Add(label4);
 			groupBox2.Location = new Point(3, 158);
 			groupBox2.Name = "groupBox2";
-			groupBox2.Size = new Size(406, 109);
+			groupBox2.Size = new Size(405, 109);
 			groupBox2.TabIndex = 18;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Metadata tags";
@@ -432,7 +420,7 @@
 			// 
 			PBMusicImage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			PBMusicImage.Cursor = Cursors.Hand;
-			PBMusicImage.Location = new Point(348, 22);
+			PBMusicImage.Location = new Point(347, 22);
 			PBMusicImage.Name = "PBMusicImage";
 			PBMusicImage.Size = new Size(52, 52);
 			PBMusicImage.SizeMode = PictureBoxSizeMode.Zoom;
@@ -443,7 +431,7 @@
 			// BtnDeleteImage
 			// 
 			BtnDeleteImage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnDeleteImage.Location = new Point(348, 80);
+			BtnDeleteImage.Location = new Point(347, 80);
 			BtnDeleteImage.Name = "BtnDeleteImage";
 			BtnDeleteImage.Size = new Size(52, 23);
 			BtnDeleteImage.TabIndex = 22;
@@ -456,7 +444,7 @@
 			InpAlbum.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpAlbum.Location = new Point(55, 80);
 			InpAlbum.Name = "InpAlbum";
-			InpAlbum.Size = new Size(287, 23);
+			InpAlbum.Size = new Size(286, 23);
 			InpAlbum.TabIndex = 21;
 			InpAlbum.TextChanged += InpAlbum_TextChanged;
 			// 
@@ -474,7 +462,7 @@
 			InpArtists.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpArtists.Location = new Point(55, 51);
 			InpArtists.Name = "InpArtists";
-			InpArtists.Size = new Size(287, 23);
+			InpArtists.Size = new Size(286, 23);
 			InpArtists.TabIndex = 19;
 			InpArtists.TextChanged += InpArtists_TextChanged;
 			// 
@@ -492,7 +480,7 @@
 			InpTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpTitle.Location = new Point(55, 22);
 			InpTitle.Name = "InpTitle";
-			InpTitle.Size = new Size(287, 23);
+			InpTitle.Size = new Size(286, 23);
 			InpTitle.TabIndex = 17;
 			InpTitle.TextChanged += InpTitle_TextChanged;
 			// 
@@ -559,7 +547,7 @@
 			InpMusicTime.Location = new Point(3, 100);
 			InpMusicTime.Maximum = 100;
 			InpMusicTime.Name = "InpMusicTime";
-			InpMusicTime.Size = new Size(406, 45);
+			InpMusicTime.Size = new Size(405, 45);
 			InpMusicTime.TabIndex = 11;
 			InpMusicTime.ValueChanged += InpMusicTime_ValueChanged;
 			// 
@@ -577,7 +565,7 @@
 			// BtnSaveMusic
 			// 
 			BtnSaveMusic.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			BtnSaveMusic.Location = new Point(334, 270);
+			BtnSaveMusic.Location = new Point(333, 270);
 			BtnSaveMusic.Name = "BtnSaveMusic";
 			BtnSaveMusic.Size = new Size(75, 23);
 			BtnSaveMusic.TabIndex = 5;
@@ -659,7 +647,7 @@
 			groupBox3.Controls.Add(BtnSelectCopyFolder);
 			groupBox3.Controls.Add(InpCopyFolder);
 			groupBox3.Controls.Add(label8);
-			groupBox3.Location = new Point(584, 41);
+			groupBox3.Location = new Point(626, 41);
 			groupBox3.Name = "groupBox3";
 			groupBox3.Size = new Size(215, 97);
 			groupBox3.TabIndex = 7;
@@ -717,7 +705,7 @@
 			// BtnSpExport
 			// 
 			BtnSpExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnSpExport.Location = new Point(609, 12);
+			BtnSpExport.Location = new Point(651, 12);
 			BtnSpExport.Name = "BtnSpExport";
 			BtnSpExport.Size = new Size(96, 23);
 			BtnSpExport.TabIndex = 13;
@@ -757,7 +745,7 @@
 			groupBox4.Controls.Add(BtnExportPlaylist);
 			groupBox4.Controls.Add(InpExportRel);
 			groupBox4.Controls.Add(BtnExportHelp);
-			groupBox4.Location = new Point(584, 144);
+			groupBox4.Location = new Point(626, 144);
 			groupBox4.Name = "groupBox4";
 			groupBox4.Size = new Size(215, 75);
 			groupBox4.TabIndex = 9;
@@ -795,7 +783,7 @@
 			// BtnSync
 			// 
 			BtnSync.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnSync.Location = new Point(711, 12);
+			BtnSync.Location = new Point(753, 12);
 			BtnSync.Name = "BtnSync";
 			BtnSync.Size = new Size(88, 23);
 			BtnSync.TabIndex = 10;
@@ -852,7 +840,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(811, 533);
+			ClientSize = new Size(853, 533);
 			Controls.Add(BtnPlayer);
 			Controls.Add(BtnSpExport);
 			Controls.Add(BtnSync);
@@ -864,7 +852,7 @@
 			Controls.Add(BtnExport);
 			Controls.Add(BtnChangeFolder);
 			Icon = (Icon)resources.GetObject("$this.Icon");
-			MinimumSize = new Size(827, 572);
+			MinimumSize = new Size(869, 572);
 			Name = "FormMain";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Melodorium";
@@ -937,8 +925,6 @@
 		private Button BtnDeleteImage;
 		private ComboBox InpTags;
 		private Label label6;
-		private ComboBox FilterTags;
-		private Label label7;
 		private GroupBox groupBox3;
 		private Button BtnExportHelp;
 		private CheckBox InpExportRel;
@@ -965,5 +951,6 @@
 		private ToolStripMenuItem TrayIconMenuItem_Player;
 		private ToolStripMenuItem TrayIconMenuItem_Manager;
 		private ToolStripMenuItem TrayIconMenuItem_Exit;
+		private CheckedListBox FilterTags;
 	}
 }

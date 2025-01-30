@@ -212,13 +212,14 @@ namespace Melodorium
 			FilterAuthor.Text = "";
 			FilterName.Text = "";
 			FilterHidden.SelectedIndex = 0;
-			FilterTags.SelectedIndex = 0;
 			for (int i = 0; i < FilterMood.Items.Count; i++)
 				FilterMood.SetItemChecked(i, true);
 			for (int i = 0; i < FilterLike.Items.Count; i++)
 				FilterLike.SetItemChecked(i, true);
 			for (int i = 0; i < FilterLang.Items.Count; i++)
 				FilterLang.SetItemChecked(i, true);
+			for (int i = 0; i < FilterTags.Items.Count; i++)
+				FilterTags.SetItemChecked(i, true);
 		}
 
 		private void ShowMusicList()
@@ -230,6 +231,8 @@ namespace Melodorium
 				FilterName.Text = FilterName.Text.Trim();
 				var author = FilterAuthor.Text.Replace(" ", "_");
 				var name = FilterName.Text.Replace(" ", "_");
+				var selectedTags = FilterTags.CheckedItems.Cast<object>().Where(v => v is string).Cast<string>().ToList();
+				var noTagSelected = FilterTags.GetItemChecked(0);
 				ListFiles.Items.Clear();
 				_selectedFileI = null;
 				_filteredFiles = [];
@@ -257,10 +260,17 @@ namespace Melodorium
 						continue;
 					if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
 						continue;
-					if (FilterTags.SelectedIndex == 1)
-						if (file.Data.Tag != "") continue;
-					if (FilterTags.SelectedIndex > 1)
-						if (file.Data.Tag != Program.MusicData.Tags[FilterTags.SelectedIndex - 2]) continue;
+					if (file.Data.Tag == "")
+					{
+						if (!noTagSelected)
+							continue;
+					}
+					else
+					{
+						var tags = file.Data.Tag.Split(";");
+						if (!tags.Any(tag => selectedTags.Contains(tag)))
+							continue;
+					}
 
 					_filteredFiles.Add(file);
 					ListFiles.Items.Add(new ListViewItem(file.RPath + file.Tags) { Tag = file });
@@ -274,23 +284,23 @@ namespace Melodorium
 
 		private void UpdateUI(bool updateData = false)
 		{
-			var selectedTagI = FilterTags.SelectedIndex;
-			var selectedTag = selectedTagI >= 2 ? Program.MusicData.Tags[FilterTags.SelectedIndex - 2] : "";
 			if (updateData)
 				Program.MusicData.UpdateTagsList();
+
+			var tagsFilter = new Dictionary<string, bool>();
+			for (int i = 0; i < FilterTags.Items.Count; i++)
+				if (FilterTags.Items[i] is string item)
+					tagsFilter[item] = FilterTags.GetItemChecked(i);
+
 			FilterTags.Items.Clear();
-			FilterTags.Items.Add("<any>");
-			FilterTags.Items.Add("<no tag>");
-			var selectI = 0;
-			for (int i = 0; i < Program.MusicData.Tags.Count; i++)
+			for (int i = -1; i < Program.MusicData.Tags.Count; i++)
 			{
-				var tag = Program.MusicData.Tags[i];
-				if (tag == selectedTag)
-					selectI = i;
+				var tag = i == -1 ? "<no tag>" : Program.MusicData.Tags[i];
 				FilterTags.Items.Add(tag);
+				if (!tagsFilter.TryGetValue(tag, out var check))
+					check = true;
+				FilterTags.SetItemChecked(i + 1, check);
 			}
-			FilterTags.SelectedIndex = selectedTagI >= 2 ? selectI : selectedTagI;
-			if (FilterTags.SelectedIndex < 0) FilterTags.SelectedIndex = 0;
 
 			InpTags.Items.Clear();
 			foreach (var tag in Program.MusicData.Tags)
@@ -381,7 +391,7 @@ namespace Melodorium
 			_selectedFile.Data.Like = (MusicLike)InpLike.SelectedIndex;
 			_selectedFile.Data.Lang = (MusicLang)InpLang.SelectedIndex;
 			_selectedFile.Data.Hidden = InpHidden.Checked;
-			_selectedFile.Data.Tag = InpTags.Text;
+			_selectedFile.Data.Tag = InpTags.Text.Trim();
 
 			_selectedFile.Save();
 
@@ -537,6 +547,14 @@ namespace Melodorium
 		{
 			if (_selectedFile == null) return;
 			LblState.Text = "Unsaved";
+			if (InpTags.Text.Length > 0 && InpTags.Text[InpTags.Text.Length - 1] == ';')
+			{
+				var selected = InpTags.Text.Split(";");
+				InpTags.Items.Clear();
+				foreach (var tag in Program.MusicData.Tags)
+					if (!selected.Contains(tag)) 
+						InpTags.Items.Add(InpTags.Text + tag);
+			}
 		}
 
 		private void BtnExportPlaylist_Click(object sender, EventArgs e)

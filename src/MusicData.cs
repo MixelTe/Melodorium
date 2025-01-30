@@ -84,12 +84,13 @@ namespace Melodorium
 			var tags = new HashSet<string>();
 			foreach (var path in GetFileNames(fullpath: true))
 			{
-				var data = new MusicFile(path);
+				var file = new MusicFile(path);
 				if (loadData)
-					data.Load();
-				if (data.Data.Tag != "")
-					tags.Add(data.Data.Tag);
-				Files.Add(data);
+					file.Load();
+				if (file.Data.Tag != "")
+                    foreach (var tag in file.Data.Tag.Split(";"))
+						tags.Add(tag);
+				Files.Add(file);
 				onFileLoaded?.Invoke();
 			}
 			Tags = tags.Order().ToList();
@@ -100,7 +101,8 @@ namespace Melodorium
 			var tags = new HashSet<string>();
 			foreach (var file in Files)
 				if (file.Data.Tag != "")
-					tags.Add(file.Data.Tag);
+                    foreach (var tag in file.Data.Tag.Split(";"))
+						tags.Add(tag);
 			Tags = tags.Order().ToList();
 		}
 
