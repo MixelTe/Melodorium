@@ -40,6 +40,7 @@ namespace Melodorium
 			FilterMood.Items.Clear();
 			FilterMood.Items.Add("Rock", true);
 			FilterMood.Items.Add("Energistic", true);
+			FilterMood.Items.Add("Cheerful", true);
 			FilterMood.Items.Add("Calm", true);
 			FilterMood.Items.Add("Sleep", true);
 			FilterLike.Items.Clear();
@@ -54,11 +55,12 @@ namespace Melodorium
 			FilterLang.Items.Add("French", true);
 			FilterLang.Items.Add("German", true);
 			FilterLang.Items.Add("Italian", true);
-			FilterLang.Items.Add("Japanese", true);
+			FilterLang.Items.Add("Asian", true);
 			FilterHidden.SelectedIndex = 0;
 			InpMood.Items.Clear();
 			InpMood.Items.Add("Rock");
 			InpMood.Items.Add("Energistic");
+			InpMood.Items.Add("Cheerful");
 			InpMood.Items.Add("Calm");
 			InpMood.Items.Add("Sleep");
 			InpLike.Items.Clear();
@@ -73,7 +75,7 @@ namespace Melodorium
 			InpLang.Items.Add("French");
 			InpLang.Items.Add("German");
 			InpLang.Items.Add("Italian");
-			InpLang.Items.Add("Japanese");
+			InpLang.Items.Add("Asian");
 			_updatingValues = false;
 		}
 

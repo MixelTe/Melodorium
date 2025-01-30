@@ -199,11 +199,19 @@ namespace Melodorium
 
 		public void Load()
 		{
-			var json = AlternativeDataStream.ReadString(FPath, Settings.AlternativeDataStreamName);
-			if (json == null) return;
-			Data = JsonSerializer.Deserialize<MusicFileData>(json)!;
-			Data.RPath = RPath;
-			Data.IsLoaded = true;
+			try
+			{
+				var json = AlternativeDataStream.ReadString(FPath, Settings.AlternativeDataStreamName);
+				if (json == null) return;
+				Data = JsonSerializer.Deserialize<MusicFileData>(json)!;
+				Data.RPath = RPath;
+				Data.IsLoaded = true;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show($"Error while loading file:\n./{RPath}\n{e.Message}", "Load file error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
 		}
 
 		public void Save()
@@ -289,11 +297,11 @@ namespace Melodorium
 	{
 		public string RPath = "";
 		public bool IsLoaded = false;
-		[JsonConverter(typeof(JsonStringEnumConverter))]
+		[JsonConverter(typeof(JsonTolerantEnumConverter))]
 		public MusicMood Mood { get; set; } = MusicMood.Energistic;
-		[JsonConverter(typeof(JsonStringEnumConverter))]
+		[JsonConverter(typeof(JsonTolerantEnumConverter))]
 		public MusicLike Like { get; set; } = MusicLike.Good;
-		[JsonConverter(typeof(JsonStringEnumConverter))]
+		[JsonConverter(typeof(JsonTolerantEnumConverter))]
 		public MusicLang Lang { get; set; } = MusicLang.An;
 		public bool Hidden { get; set; } = false;
 		public string Tag { get; set; } = "";
@@ -303,8 +311,9 @@ namespace Melodorium
 	{
 		Rock = 0,
 		Energistic = 1,
-		Calm = 2,
-		Sleep = 3,
+		Cheerful = 2,
+		Calm = 3,
+		Sleep = 4,
 	}
 	public enum MusicLike
 	{
@@ -321,6 +330,6 @@ namespace Melodorium
 		Fr = 4,
 		Ge = 5,
 		It = 6,
-		Ja = 7,
+		As = 7,
 	}
 }
