@@ -83,6 +83,11 @@ namespace Melodorium
 			Close();
 		}
 
+		public void ShowBalloonTip(string text, ToolTipIcon icon)
+		{
+			TrayIcon.ShowBalloonTip(500, "Melodorium", text, icon);
+		}
+
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (!Program.Player.WasOpened)

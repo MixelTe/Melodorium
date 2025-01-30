@@ -10,6 +10,7 @@ namespace Melodorium
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 		public static FormPlayer Player = null;
 		public static FormMain Manager = null;
+		public static Hotkeys Hotkeys = null;
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 		public static Mutex? mutex;
 
@@ -27,8 +28,10 @@ namespace Melodorium
 			}
 			ApplicationConfiguration.Initialize();
 			Settings.Load();
+			Hotkeys = new();
 			Player = new();
 			Manager = new();
+			Hotkeys.Register();
 			Application.Run(Manager);
 		}
 	}

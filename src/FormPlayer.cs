@@ -136,18 +136,34 @@ namespace Melodorium
 			if (!ok) PlayNext();
 		}
 
-		private void PlayNext()
+		public void PlayNext()
 		{
 			if (_playlist.Count == 0) return;
 			Play((_selectedFileI + 1) % _playlist.Count);
 		}
 
+		public void PlayPrev()
+		{
+			if (_playlist.Count == 0) return;
+			Play((_selectedFileI - 1 + _playlist.Count) % _playlist.Count);
+		}
+
 		private void BtnPlay_Click(object sender, EventArgs e)
+		{
+			PlayerPlay();
+		}
+
+		public void PlayerPlay()
 		{
 			Play(_selectedFileI);
 		}
 
 		private void BtnStop_Click(object sender, EventArgs e)
+		{
+			PlayerStop();
+		}
+
+		public void PlayerStop()
 		{
 			_audioPlayer.Stop();
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
@@ -156,13 +172,11 @@ namespace Melodorium
 
 		private void BtnPrev_Click(object sender, EventArgs e)
 		{
-			if (_playlist.Count == 0) return;
-			Play((_selectedFileI - 1 + _playlist.Count) % _playlist.Count);
+			PlayPrev();
 		}
 
 		private void BtnNext_Click(object sender, EventArgs e)
 		{
-			if (_playlist.Count == 0) return;
 			PlayNext();
 		}
 
@@ -372,6 +386,12 @@ namespace Melodorium
 		private void BtnAddTrack_Click(object sender, EventArgs e)
 		{
 			Autoplay();
+		}
+
+		private void BtnHotkeys_Click(object sender, EventArgs e)
+		{
+			using var dialog = new FormHotkeys();
+			dialog.ShowDialog(this);
 		}
 	}
 }

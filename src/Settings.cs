@@ -17,6 +17,12 @@
 		public Rectangle PlayerRect = new(-1, -1, 308, 306);
 		public bool Autoplay = false;
 		public bool LoopTrack = false;
+		public bool HotkeyEnabled = false;
+		public Keys HotkeyShow = Keys.SelectMedia;
+		public Keys HotkeyPlay = Keys.MediaPlayPause;
+		public Keys HotkeyStop = Keys.MediaStop;
+		public Keys HotkeyNext = Keys.MediaNextTrack;
+		public Keys HotkeyPrev = Keys.MediaPreviousTrack;
 
 		public void Save()
 		{

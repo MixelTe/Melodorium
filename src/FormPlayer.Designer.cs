@@ -51,6 +51,8 @@
 			InpAutoplay = new CheckBox();
 			InpLoop = new CheckBox();
 			BtnAddTrack = new Button();
+			BtnHotkeys = new Button();
+			ToolTip1 = new ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)InpMusicTime).BeginInit();
 			ListFilesMenu.SuspendLayout();
 			SuspendLayout();
@@ -190,6 +192,7 @@
 			BtnPrev.Size = new Size(23, 23);
 			BtnPrev.TabIndex = 22;
 			BtnPrev.Text = "<";
+			ToolTip1.SetToolTip(BtnPrev, "Previous track");
 			BtnPrev.UseVisualStyleBackColor = true;
 			BtnPrev.Click += BtnPrev_Click;
 			// 
@@ -201,6 +204,7 @@
 			BtnNext.Size = new Size(23, 23);
 			BtnNext.TabIndex = 23;
 			BtnNext.Text = ">";
+			ToolTip1.SetToolTip(BtnNext, "Next track");
 			BtnNext.UseVisualStyleBackColor = true;
 			BtnNext.Click += BtnNext_Click;
 			// 
@@ -219,6 +223,7 @@
 			BtnOpenManager.Size = new Size(23, 23);
 			BtnOpenManager.TabIndex = 24;
 			BtnOpenManager.Text = "M";
+			ToolTip1.SetToolTip(BtnOpenManager, "Manager");
 			BtnOpenManager.UseVisualStyleBackColor = true;
 			BtnOpenManager.Click += BtnOpenManager_Click;
 			// 
@@ -226,7 +231,7 @@
 			// 
 			InpAutoplay.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			InpAutoplay.AutoSize = true;
-			InpAutoplay.Location = new Point(55, 240);
+			InpAutoplay.Location = new Point(80, 240);
 			InpAutoplay.Name = "InpAutoplay";
 			InpAutoplay.Size = new Size(72, 19);
 			InpAutoplay.TabIndex = 25;
@@ -238,7 +243,7 @@
 			// 
 			InpLoop.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			InpLoop.AutoSize = true;
-			InpLoop.Location = new Point(131, 240);
+			InpLoop.Location = new Point(156, 240);
 			InpLoop.Name = "InpLoop";
 			InpLoop.Size = new Size(79, 19);
 			InpLoop.TabIndex = 26;
@@ -249,20 +254,35 @@
 			// BtnAddTrack
 			// 
 			BtnAddTrack.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-			BtnAddTrack.Location = new Point(29, 237);
+			BtnAddTrack.Location = new Point(54, 237);
 			BtnAddTrack.Margin = new Padding(4, 3, 4, 3);
 			BtnAddTrack.Name = "BtnAddTrack";
 			BtnAddTrack.Size = new Size(23, 23);
 			BtnAddTrack.TabIndex = 27;
 			BtnAddTrack.Text = "A";
+			ToolTip1.SetToolTip(BtnAddTrack, "Add track (auto)");
 			BtnAddTrack.UseVisualStyleBackColor = true;
 			BtnAddTrack.Click += BtnAddTrack_Click;
+			// 
+			// BtnHotkeys
+			// 
+			BtnHotkeys.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			BtnHotkeys.Location = new Point(29, 237);
+			BtnHotkeys.Margin = new Padding(4, 3, 4, 3);
+			BtnHotkeys.Name = "BtnHotkeys";
+			BtnHotkeys.Size = new Size(23, 23);
+			BtnHotkeys.TabIndex = 28;
+			BtnHotkeys.Text = "H";
+			ToolTip1.SetToolTip(BtnHotkeys, "Hotkeys");
+			BtnHotkeys.UseVisualStyleBackColor = true;
+			BtnHotkeys.Click += BtnHotkeys_Click;
 			// 
 			// FormPlayer
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(284, 264);
+			Controls.Add(BtnHotkeys);
 			Controls.Add(BtnAddTrack);
 			Controls.Add(InpLoop);
 			Controls.Add(InpAutoplay);
@@ -316,5 +336,7 @@
 		private CheckBox InpAutoplay;
 		private CheckBox InpLoop;
 		private Button BtnAddTrack;
+		private Button BtnHotkeys;
+		private ToolTip ToolTip1;
 	}
 }
