@@ -384,7 +384,7 @@
 			InpTags.FormattingEnabled = true;
 			InpTags.Location = new Point(246, 46);
 			InpTags.Name = "InpTags";
-			InpTags.Size = new Size(144, 23);
+			InpTags.Size = new Size(163, 23);
 			InpTags.TabIndex = 20;
 			InpTags.TextChanged += InpTags_TextChanged;
 			// 
@@ -393,14 +393,14 @@
 			label6.AutoSize = true;
 			label6.Location = new Point(246, 76);
 			label6.Name = "label6";
-			label6.Size = new Size(80, 15);
+			label6.Size = new Size(156, 15);
 			label6.TabIndex = 19;
-			label6.Text = "Custom tag ^";
+			label6.Text = "Custom tag ^ separated by ;";
 			// 
 			// InpVolume
 			// 
 			InpVolume.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			InpVolume.Location = new Point(353, 129);
+			InpVolume.Location = new Point(366, 129);
 			InpVolume.Margin = new Padding(4, 3, 4, 3);
 			InpVolume.Maximum = 1D;
 			InpVolume.Minimum = 0D;
@@ -412,7 +412,7 @@
 			// 
 			// groupBox2
 			// 
-			groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			groupBox2.Controls.Add(PBMusicImage);
 			groupBox2.Controls.Add(BtnDeleteImage);
 			groupBox2.Controls.Add(InpAlbum);
@@ -423,15 +423,16 @@
 			groupBox2.Controls.Add(label4);
 			groupBox2.Location = new Point(3, 158);
 			groupBox2.Name = "groupBox2";
-			groupBox2.Size = new Size(387, 109);
+			groupBox2.Size = new Size(406, 109);
 			groupBox2.TabIndex = 18;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Metadata tags";
 			// 
 			// PBMusicImage
 			// 
+			PBMusicImage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			PBMusicImage.Cursor = Cursors.Hand;
-			PBMusicImage.Location = new Point(329, 22);
+			PBMusicImage.Location = new Point(348, 22);
 			PBMusicImage.Name = "PBMusicImage";
 			PBMusicImage.Size = new Size(52, 52);
 			PBMusicImage.SizeMode = PictureBoxSizeMode.Zoom;
@@ -441,7 +442,8 @@
 			// 
 			// BtnDeleteImage
 			// 
-			BtnDeleteImage.Location = new Point(329, 80);
+			BtnDeleteImage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			BtnDeleteImage.Location = new Point(348, 80);
 			BtnDeleteImage.Name = "BtnDeleteImage";
 			BtnDeleteImage.Size = new Size(52, 23);
 			BtnDeleteImage.TabIndex = 22;
@@ -451,9 +453,10 @@
 			// 
 			// InpAlbum
 			// 
+			InpAlbum.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpAlbum.Location = new Point(55, 80);
 			InpAlbum.Name = "InpAlbum";
-			InpAlbum.Size = new Size(268, 23);
+			InpAlbum.Size = new Size(287, 23);
 			InpAlbum.TabIndex = 21;
 			InpAlbum.TextChanged += InpAlbum_TextChanged;
 			// 
@@ -468,9 +471,10 @@
 			// 
 			// InpArtists
 			// 
+			InpArtists.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpArtists.Location = new Point(55, 51);
 			InpArtists.Name = "InpArtists";
-			InpArtists.Size = new Size(268, 23);
+			InpArtists.Size = new Size(287, 23);
 			InpArtists.TabIndex = 19;
 			InpArtists.TextChanged += InpArtists_TextChanged;
 			// 
@@ -485,9 +489,10 @@
 			// 
 			// InpTitle
 			// 
+			InpTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			InpTitle.Location = new Point(55, 22);
 			InpTitle.Name = "InpTitle";
-			InpTitle.Size = new Size(268, 23);
+			InpTitle.Size = new Size(287, 23);
 			InpTitle.TabIndex = 17;
 			InpTitle.TextChanged += InpTitle_TextChanged;
 			// 
@@ -521,7 +526,7 @@
 			// InpAutoplay
 			// 
 			InpAutoplay.AutoSize = true;
-			InpAutoplay.Location = new Point(268, 133);
+			InpAutoplay.Location = new Point(285, 129);
 			InpAutoplay.Name = "InpAutoplay";
 			InpAutoplay.Size = new Size(74, 19);
 			InpAutoplay.TabIndex = 12;
@@ -554,7 +559,7 @@
 			InpMusicTime.Location = new Point(3, 100);
 			InpMusicTime.Maximum = 100;
 			InpMusicTime.Name = "InpMusicTime";
-			InpMusicTime.Size = new Size(388, 45);
+			InpMusicTime.Size = new Size(406, 45);
 			InpMusicTime.TabIndex = 11;
 			InpMusicTime.ValueChanged += InpMusicTime_ValueChanged;
 			// 
@@ -572,7 +577,7 @@
 			// BtnSaveMusic
 			// 
 			BtnSaveMusic.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			BtnSaveMusic.Location = new Point(316, 270);
+			BtnSaveMusic.Location = new Point(334, 270);
 			BtnSaveMusic.Name = "BtnSaveMusic";
 			BtnSaveMusic.Size = new Size(75, 23);
 			BtnSaveMusic.TabIndex = 5;
@@ -859,6 +864,7 @@
 			Controls.Add(BtnExport);
 			Controls.Add(BtnChangeFolder);
 			Icon = (Icon)resources.GetObject("$this.Icon");
+			MinimumSize = new Size(827, 572);
 			Name = "FormMain";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Melodorium";
