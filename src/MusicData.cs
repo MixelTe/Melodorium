@@ -163,7 +163,10 @@ namespace Melodorium
 					tags += " [";
 					tags += Data.Mood.ToString()[..2] + ";";
 					tags += Data.Like.ToString()[..2] + ";";
-					tags += Data.Lang.ToString()[..2] + "]";
+					tags += Data.Lang.ToString()[..2];
+					if (Data.Tag != "")
+						tags += "|" + Data.Tag;
+					tags += "]";
 				}
 				return tags;
 			}

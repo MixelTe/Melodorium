@@ -35,6 +35,11 @@
 			BtnManage = new Button();
 			FilterMood = new CheckedListBox();
 			groupBox1 = new GroupBox();
+			InpAutoApply = new CheckBox();
+			FilterTagsBtn = new Button();
+			FilterLangBtn = new Button();
+			FilterLikeBtn = new Button();
+			FilterMoodBtn = new Button();
 			FilterTags = new CheckedListBox();
 			BtnResetFilter = new Button();
 			label2 = new Label();
@@ -154,9 +159,15 @@
 			FilterMood.Name = "FilterMood";
 			FilterMood.Size = new Size(78, 148);
 			FilterMood.TabIndex = 3;
+			FilterMood.ItemCheck += FilterMood_ItemCheck;
 			// 
 			// groupBox1
 			// 
+			groupBox1.Controls.Add(InpAutoApply);
+			groupBox1.Controls.Add(FilterTagsBtn);
+			groupBox1.Controls.Add(FilterLangBtn);
+			groupBox1.Controls.Add(FilterLikeBtn);
+			groupBox1.Controls.Add(FilterMoodBtn);
 			groupBox1.Controls.Add(FilterTags);
 			groupBox1.Controls.Add(BtnResetFilter);
 			groupBox1.Controls.Add(label2);
@@ -176,6 +187,57 @@
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Filters";
 			// 
+			// InpAutoApply
+			// 
+			InpAutoApply.AutoSize = true;
+			InpAutoApply.Location = new Point(520, 149);
+			InpAutoApply.Name = "InpAutoApply";
+			InpAutoApply.Size = new Size(82, 19);
+			InpAutoApply.TabIndex = 21;
+			InpAutoApply.Text = "auto apply";
+			InpAutoApply.UseVisualStyleBackColor = true;
+			InpAutoApply.CheckedChanged += InpAutoApply_CheckedChanged;
+			// 
+			// FilterTagsBtn
+			// 
+			FilterTagsBtn.Location = new Point(327, 152);
+			FilterTagsBtn.Name = "FilterTagsBtn";
+			FilterTagsBtn.Size = new Size(18, 18);
+			FilterTagsBtn.TabIndex = 20;
+			FilterTagsBtn.Text = "*";
+			FilterTagsBtn.UseVisualStyleBackColor = true;
+			FilterTagsBtn.Click += FilterTagsBtn_Click;
+			// 
+			// FilterLangBtn
+			// 
+			FilterLangBtn.Location = new Point(213, 152);
+			FilterLangBtn.Name = "FilterLangBtn";
+			FilterLangBtn.Size = new Size(18, 18);
+			FilterLangBtn.TabIndex = 19;
+			FilterLangBtn.Text = "*";
+			FilterLangBtn.UseVisualStyleBackColor = true;
+			FilterLangBtn.Click += FilterLangBtn_Click;
+			// 
+			// FilterLikeBtn
+			// 
+			FilterLikeBtn.Location = new Point(131, 152);
+			FilterLikeBtn.Name = "FilterLikeBtn";
+			FilterLikeBtn.Size = new Size(18, 18);
+			FilterLikeBtn.TabIndex = 18;
+			FilterLikeBtn.Text = "*";
+			FilterLikeBtn.UseVisualStyleBackColor = true;
+			FilterLikeBtn.Click += FilterLikeBtn_Click;
+			// 
+			// FilterMoodBtn
+			// 
+			FilterMoodBtn.Location = new Point(66, 152);
+			FilterMoodBtn.Name = "FilterMoodBtn";
+			FilterMoodBtn.Size = new Size(18, 18);
+			FilterMoodBtn.TabIndex = 17;
+			FilterMoodBtn.Text = "*";
+			FilterMoodBtn.UseVisualStyleBackColor = true;
+			FilterMoodBtn.Click += FilterMoodBtn_Click;
+			// 
 			// FilterTags
 			// 
 			FilterTags.CheckOnClick = true;
@@ -184,11 +246,12 @@
 			FilterTags.Name = "FilterTags";
 			FilterTags.Size = new Size(108, 148);
 			FilterTags.TabIndex = 16;
+			FilterTags.ItemCheck += FilterTags_ItemCheck;
 			// 
 			// BtnResetFilter
 			// 
 			BtnResetFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnResetFilter.Location = new Point(524, 120);
+			BtnResetFilter.Location = new Point(524, 91);
 			BtnResetFilter.Name = "BtnResetFilter";
 			BtnResetFilter.Size = new Size(75, 23);
 			BtnResetFilter.TabIndex = 13;
@@ -212,6 +275,7 @@
 			FilterName.PlaceholderText = "Any";
 			FilterName.Size = new Size(198, 23);
 			FilterName.TabIndex = 11;
+			FilterName.TextChanged += FilterName_TextChanged;
 			// 
 			// FilterHidden
 			// 
@@ -222,11 +286,12 @@
 			FilterHidden.Name = "FilterHidden";
 			FilterHidden.Size = new Size(64, 23);
 			FilterHidden.TabIndex = 10;
+			FilterHidden.SelectedIndexChanged += FilterHidden_SelectedIndexChanged;
 			// 
 			// BtnFilter
 			// 
 			BtnFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			BtnFilter.Location = new Point(524, 146);
+			BtnFilter.Location = new Point(524, 120);
 			BtnFilter.Name = "BtnFilter";
 			BtnFilter.Size = new Size(75, 23);
 			BtnFilter.TabIndex = 9;
@@ -243,6 +308,7 @@
 			FilterUncategorized.TabIndex = 8;
 			FilterUncategorized.Text = "Uncategorized";
 			FilterUncategorized.UseVisualStyleBackColor = true;
+			FilterUncategorized.CheckedChanged += FilterUncategorized_CheckedChanged;
 			// 
 			// FilterAuthor
 			// 
@@ -251,6 +317,7 @@
 			FilterAuthor.PlaceholderText = "Any";
 			FilterAuthor.Size = new Size(198, 23);
 			FilterAuthor.TabIndex = 7;
+			FilterAuthor.TextChanged += FilterAuthor_TextChanged;
 			// 
 			// label1
 			// 
@@ -269,6 +336,7 @@
 			FilterLang.Name = "FilterLang";
 			FilterLang.Size = new Size(76, 148);
 			FilterLang.TabIndex = 5;
+			FilterLang.ItemCheck += FilterLang_ItemCheck;
 			// 
 			// FilterLike
 			// 
@@ -278,6 +346,7 @@
 			FilterLike.Name = "FilterLike";
 			FilterLike.Size = new Size(59, 148);
 			FilterLike.TabIndex = 4;
+			FilterLike.ItemCheck += FilterLike_ItemCheck;
 			// 
 			// splitContainer1
 			// 
@@ -952,5 +1021,10 @@
 		private ToolStripMenuItem TrayIconMenuItem_Manager;
 		private ToolStripMenuItem TrayIconMenuItem_Exit;
 		private CheckedListBox FilterTags;
+		private Button FilterMoodBtn;
+		private Button FilterTagsBtn;
+		private Button FilterLangBtn;
+		private Button FilterLikeBtn;
+		private CheckBox InpAutoApply;
 	}
 }

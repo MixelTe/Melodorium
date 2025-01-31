@@ -28,13 +28,14 @@ namespace Melodorium
 		private bool _metaChanged = false;
 		private bool _metaDeleteImg = false;
 		private string? _metaNewImg;
-		
+
 		public ReadOnlyCollection<MusicFile> FilteredFiles { get => _filteredFiles.AsReadOnly(); }
 
 		public FormMain()
 		{
 			InitializeComponent();
 			TrayIcon.Text = "Melodorium v1.0";
+			InpAutoApply.Checked = Program.Settings.AutoApply;
 			_audioPlayer.Volume = Program.Settings.Volume;
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
@@ -201,13 +202,83 @@ namespace Melodorium
 			Show();
 		}
 
+		private void FilterMood_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
+		}
+
+		private void FilterLike_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
+		}
+
+		private void FilterLang_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
+		}
+
+		private void FilterTags_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
+		}
+
+		private void FilterAuthor_TextChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			var s = FilterAuthor.SelectionStart;
+			if (FilterAuthor.Text == "" || FilterAuthor.Text.Length > 2)
+				ShowMusicList();
+			FilterAuthor.SelectionStart = s;
+		}
+
+		private void FilterName_TextChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			var s = FilterName.SelectionStart;
+			if (FilterName.Text == "" || FilterName.Text.Length > 2)
+				ShowMusicList();
+			FilterName.SelectionStart = s;
+		}
+
+		private void FilterHidden_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			ShowMusicList();
+		}
+
+		private void FilterUncategorized_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			if (!Program.Settings.AutoApply) return;
+			ShowMusicList();
+		}
+
 		private void BtnFilter_Click(object sender, EventArgs e)
 		{
 			ShowMusicList();
 		}
 
+		private void InpAutoApply_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_updatingValues) return;
+			Program.Settings.AutoApply = InpAutoApply.Checked;
+			Program.Settings.Save();
+		}
+
 		private void BtnResetFilter_Click(object sender, EventArgs e)
 		{
+			_updatingValues = true;
 			FilterUncategorized.Checked = false;
 			FilterAuthor.Text = "";
 			FilterName.Text = "";
@@ -220,6 +291,8 @@ namespace Melodorium
 				FilterLang.SetItemChecked(i, true);
 			for (int i = 0; i < FilterTags.Items.Count; i++)
 				FilterTags.SetItemChecked(i, true);
+			_updatingValues = false;
+			if (Program.Settings.AutoApply) ShowMusicList();
 		}
 
 		private void ShowMusicList()
@@ -227,8 +300,10 @@ namespace Melodorium
 			using var loadingDialog = new FormLoading();
 			loadingDialog.Job = () =>
 			{
+				_updatingValues = true;
 				FilterAuthor.Text = FilterAuthor.Text.Trim();
 				FilterName.Text = FilterName.Text.Trim();
+				_updatingValues = false;
 				var author = FilterAuthor.Text.Replace(" ", "_");
 				var name = FilterName.Text.Replace(" ", "_");
 				var selectedTags = FilterTags.CheckedItems.Cast<object>().Where(v => v is string).Cast<string>().ToList();
@@ -247,7 +322,7 @@ namespace Melodorium
 						if (!file.Author.Contains(author, StringComparison.CurrentCultureIgnoreCase))
 							continue;
 					if (name != "")
-						if (!(file.Name != "" ? file.Name : file.FName)
+						if (!(file.SName != "" ? file.SName : file.Name)
 								.Contains(name, StringComparison.CurrentCultureIgnoreCase))
 							continue;
 					if (FilterHidden.SelectedIndex == 0)
@@ -552,7 +627,7 @@ namespace Melodorium
 				var selected = InpTags.Text.Split(";");
 				InpTags.Items.Clear();
 				foreach (var tag in Program.MusicData.Tags)
-					if (!selected.Contains(tag)) 
+					if (!selected.Contains(tag))
 						InpTags.Items.Add(InpTags.Text + tag);
 			}
 		}
@@ -788,6 +863,46 @@ namespace Melodorium
 			{
 				Utils.OpenExplorer(file.FPath);
 			}
+		}
+
+		private void FilterMoodBtn_Click(object sender, EventArgs e)
+		{
+			_updatingValues = true;
+			var check = FilterMood.Items.Count != FilterMood.CheckedItems.Count;
+			for (int i = 0; i < FilterMood.Items.Count; i++)
+				FilterMood.SetItemChecked(i, check);
+			_updatingValues = false;
+			if (Program.Settings.AutoApply) ShowMusicList();
+		}
+
+		private void FilterLikeBtn_Click(object sender, EventArgs e)
+		{
+			_updatingValues = true;
+			var check = FilterLike.Items.Count != FilterLike.CheckedItems.Count;
+			for (int i = 0; i < FilterLike.Items.Count; i++)
+				FilterLike.SetItemChecked(i, check);
+			_updatingValues = false;
+			if (Program.Settings.AutoApply) ShowMusicList();
+		}
+
+		private void FilterLangBtn_Click(object sender, EventArgs e)
+		{
+			_updatingValues = true;
+			var check = FilterLang.Items.Count != FilterLang.CheckedItems.Count;
+			for (int i = 0; i < FilterLang.Items.Count; i++)
+				FilterLang.SetItemChecked(i, check);
+			_updatingValues = false;
+			if (Program.Settings.AutoApply) ShowMusicList();
+		}
+
+		private void FilterTagsBtn_Click(object sender, EventArgs e)
+		{
+			_updatingValues = true;
+			var check = FilterTags.Items.Count != FilterTags.CheckedItems.Count;
+			for (int i = 0; i < FilterTags.Items.Count; i++)
+				FilterTags.SetItemChecked(i, check);
+			_updatingValues = false;
+			if (Program.Settings.AutoApply) ShowMusicList();
 		}
 	}
 }
