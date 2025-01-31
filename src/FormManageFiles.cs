@@ -69,7 +69,7 @@ namespace Melodorium
 
 		private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			using var loadingDialog = new FormLoading();
+			using var loadingDialog = new FormLoading(delayed: true);
 			loadingDialog.Job = () =>
 			{
 				var c = 0;
@@ -93,20 +93,16 @@ namespace Melodorium
 
 		private void FindProblems()
 		{
-			using var loadingDialog = new FormLoading();
-			loadingDialog.Job = () =>
+			ListProblems.Items.Clear();
+			var items = new List<ListViewItem>();
+			for (var i = 0; i < Program.MusicData.Files.Count; i++)
 			{
-				ListProblems.Items.Clear();
-				for (var i = 0; i < Program.MusicData.Files.Count; i++)
-				{
-					var file = Program.MusicData.Files[i];
-					if (!IsGoodName(file.Name))
-						ListProblems.Items.Add(new ListViewItem(file.RPath) { Tag = i });
-				}
-				ListProblems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-				loadingDialog.Close();
-			};
-			loadingDialog.ShowDialog(this);
+				var file = Program.MusicData.Files[i];
+				if (!IsGoodName(file.Name))
+					items.Add(new ListViewItem(file.RPath) { Tag = i });
+			}
+			ListProblems.Items.AddRange(items.ToArray());
+			ListProblems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		private static bool IsGoodName(string name)
@@ -194,26 +190,22 @@ namespace Melodorium
 
 		private void LoadFolders()
 		{
-			using var loadingDialog = new FormLoading();
-			loadingDialog.Job = () =>
+			_folders = GetFolders();
+			ListFolders.Items.Clear();
+			var items = new List<ListViewItem>();
+			for (var i = 0; i < _folders.Count; i++)
 			{
-				_folders = GetFolders();
-				ListFolders.Items.Clear();
-				for (var i = 0; i < _folders.Count; i++)
-				{
-					var folder = _folders[i];
-					if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
-						if (author == "")
-							folder += " [<any>]";
-						else
-							folder += $" [{author}]";
+				var folder = _folders[i];
+				if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
+					if (author == "")
+						folder += " [<any>]";
+					else
+						folder += $" [{author}]";
 
-					ListFolders.Items.Add(new ListViewItem(folder) { Tag = i });
-				}
-				ListFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-				loadingDialog.Close();
-			};
-			loadingDialog.ShowDialog(this);
+				items.Add(new ListViewItem(folder) { Tag = i });
+			}
+			ListFolders.Items.AddRange(items.ToArray());
+			ListFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		private static List<string> GetFolders()
@@ -315,43 +307,39 @@ namespace Melodorium
 
 		private void FindMismatch()
 		{
-			using var loadingDialog = new FormLoading();
-			loadingDialog.Job = () =>
+			var authorToFolder = new Dictionary<string, string>();
+			var anyFolder = "";
+			_folders = GetFolders();
+			foreach (var folder in _folders)
 			{
-				var authorToFolder = new Dictionary<string, string>();
-				var anyFolder = "";
-				_folders = GetFolders();
-				foreach (var folder in _folders)
-				{
-					if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
-						if (author != "")
-							authorToFolder[author] = folder;
-						else
-							anyFolder = folder;
+				if (Program.MusicData.FolderAuthor.TryGetValue(folder, out var author))
+					if (author != "")
+						authorToFolder[author] = folder;
 					else
-						authorToFolder[folder] = folder;
-				}
-				_mismatch = Program.MusicData.Files
-					.Where(f =>
-					{
-						if (authorToFolder.TryGetValue(f.Author, out var folder))
-							return folder != f.RFolder;
-						if (Program.MusicData.FolderAuthor.TryGetValue(f.RFolder, out var author))
-							return author != "";
-						return true;
-					})
-					.Select(f => new MismatchFile(f, authorToFolder.GetValueOrDefault(f.Author, anyFolder)))
-					.ToList();
-				ListMismatch.Items.Clear();
-				for (var i = 0; i < _mismatch.Count; i++)
+						anyFolder = folder;
+				else
+					authorToFolder[folder] = folder;
+			}
+			_mismatch = Program.MusicData.Files
+				.Where(f =>
 				{
-					var mismatch = _mismatch[i];
-					ListMismatch.Items.Add(new ListViewItem(mismatch.MusicFile.RPath) { Tag = i });
-				}
-				ListMismatch.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-				loadingDialog.Close();
-			};
-			loadingDialog.ShowDialog(this);
+					if (authorToFolder.TryGetValue(f.Author, out var folder))
+						return folder != f.RFolder;
+					if (Program.MusicData.FolderAuthor.TryGetValue(f.RFolder, out var author))
+						return author != "";
+					return true;
+				})
+				.Select(f => new MismatchFile(f, authorToFolder.GetValueOrDefault(f.Author, anyFolder)))
+				.ToList();
+			ListMismatch.Items.Clear();
+			var items = new List<ListViewItem>();
+			for (var i = 0; i < _mismatch.Count; i++)
+			{
+				var mismatch = _mismatch[i];
+				items.Add(new ListViewItem(mismatch.MusicFile.RPath) { Tag = i });
+			}
+			ListMismatch.Items.AddRange(items.ToArray());
+			ListMismatch.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		private void ListMismatch_SelectedIndexChanged(object sender, EventArgs e)
@@ -453,6 +441,7 @@ namespace Melodorium
 				//watch.Stop();
 				//Debug.WriteLine(watch.ElapsedMilliseconds, "FindSimilar_ElapsedMilliseconds");
 				ListSimilar.Items.Clear();
+				var items = new List<ListViewItem>();
 				_similar = r.OrderByDescending(v => v.Item1)
 							.ThenBy(v => v.Item2[0].Name)
 							.Select(v => v.Item2)
@@ -462,8 +451,9 @@ namespace Melodorium
 				{
 					var item = _similar[i][0];
 					var title = ignoreAuthor ? item.SName : item.Name;
-					ListSimilar.Items.Add(new ListViewItem(title) { Tag = i });
+					items.Add(new ListViewItem(title) { Tag = i });
 				}
+				ListSimilar.Items.AddRange(items.ToArray());
 				ListSimilar.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				loadingDialog.Close();
 			};
@@ -539,35 +529,31 @@ namespace Melodorium
 
 		private void FindGroup()
 		{
-			using var loadingDialog = new FormLoading();
-			loadingDialog.Job = () =>
+			var files = Program.MusicData.Files
+				.Where(v => Program.MusicData.FolderAuthor.TryGetValue(v.RFolder, out var author) && author == "")
+				.OrderBy(v => v.Author)
+				.ToList();
+			_groups = [];
+			for (var i = 0; i < files.Count; i++)
 			{
-				var files = Program.MusicData.Files
-					.Where(v => Program.MusicData.FolderAuthor.TryGetValue(v.RFolder, out var author) && author == "")
-					.OrderBy(v => v.Author)
-					.ToList();
-				_groups = [];
-				for (var i = 0; i < files.Count; i++)
-				{
-					var file = files[i];
-					var key = file.RFolder + Path.DirectorySeparatorChar + file.Author;
-					if (_groups.TryGetValue(key, out var g))
-						g.Add(file);
-					else
-						_groups[key] = [file];
-				}
-				TreeGroup.Nodes.Clear();
-				foreach (var (author, group) in _groups)
-				{
-					if (group.Count < InpItemsInGroup.Value) continue;
-					var node = new TreeNode(author + $" [{group.Count}]") { Tag = author };
-					TreeGroup.Nodes.Add(node);
-					foreach (var file in group)
-						node.Nodes.Add(new TreeNode(file.SName) { Tag = file });
-				}
-				loadingDialog.Close();
-			};
-			loadingDialog.ShowDialog(this);
+				var file = files[i];
+				var key = file.RFolder + Path.DirectorySeparatorChar + file.Author;
+				if (_groups.TryGetValue(key, out var g))
+					g.Add(file);
+				else
+					_groups[key] = [file];
+			}
+			TreeGroup.Nodes.Clear();
+			var nodes = new List<TreeNode>();
+			foreach (var (author, group) in _groups)
+			{
+				if (group.Count < InpItemsInGroup.Value) continue;
+				var node = new TreeNode(author + $" [{group.Count}]") { Tag = author };
+				nodes.Add(node);
+				foreach (var file in group)
+					node.Nodes.Add(new TreeNode(file.SName) { Tag = file });
+			}
+			TreeGroup.Nodes.AddRange(nodes.ToArray());
 		}
 
 		private void InpItemsInGroup_ValueChanged(object sender, EventArgs e)

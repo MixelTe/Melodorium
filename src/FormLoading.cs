@@ -32,26 +32,28 @@
 		{
 			ProgBar.Visible = true;
 			ProgBar.Value = Math.Min(Math.Max((int)(progress * 100), 0), 100);
-			DoEvents();
+			CheckDelay();
+			Application.DoEvents();
 		}
         public void SetInfo(string info)
         {
             LblInfo.Visible = true;
             LblInfo.Text = info;
-			DoEvents();
+			CheckDelay();
+			Application.DoEvents();
 		}
-		public void DoEvents()
+		public void CheckDelay()
 		{
 			if (Delayed)
 			{
 				var d = DateTime.Now - OpenedAt;
 				if (d.TotalMilliseconds > 300)
 				{
-					Opacity = 1;
+					Opacity = 0.6;
 					Delayed = false;
+					Application.DoEvents();
 				}
 			}
-			Application.DoEvents();
 		}
 
 		public void EnableCancel()

@@ -182,7 +182,6 @@ namespace Melodorium
 				MusicData.LoadFull(() => { if (++c % 100 == 0) loadingDialog.SetInfo($"{c} files"); });
 				UpdateUI();
 				ShowMusicList();
-				ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				Program.Player.ClearPlaylist(save: false);
 				Program.Player.AddTracksToPlaylist(
 					Program.MusicData.Playlist
@@ -234,20 +233,14 @@ namespace Melodorium
 		{
 			if (_updatingValues) return;
 			if (!Program.Settings.AutoApply) return;
-			var s = FilterAuthor.SelectionStart;
-			if (FilterAuthor.Text == "" || FilterAuthor.Text.Length > 2)
-				ShowMusicList();
-			FilterAuthor.SelectionStart = s;
+			ShowMusicList();
 		}
 
 		private void FilterName_TextChanged(object sender, EventArgs e)
 		{
 			if (_updatingValues) return;
 			if (!Program.Settings.AutoApply) return;
-			var s = FilterName.SelectionStart;
-			if (FilterName.Text == "" || FilterName.Text.Length > 2)
-				ShowMusicList();
-			FilterName.SelectionStart = s;
+			ShowMusicList();
 		}
 
 		private void FilterHidden_SelectedIndexChanged(object sender, EventArgs e)
@@ -297,66 +290,62 @@ namespace Melodorium
 
 		private void ShowMusicList()
 		{
-			using var loadingDialog = new FormLoading(delayed: true);
-			loadingDialog.Job = () =>
+			_updatingValues = true;
+			FilterAuthor.Text = FilterAuthor.Text.Trim();
+			FilterName.Text = FilterName.Text.Trim();
+			_updatingValues = false;
+			var author = FilterAuthor.Text.Replace(" ", "_");
+			var name = FilterName.Text.Replace(" ", "_");
+			var selectedTags = FilterTags.CheckedItems.Cast<object>().Where(v => v is string).Cast<string>().ToList();
+			var noTagSelected = FilterTags.GetItemChecked(0);
+			ListFiles.Items.Clear();
+			var items = new List<ListViewItem>();
+			_selectedFileI = null;
+			_filteredFiles = [];
+			var c = 0;
+			for (int i = 0; i < Program.MusicData.Files.Count; i++)
 			{
-				_updatingValues = true;
-				FilterAuthor.Text = FilterAuthor.Text.Trim();
-				FilterName.Text = FilterName.Text.Trim();
-				_updatingValues = false;
-				var author = FilterAuthor.Text.Replace(" ", "_");
-				var name = FilterName.Text.Replace(" ", "_");
-				var selectedTags = FilterTags.CheckedItems.Cast<object>().Where(v => v is string).Cast<string>().ToList();
-				var noTagSelected = FilterTags.GetItemChecked(0);
-				ListFiles.Items.Clear();
-				_selectedFileI = null;
-				_filteredFiles = [];
-				var c = 0;
-				for (int i = 0; i < Program.MusicData.Files.Count; i++)
+				var file = Program.MusicData.Files[i];
+				if (FilterUncategorized.Checked && file.Data.IsLoaded)
+					continue;
+				if (!FilterUncategorized.Checked && !file.Data.IsLoaded)
+					continue;
+				if (author != "")
+					if (!file.Author.Contains(author, StringComparison.CurrentCultureIgnoreCase))
+						continue;
+				if (name != "")
+					if (!(file.SName != "" ? file.SName : file.Name)
+							.Contains(name, StringComparison.CurrentCultureIgnoreCase))
+						continue;
+				if (FilterHidden.SelectedIndex == 0)
+					if (file.Data.Hidden) continue;
+				if (FilterHidden.SelectedIndex == 2)
+					if (!file.Data.Hidden) continue;
+				if (!FilterMood.CheckedIndices.Contains((int)file.Data.Mood))
+					continue;
+				if (!FilterLike.CheckedIndices.Contains((int)file.Data.Like))
+					continue;
+				if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
+					continue;
+				if (file.Data.Tag == "")
 				{
-					if (i % 100 == 0) loadingDialog.SetProgress((float)(i + 50) / Program.MusicData.Files.Count);
-					var file = Program.MusicData.Files[i];
-					if (FilterUncategorized.Checked && file.Data.IsLoaded)
+					if (!noTagSelected)
 						continue;
-					if (!FilterUncategorized.Checked && !file.Data.IsLoaded)
-						continue;
-					if (author != "")
-						if (!file.Author.Contains(author, StringComparison.CurrentCultureIgnoreCase))
-							continue;
-					if (name != "")
-						if (!(file.SName != "" ? file.SName : file.Name)
-								.Contains(name, StringComparison.CurrentCultureIgnoreCase))
-							continue;
-					if (FilterHidden.SelectedIndex == 0)
-						if (file.Data.Hidden) continue;
-					if (FilterHidden.SelectedIndex == 2)
-						if (!file.Data.Hidden) continue;
-					if (!FilterMood.CheckedIndices.Contains((int)file.Data.Mood))
-						continue;
-					if (!FilterLike.CheckedIndices.Contains((int)file.Data.Like))
-						continue;
-					if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
-						continue;
-					if (file.Data.Tag == "")
-					{
-						if (!noTagSelected)
-							continue;
-					}
-					else
-					{
-						var tags = file.Data.Tag.Split(";");
-						if (!tags.Any(tag => selectedTags.Contains(tag)))
-							continue;
-					}
-
-					_filteredFiles.Add(file);
-					ListFiles.Items.Add(new ListViewItem(file.RPath + file.Tags) { Tag = file });
-					c++;
 				}
-				ListFiles.Columns[0].Text = $"Music [{c}]";
-				loadingDialog.Close();
-			};
-			loadingDialog.ShowDialog(this);
+				else
+				{
+					var tags = file.Data.Tag.Split(";");
+					if (!tags.Any(selectedTags.Contains))
+						continue;
+				}
+
+				_filteredFiles.Add(file);
+				items.Add(new ListViewItem(file.RPath + file.Tags) { Tag = file });
+				c++;
+			}
+			ListFiles.Items.AddRange(items.ToArray());
+			ListFiles.Columns[0].Text = $"Music [{c}]";
+			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		private void UpdateUI(bool updateData = false)
@@ -839,22 +828,15 @@ namespace Melodorium
 
 		private void AddSelectedToPlaylist(bool randomize = false)
 		{
-			var files = ListFiles.SelectedItems.Cast<ListViewItem>().Select(v => v.Tag as MusicFile).ToList();
+			var files = ListFiles.SelectedItems.Cast<ListViewItem>().Select(v => v.Tag as MusicFile).WhereNotNull().ToList();
 			if (randomize)
 				files.Shuffle();
-			foreach (var file in files)
-			{
-				Debug.Assert(file != null);
-				Program.Player.AddTrackToPlaylist(file);
-			}
+			Program.Player.AddTracksToPlaylist(files);
 		}
 
 		private void ListFilesMenuItem_AddAll_Click(object sender, EventArgs e)
 		{
-			foreach (var file in _filteredFiles)
-			{
-				Program.Player.AddTrackToPlaylist(file);
-			}
+			Program.Player.AddTracksToPlaylist(_filteredFiles);
 		}
 
 		private void ListFilesMenuItem_Explorer_Click(object sender, EventArgs e)

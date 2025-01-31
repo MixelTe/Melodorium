@@ -52,11 +52,13 @@ namespace Melodorium
 
 		public void AddTracksToPlaylist(IEnumerable<MusicFile> files)
 		{
+			var items = new List<ListViewItem>();
 			foreach (var file in files)
 			{
 				_playlist.Add(file);
-				ListFiles.Items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
+				items.Add(new ListViewItem(file.PlaylistName + file.Tags) { Tag = file });
 			}
+			ListFiles.Items.AddRange(items.ToArray());
 			ListFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 			SavePlaylist();
 		}
