@@ -297,7 +297,7 @@ namespace Melodorium
 
 		private void ShowMusicList()
 		{
-			using var loadingDialog = new FormLoading();
+			using var loadingDialog = new FormLoading(delayed: true);
 			loadingDialog.Job = () =>
 			{
 				_updatingValues = true;
@@ -312,8 +312,10 @@ namespace Melodorium
 				_selectedFileI = null;
 				_filteredFiles = [];
 				var c = 0;
-				foreach (var file in Program.MusicData.Files)
+				for (int i = 0; i < Program.MusicData.Files.Count; i++)
 				{
+					if (i % 100 == 0) loadingDialog.SetProgress((float)(i + 50) / Program.MusicData.Files.Count);
+					var file = Program.MusicData.Files[i];
 					if (FilterUncategorized.Checked && file.Data.IsLoaded)
 						continue;
 					if (!FilterUncategorized.Checked && !file.Data.IsLoaded)
