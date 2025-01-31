@@ -27,6 +27,7 @@ namespace Melodorium
 		private List<List<MusicFile>> _similar = [];
 		private List<MusicFile>? _selectedSimilar;
 		private ListViewItem? _selectedSimilarItem;
+		private Dictionary<(string, string), float> _similarityCache = [];
 		private Dictionary<string, List<MusicFile>> _groups = [];
 		private string? _selectedGroup;
 
@@ -470,7 +471,13 @@ namespace Melodorium
 			if (strictComparison)
 				return name1 == name2 ? 1 : 0;
 
-			return Utils.StringSimilarityBySmithWatermanAlgorithm(name1, name2);
+			var key = (name1, name2);
+			if (!_similarityCache.TryGetValue(key, out var similarity))
+			{
+				similarity = Utils.StringSimilarityBySmithWatermanAlgorithm(name1, name2);
+				_similarityCache[key] = similarity;
+			}
+			return similarity;
 		}
 
 		private void ListSimilar_SelectedIndexChanged(object sender, EventArgs e)
