@@ -48,6 +48,11 @@ namespace Melodorium
 			FilterLike.Items.Add("Best", true);
 			FilterLike.Items.Add("Like", true);
 			FilterLike.Items.Add("Good", true);
+			FilterLike.Items.Add("Normal", true);
+			FilterLike.Items.Add("------", CheckState.Indeterminate);
+			FilterLike.Items.Add("Happy", true);
+			FilterLike.Items.Add("Neutral", true);
+			FilterLike.Items.Add("Sad", true);
 			FilterLang.Items.Clear();
 			FilterLang.Items.Add("Wordless", true);
 			FilterLang.Items.Add("Russian", true);
@@ -68,6 +73,7 @@ namespace Melodorium
 			InpLike.Items.Add("Best");
 			InpLike.Items.Add("Like");
 			InpLike.Items.Add("Good");
+			InpLike.Items.Add("Normal");
 			InpLang.Items.Clear();
 			InpLang.Items.Add("Wordless");
 			InpLang.Items.Add("Russian");
@@ -77,6 +83,10 @@ namespace Melodorium
 			InpLang.Items.Add("German");
 			InpLang.Items.Add("Italian");
 			InpLang.Items.Add("Asian");
+			InpEmo.Items.Clear();
+			InpEmo.Items.Add("Happy");
+			InpEmo.Items.Add("Neutral");
+			InpEmo.Items.Add("Sad");
 			_updatingValues = false;
 		}
 
@@ -219,6 +229,11 @@ namespace Melodorium
 		{
 			if (_updatingValues) return;
 			if (!Program.Settings.AutoApply) return;
+			if (e.Index == 4)
+			{
+				e.NewValue = e.CurrentValue;
+				return;
+			}
 			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
 		}
 
@@ -280,6 +295,7 @@ namespace Melodorium
 				FilterMood.SetItemChecked(i, true);
 			for (int i = 0; i < FilterLike.Items.Count; i++)
 				FilterLike.SetItemChecked(i, true);
+			FilterLike.SetItemCheckState(4, CheckState.Indeterminate);
 			for (int i = 0; i < FilterLang.Items.Count; i++)
 				FilterLang.SetItemChecked(i, true);
 			for (int i = 0; i < FilterTags.Items.Count; i++)
@@ -324,6 +340,8 @@ namespace Melodorium
 				if (!FilterMood.CheckedIndices.Contains((int)file.Data.Mood))
 					continue;
 				if (!FilterLike.CheckedIndices.Contains((int)file.Data.Like))
+					continue;
+				if (!FilterLike.CheckedIndices.Contains((int)file.Data.Emo + 5))
 					continue;
 				if (!FilterLang.CheckedIndices.Contains((int)file.Data.Lang))
 					continue;
@@ -395,6 +413,7 @@ namespace Melodorium
 
 		private void ListFiles_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (_updatingValues) return;
 			if (ListFiles.SelectedItems.Count == 0) return;
 			var item = ListFiles.SelectedItems[0];
 			if (item.Tag is not MusicFile file)
@@ -408,6 +427,7 @@ namespace Melodorium
 			InpMood.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Mood : -1;
 			InpLike.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Like : -1;
 			InpLang.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Lang : -1;
+			InpEmo.SelectedIndex = file.Data.IsLoaded ? (int)file.Data.Emo : -1;
 			InpHidden.Checked = file.Data.Hidden;
 			InpTags.Text = file.Data.Tag;
 			InpTitle.Text = file.Title;
@@ -447,6 +467,8 @@ namespace Melodorium
 				err = "Like";
 			else if (InpLang.SelectedIndex < 0)
 				err = "Lang";
+			else if (InpEmo.SelectedIndex < 0)
+				err = "Emo";
 			if (err != "")
 			{
 				MessageBox.Show($"{err} not selected", "Saving music data");
@@ -456,6 +478,7 @@ namespace Melodorium
 			_selectedFile.Data.Mood = (MusicMood)InpMood.SelectedIndex;
 			_selectedFile.Data.Like = (MusicLike)InpLike.SelectedIndex;
 			_selectedFile.Data.Lang = (MusicLang)InpLang.SelectedIndex;
+			_selectedFile.Data.Emo = (MusicEmo)InpLike.SelectedIndex;
 			_selectedFile.Data.Hidden = InpHidden.Checked;
 			_selectedFile.Data.Tag = InpTags.Text.Trim();
 
@@ -511,6 +534,19 @@ namespace Melodorium
 		{
 			_audioPlayer.Stop();
 			BtnPlay.Text = "Play";
+		}
+
+		private void BtnNext_Click(object sender, EventArgs e)
+		{
+			if (_selectedFileI == null) return;
+			if (_selectedFileI + 1 < _filteredFiles.Count)
+			{
+				_updatingValues = true;
+				foreach (ListViewItem item in ListFiles.SelectedItems)
+					item.Selected = false;
+				_updatingValues = false;
+				ListFiles.Items[_selectedFileI.Value + 1].Selected = true;
+			}
 		}
 
 		private void InpVolume_VolumeChanged(object sender, EventArgs e)

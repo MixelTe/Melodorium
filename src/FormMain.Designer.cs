@@ -59,6 +59,8 @@
 			ListFilesMenuItem_AddRnd = new ToolStripMenuItem();
 			ListFilesMenuItem_AddAll = new ToolStripMenuItem();
 			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
+			BtnNext = new Button();
+			InpEmo = new ComboBox();
 			InpTags = new ComboBox();
 			label6 = new Label();
 			InpVolume = new NAudio.Gui.Pot();
@@ -200,7 +202,7 @@
 			// 
 			// FilterTagsBtn
 			// 
-			FilterTagsBtn.Location = new Point(327, 152);
+			FilterTagsBtn.Location = new Point(344, 152);
 			FilterTagsBtn.Name = "FilterTagsBtn";
 			FilterTagsBtn.Size = new Size(18, 18);
 			FilterTagsBtn.TabIndex = 20;
@@ -210,7 +212,7 @@
 			// 
 			// FilterLangBtn
 			// 
-			FilterLangBtn.Location = new Point(213, 152);
+			FilterLangBtn.Location = new Point(219, 152);
 			FilterLangBtn.Name = "FilterLangBtn";
 			FilterLangBtn.Size = new Size(18, 18);
 			FilterLangBtn.TabIndex = 19;
@@ -220,7 +222,7 @@
 			// 
 			// FilterLikeBtn
 			// 
-			FilterLikeBtn.Location = new Point(131, 152);
+			FilterLikeBtn.Location = new Point(137, 152);
 			FilterLikeBtn.Name = "FilterLikeBtn";
 			FilterLikeBtn.Size = new Size(18, 18);
 			FilterLikeBtn.TabIndex = 18;
@@ -242,9 +244,9 @@
 			// 
 			FilterTags.CheckOnClick = true;
 			FilterTags.FormattingEnabled = true;
-			FilterTags.Location = new Point(237, 22);
+			FilterTags.Location = new Point(242, 22);
 			FilterTags.Name = "FilterTags";
-			FilterTags.Size = new Size(108, 148);
+			FilterTags.Size = new Size(119, 148);
 			FilterTags.TabIndex = 16;
 			FilterTags.ItemCheck += FilterTags_ItemCheck;
 			// 
@@ -262,7 +264,7 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(351, 54);
+			label2.Location = new Point(367, 54);
 			label2.Name = "label2";
 			label2.Size = new Size(39, 15);
 			label2.TabIndex = 12;
@@ -270,10 +272,10 @@
 			// 
 			// FilterName
 			// 
-			FilterName.Location = new Point(401, 51);
+			FilterName.Location = new Point(417, 51);
 			FilterName.Name = "FilterName";
 			FilterName.PlaceholderText = "Any";
-			FilterName.Size = new Size(198, 23);
+			FilterName.Size = new Size(182, 23);
 			FilterName.TabIndex = 11;
 			FilterName.TextChanged += FilterName_TextChanged;
 			// 
@@ -282,7 +284,7 @@
 			FilterHidden.DropDownStyle = ComboBoxStyle.DropDownList;
 			FilterHidden.FormattingEnabled = true;
 			FilterHidden.Items.AddRange(new object[] { "normal", "all", "hidden" });
-			FilterHidden.Location = new Point(351, 120);
+			FilterHidden.Location = new Point(367, 120);
 			FilterHidden.Name = "FilterHidden";
 			FilterHidden.Size = new Size(64, 23);
 			FilterHidden.TabIndex = 10;
@@ -302,7 +304,7 @@
 			// FilterUncategorized
 			// 
 			FilterUncategorized.AutoSize = true;
-			FilterUncategorized.Location = new Point(351, 149);
+			FilterUncategorized.Location = new Point(367, 149);
 			FilterUncategorized.Name = "FilterUncategorized";
 			FilterUncategorized.Size = new Size(102, 19);
 			FilterUncategorized.TabIndex = 8;
@@ -312,17 +314,17 @@
 			// 
 			// FilterAuthor
 			// 
-			FilterAuthor.Location = new Point(401, 22);
+			FilterAuthor.Location = new Point(417, 22);
 			FilterAuthor.Name = "FilterAuthor";
 			FilterAuthor.PlaceholderText = "Any";
-			FilterAuthor.Size = new Size(198, 23);
+			FilterAuthor.Size = new Size(182, 23);
 			FilterAuthor.TabIndex = 7;
 			FilterAuthor.TextChanged += FilterAuthor_TextChanged;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(351, 25);
+			label1.Location = new Point(367, 25);
 			label1.Name = "label1";
 			label1.Size = new Size(44, 15);
 			label1.TabIndex = 6;
@@ -332,7 +334,7 @@
 			// 
 			FilterLang.CheckOnClick = true;
 			FilterLang.FormattingEnabled = true;
-			FilterLang.Location = new Point(155, 22);
+			FilterLang.Location = new Point(160, 22);
 			FilterLang.Name = "FilterLang";
 			FilterLang.Size = new Size(76, 148);
 			FilterLang.TabIndex = 5;
@@ -344,7 +346,7 @@
 			FilterLike.FormattingEnabled = true;
 			FilterLike.Location = new Point(90, 22);
 			FilterLike.Name = "FilterLike";
-			FilterLike.Size = new Size(59, 148);
+			FilterLike.Size = new Size(64, 148);
 			FilterLike.TabIndex = 4;
 			FilterLike.ItemCheck += FilterLike_ItemCheck;
 			// 
@@ -360,6 +362,8 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(BtnNext);
+			splitContainer1.Panel2.Controls.Add(InpEmo);
 			splitContainer1.Panel2.Controls.Add(InpTags);
 			splitContainer1.Panel2.Controls.Add(label6);
 			splitContainer1.Panel2.Controls.Add(InpVolume);
@@ -432,6 +436,25 @@
 			ListFilesMenuItem_Explorer.Size = new Size(179, 22);
 			ListFilesMenuItem_Explorer.Text = "Open in explorer";
 			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
+			// 
+			// BtnNext
+			// 
+			BtnNext.Location = new Point(3, 270);
+			BtnNext.Name = "BtnNext";
+			BtnNext.Size = new Size(46, 23);
+			BtnNext.TabIndex = 22;
+			BtnNext.Text = "Next";
+			BtnNext.UseVisualStyleBackColor = true;
+			BtnNext.Click += BtnNext_Click;
+			// 
+			// InpEmo
+			// 
+			InpEmo.DropDownStyle = ComboBoxStyle.DropDownList;
+			InpEmo.FormattingEnabled = true;
+			InpEmo.Location = new Point(84, 73);
+			InpEmo.Name = "InpEmo";
+			InpEmo.Size = new Size(75, 23);
+			InpEmo.TabIndex = 21;
 			// 
 			// InpTags
 			// 
@@ -565,7 +588,7 @@
 			// LblTime
 			// 
 			LblTime.AutoSize = true;
-			LblTime.Location = new Point(127, 133);
+			LblTime.Location = new Point(157, 133);
 			LblTime.Name = "LblTime";
 			LblTime.Size = new Size(66, 15);
 			LblTime.TabIndex = 14;
@@ -592,9 +615,9 @@
 			// 
 			// BtnStop
 			// 
-			BtnStop.Location = new Point(65, 129);
+			BtnStop.Location = new Point(55, 129);
 			BtnStop.Name = "BtnStop";
-			BtnStop.Size = new Size(56, 23);
+			BtnStop.Size = new Size(46, 23);
 			BtnStop.TabIndex = 8;
 			BtnStop.Text = "Stop";
 			BtnStop.UseVisualStyleBackColor = true;
@@ -604,7 +627,7 @@
 			// 
 			BtnPlay.Location = new Point(3, 129);
 			BtnPlay.Name = "BtnPlay";
-			BtnPlay.Size = new Size(56, 23);
+			BtnPlay.Size = new Size(46, 23);
 			BtnPlay.TabIndex = 7;
 			BtnPlay.Text = "Play";
 			BtnPlay.UseVisualStyleBackColor = true;
@@ -1026,5 +1049,7 @@
 		private Button FilterLangBtn;
 		private Button FilterLikeBtn;
 		private CheckBox InpAutoApply;
+		private ComboBox InpEmo;
+		private Button BtnNext;
 	}
 }

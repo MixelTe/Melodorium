@@ -88,7 +88,7 @@ namespace Melodorium
 				if (loadData)
 					file.Load();
 				if (file.Data.Tag != "")
-                    foreach (var tag in file.Data.Tag.Split(";"))
+					foreach (var tag in file.Data.Tag.Split(";"))
 						tags.Add(tag);
 				Files.Add(file);
 				onFileLoaded?.Invoke();
@@ -101,7 +101,7 @@ namespace Melodorium
 			var tags = new HashSet<string>();
 			foreach (var file in Files)
 				if (file.Data.Tag != "")
-                    foreach (var tag in file.Data.Tag.Split(";"))
+					foreach (var tag in file.Data.Tag.Split(";"))
 						tags.Add(tag);
 			Tags = tags.Order().ToList();
 		}
@@ -161,7 +161,10 @@ namespace Melodorium
 				if (Data.IsLoaded)
 				{
 					tags += " [";
-					tags += Data.Mood.ToString()[..2] + ";";
+					tags += Data.Mood.ToString()[..2];
+					if (Data.Emo == MusicEmo.Happy) tags += "+";
+					else if (Data.Emo == MusicEmo.Sad) tags += "-";
+					tags += ";";
 					tags += Data.Like.ToString()[..2] + ";";
 					tags += Data.Lang.ToString()[..2];
 					if (Data.Tag != "")
@@ -308,6 +311,8 @@ namespace Melodorium
 		public MusicLike Like { get; set; } = MusicLike.Good;
 		[JsonConverter(typeof(JsonTolerantEnumConverter))]
 		public MusicLang Lang { get; set; } = MusicLang.An;
+		[JsonConverter(typeof(JsonTolerantEnumConverter))]
+		public MusicEmo Emo { get; set; } = MusicEmo.Neutral;
 		public bool Hidden { get; set; } = false;
 		public string Tag { get; set; } = "";
 	}
@@ -322,9 +327,10 @@ namespace Melodorium
 	}
 	public enum MusicLike
 	{
-        Best = 0,
-        Like = 1,
-        Good = 2,
+		Best = 0,
+		Like = 1,
+		Good = 2,
+		Normal = 3,
 	}
 	public enum MusicLang
 	{
@@ -336,5 +342,11 @@ namespace Melodorium
 		Ge = 5,
 		It = 6,
 		As = 7,
+	}
+	public enum MusicEmo
+	{
+		Happy = 0,
+		Neutral = 1,
+		Sad = 2,
 	}
 }
