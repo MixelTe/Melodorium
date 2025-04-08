@@ -37,6 +37,10 @@ namespace Melodorium
 			TrayIcon.Text = "Melodorium v1.0";
 			InpAutoApply.Checked = Program.Settings.AutoApply;
 			_audioPlayer.Volume = Program.Settings.Volume;
+			_audioPlayer.TrackEnded += (object? sender, EventArgs e) =>
+			{
+				PlayMusic();
+			};
 			InpVolume.Value = Program.Settings.Volume;
 			FilterMood.Items.Clear();
 			FilterMood.Items.Add("Rock", true);
@@ -222,6 +226,11 @@ namespace Melodorium
 		{
 			if (_updatingValues) return;
 			if (!Program.Settings.AutoApply) return;
+			if (e.Index == 4)
+			{
+				e.NewValue = e.CurrentValue;
+				return;
+			}
 			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
 		}
 
@@ -229,11 +238,6 @@ namespace Melodorium
 		{
 			if (_updatingValues) return;
 			if (!Program.Settings.AutoApply) return;
-			if (e.Index == 4)
-			{
-				e.NewValue = e.CurrentValue;
-				return;
-			}
 			BeginInvoke((MethodInvoker)(() => ShowMusicList()));
 		}
 
@@ -358,7 +362,13 @@ namespace Melodorium
 				}
 
 				_filteredFiles.Add(file);
-				items.Add(new ListViewItem(file.RPath + file.Tags) { Tag = file });
+				var item = new ListViewItem(file.RPath + file.Tags) { Tag = file };
+				items.Add(item);
+				if (_selectedFile == file)
+				{
+					_selectedFileI = i;
+					item.Selected = true;
+				}
 				c++;
 			}
 			ListFiles.Items.AddRange(items.ToArray());
@@ -368,6 +378,7 @@ namespace Melodorium
 
 		private void UpdateUI(bool updateData = false)
 		{
+			_updatingValues = true;
 			if (updateData)
 				Program.MusicData.UpdateTagsList();
 
@@ -409,6 +420,7 @@ namespace Melodorium
 				InpExportRel.Checked = false;
 				InpExportFolder.Text = Program.Settings.ExportFolder;
 			}
+			_updatingValues = false;
 		}
 
 		private void ListFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -478,7 +490,7 @@ namespace Melodorium
 			_selectedFile.Data.Mood = (MusicMood)InpMood.SelectedIndex;
 			_selectedFile.Data.Like = (MusicLike)InpLike.SelectedIndex;
 			_selectedFile.Data.Lang = (MusicLang)InpLang.SelectedIndex;
-			_selectedFile.Data.Emo = (MusicEmo)InpLike.SelectedIndex;
+			_selectedFile.Data.Emo = (MusicEmo)InpEmo.SelectedIndex;
 			_selectedFile.Data.Hidden = InpHidden.Checked;
 			_selectedFile.Data.Tag = InpTags.Text.Trim();
 
@@ -501,6 +513,7 @@ namespace Melodorium
 				if (_metaNewImg != null)
 				{
 					_selectedFile.Picture = new TagLib.Picture(_metaNewImg);
+					_metaNewImg = null;
 				}
 				_selectedFile.SaveMeta();
 				if (musicPlaying)
@@ -518,14 +531,15 @@ namespace Melodorium
 
 		private void BtnPlay_Click(object sender, EventArgs e)
 		{
-			PlayMusic();
+			PlayMusic(toggle: true);
 		}
 
-		private void PlayMusic()
+		private void PlayMusic(bool toggle = false)
 		{
 			if (_selectedFile == null) return;
 
-			_audioPlayer.PlayPause(_selectedFile);
+			if (toggle) _audioPlayer.PlayPause(_selectedFile);
+			else _audioPlayer.Play(_selectedFile);
 			LblTime.Text = _audioPlayer.PlaytimeDisplay;
 			BtnPlay.Text = _audioPlayer.IsPlaying ? "Pause" : "Play";
 		}
@@ -534,6 +548,20 @@ namespace Melodorium
 		{
 			_audioPlayer.Stop();
 			BtnPlay.Text = "Play";
+		}
+
+		private void BtnPrev_Click(object sender, EventArgs e)
+		{
+			if (_selectedFileI == null) return;
+			if (_selectedFileI - 1 >= 0)
+			{
+				_updatingValues = true;
+				foreach (ListViewItem item in ListFiles.SelectedItems)
+					item.Selected = false;
+				_updatingValues = false;
+				ListFiles.EnsureVisible(_selectedFileI.Value - 1);
+				ListFiles.Items[_selectedFileI.Value - 1].Selected = true;
+			}
 		}
 
 		private void BtnNext_Click(object sender, EventArgs e)
@@ -545,8 +573,30 @@ namespace Melodorium
 				foreach (ListViewItem item in ListFiles.SelectedItems)
 					item.Selected = false;
 				_updatingValues = false;
+				ListFiles.EnsureVisible(_selectedFileI.Value + 1);
 				ListFiles.Items[_selectedFileI.Value + 1].Selected = true;
 			}
+		}
+
+		private void BtnTime1_Click(object sender, EventArgs e)
+		{
+			if (!_audioPlayer.IsPlaying) return;
+			_audioPlayer.TimeNormalized = 0.25;
+			UpdateTimeDisplay();
+		}
+
+		private void BtnTime2_Click(object sender, EventArgs e)
+		{
+			if (!_audioPlayer.IsPlaying) return;
+			_audioPlayer.TimeNormalized = 0.5;
+			UpdateTimeDisplay();
+		}
+
+		private void BtnTime3_Click(object sender, EventArgs e)
+		{
+			if (!_audioPlayer.IsPlaying) return;
+			_audioPlayer.TimeNormalized = 0.75;
+			UpdateTimeDisplay();
 		}
 
 		private void InpVolume_VolumeChanged(object sender, EventArgs e)
@@ -565,6 +615,11 @@ namespace Melodorium
 		}
 
 		private void MusicTimer_Tick(object sender, EventArgs e)
+		{
+			UpdateTimeDisplay();
+		}
+
+		private void UpdateTimeDisplay()
 		{
 			if (_selectedFile == null) return;
 			_updatingTime = true;
@@ -586,6 +641,12 @@ namespace Melodorium
 		}
 
 		private void InpLang_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_selectedFile == null) return;
+			LblState.Text = "Unsaved";
+		}
+
+		private void InpEmo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (_selectedFile == null) return;
 			LblState.Text = "Unsaved";
@@ -641,6 +702,7 @@ namespace Melodorium
 				BtnDeleteImage.Enabled = true;
 				PBMusicImage.Image = dialog.Image;
 				_metaNewImg = dialog.NewImage;
+				_metaChanged = true;
 				LblState.Text = "Unsaved";
 			}
 		}
@@ -901,6 +963,7 @@ namespace Melodorium
 			var check = FilterLike.Items.Count != FilterLike.CheckedItems.Count;
 			for (int i = 0; i < FilterLike.Items.Count; i++)
 				FilterLike.SetItemChecked(i, check);
+			FilterLike.SetItemCheckState(4, CheckState.Indeterminate);
 			_updatingValues = false;
 			if (Program.Settings.AutoApply) ShowMusicList();
 		}

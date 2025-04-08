@@ -14,15 +14,15 @@ namespace Melodorium
 	public partial class FormImage : Form
 	{
 		public string? NewImage;
-		public Image Image { get => PBImage.Image; }
+		public Image? Image { get => PBImage.Image; }
 		private MusicFile _musicFile;
 
-		public FormImage(MusicFile musicFile, Image image)
+		public FormImage(MusicFile musicFile, Image? image)
 		{
 			InitializeComponent();
 			_musicFile = musicFile;
 			PBImage.Image = image;
-			if (musicFile.Picture == null)
+			if (musicFile.Picture == null || image == null)
 				BtnExport.Enabled = false;
 		}
 
@@ -45,6 +45,7 @@ namespace Melodorium
 
 		private void BtnExport_Click(object sender, EventArgs e)
 		{
+			if (PBImage.Image == null) return;
 			var path = Utils.GetFreeFileName(_musicFile.Name, ".png");
 			PBImage.Image.Save(path, System.Drawing.Imaging.ImageFormat.Png);
 			Utils.OpenExplorer(path);

@@ -59,6 +59,10 @@
 			ListFilesMenuItem_AddRnd = new ToolStripMenuItem();
 			ListFilesMenuItem_AddAll = new ToolStripMenuItem();
 			ListFilesMenuItem_Explorer = new ToolStripMenuItem();
+			BtnTime3 = new Button();
+			BtnTime2 = new Button();
+			BtnTime1 = new Button();
+			BtnPrev = new Button();
 			BtnNext = new Button();
 			InpEmo = new ComboBox();
 			InpTags = new ComboBox();
@@ -362,6 +366,10 @@
 			// 
 			// splitContainer1.Panel2
 			// 
+			splitContainer1.Panel2.Controls.Add(BtnTime3);
+			splitContainer1.Panel2.Controls.Add(BtnTime2);
+			splitContainer1.Panel2.Controls.Add(BtnTime1);
+			splitContainer1.Panel2.Controls.Add(BtnPrev);
 			splitContainer1.Panel2.Controls.Add(BtnNext);
 			splitContainer1.Panel2.Controls.Add(InpEmo);
 			splitContainer1.Panel2.Controls.Add(InpTags);
@@ -437,9 +445,49 @@
 			ListFilesMenuItem_Explorer.Text = "Open in explorer";
 			ListFilesMenuItem_Explorer.Click += ListFilesMenuItem_Explorer_Click;
 			// 
+			// BtnTime3
+			// 
+			BtnTime3.Location = new Point(183, 270);
+			BtnTime3.Name = "BtnTime3";
+			BtnTime3.Size = new Size(33, 23);
+			BtnTime3.TabIndex = 26;
+			BtnTime3.Text = "3/4";
+			BtnTime3.UseVisualStyleBackColor = true;
+			BtnTime3.Click += BtnTime3_Click;
+			// 
+			// BtnTime2
+			// 
+			BtnTime2.Location = new Point(144, 270);
+			BtnTime2.Name = "BtnTime2";
+			BtnTime2.Size = new Size(33, 23);
+			BtnTime2.TabIndex = 25;
+			BtnTime2.Text = "2/4";
+			BtnTime2.UseVisualStyleBackColor = true;
+			BtnTime2.Click += BtnTime2_Click;
+			// 
+			// BtnTime1
+			// 
+			BtnTime1.Location = new Point(105, 270);
+			BtnTime1.Name = "BtnTime1";
+			BtnTime1.Size = new Size(33, 23);
+			BtnTime1.TabIndex = 24;
+			BtnTime1.Text = "1/4";
+			BtnTime1.UseVisualStyleBackColor = true;
+			BtnTime1.Click += BtnTime1_Click;
+			// 
+			// BtnPrev
+			// 
+			BtnPrev.Location = new Point(3, 270);
+			BtnPrev.Name = "BtnPrev";
+			BtnPrev.Size = new Size(46, 23);
+			BtnPrev.TabIndex = 23;
+			BtnPrev.Text = "Prev";
+			BtnPrev.UseVisualStyleBackColor = true;
+			BtnPrev.Click += BtnPrev_Click;
+			// 
 			// BtnNext
 			// 
-			BtnNext.Location = new Point(3, 270);
+			BtnNext.Location = new Point(55, 270);
 			BtnNext.Name = "BtnNext";
 			BtnNext.Size = new Size(46, 23);
 			BtnNext.TabIndex = 22;
@@ -455,6 +503,7 @@
 			InpEmo.Name = "InpEmo";
 			InpEmo.Size = new Size(75, 23);
 			InpEmo.TabIndex = 21;
+			InpEmo.SelectedIndexChanged += InpEmo_SelectedIndexChanged;
 			// 
 			// InpTags
 			// 
@@ -596,7 +645,7 @@
 			// 
 			// LblState
 			// 
-			LblState.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+			LblState.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			LblState.Location = new Point(217, 270);
 			LblState.Name = "LblState";
 			LblState.Size = new Size(93, 23);
@@ -1051,5 +1100,9 @@
 		private CheckBox InpAutoApply;
 		private ComboBox InpEmo;
 		private Button BtnNext;
+		private Button BtnPrev;
+		private Button BtnTime3;
+		private Button BtnTime2;
+		private Button BtnTime1;
 	}
 }

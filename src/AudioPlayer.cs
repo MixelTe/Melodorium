@@ -39,7 +39,8 @@ namespace Melodorium
 		}
 		public double TimeNormalized
 		{
-			get => _fileReader == null ? 0 : _fileReader.CurrentTime / _fileReader.TotalTime;
+			get => _fileReader == null || _fileReader.TotalTime == TimeSpan.Zero ? 0
+				: _fileReader.CurrentTime / _fileReader.TotalTime;
 			set
 			{
 				if (_fileReader != null)

@@ -297,6 +297,7 @@ namespace Melodorium
 					ListFiles.Items[i - 1] = item1;
 					(_playlist[i], _playlist[i - 1]) = (_playlist[i - 1], _playlist[i]);
 				}
+				ListFiles.EnsureVisible(indexes[0] - 1);
 				SavePlaylist();
 			}
 			else if (e.KeyCode == Keys.Down && e.Alt)
@@ -316,6 +317,7 @@ namespace Melodorium
 					ListFiles.Items[i + 1] = item1;
 					(_playlist[i], _playlist[i + 1]) = (_playlist[i + 1], _playlist[i]);
 				}
+				ListFiles.EnsureVisible(indexes[0] + 1);
 				SavePlaylist();
 			}
 			else if (e.KeyCode == Keys.Up && e.Shift)
@@ -323,14 +325,22 @@ namespace Melodorium
 				e.Handled = true;
 				if (ListFiles.SelectedIndices.Count == 0) return;
 				var mi = ListFiles.SelectedIndices.Cast<int>().Min();
-				if (mi - 1 >= 0) ListFiles.Items[mi - 1].Selected = true;
+				if (mi - 1 >= 0)
+				{
+					ListFiles.Items[mi - 1].Selected = true;
+					ListFiles.EnsureVisible(mi - 1);
+				}
 			}
 			else if (e.KeyCode == Keys.Down && e.Shift)
 			{
 				e.Handled = true;
 				if (ListFiles.SelectedIndices.Count == 0) return;
 				var mi = ListFiles.SelectedIndices.Cast<int>().Max();
-				if (mi + 1 < _playlist.Count) ListFiles.Items[mi + 1].Selected = true;
+				if (mi + 1 < _playlist.Count)
+				{
+					ListFiles.Items[mi + 1].Selected = true;
+					ListFiles.EnsureVisible(mi + 1);
+				}
 			}
 			else if (e.KeyCode == Keys.Up)
 			{
@@ -344,7 +354,9 @@ namespace Melodorium
 				var indexes = ListFiles.SelectedIndices.Cast<int>().Order().ToList();
 				foreach (var i in indexes)
 					ListFiles.Items[i].Selected = false;
-				ListFiles.Items[(indexes[0] - 1 + _playlist.Count) % _playlist.Count].Selected = true;
+				int selected = (indexes[0] - 1 + _playlist.Count) % _playlist.Count;
+				ListFiles.Items[selected].Selected = true;
+				ListFiles.EnsureVisible(selected);
 			}
 			else if (e.KeyCode == Keys.Down)
 			{
@@ -358,7 +370,9 @@ namespace Melodorium
 				var indexes = ListFiles.SelectedIndices.Cast<int>().OrderDescending().ToList();
 				foreach (var i in indexes)
 					ListFiles.Items[i].Selected = false;
-				ListFiles.Items[(indexes[0] + 1) % _playlist.Count].Selected = true;
+				var selected = (indexes[0] + 1) % _playlist.Count;
+				ListFiles.Items[selected].Selected = true;
+				ListFiles.EnsureVisible(selected);
 			}
 		}
 
